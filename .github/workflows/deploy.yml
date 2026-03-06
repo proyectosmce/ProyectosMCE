@@ -26,20 +26,68 @@ jobs:
       FTP_PORT: ${{ secrets.FTP_PORT }}
       FTP_PROTOCOL: ${{ secrets.FTP_PROTOCOL }}
       FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASS: ${{ secrets.DB_PASS }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      SMTP_USER: ${{ secrets.SMTP_USER }}
+      SMTP_PASS: ${{ secrets.SMTP_PASS }}
 
     steps:
       - name: Verificar configuracion
-        if: ${{ env.FTP_SERVER == '' || env.FTP_USERNAME == '' || env.FTP_PASSWORD == '' }}
         run: |
-          echo "Faltan secrets obligatorios para el deploy: FTP_SERVER, FTP_USERNAME o FTP_PASSWORD."
-          echo "Configuralos en Settings > Secrets and variables > Actions."
+          missing=0
+          for secret_name in FTP_SERVER FTP_USERNAME FTP_PASSWORD DB_HOST DB_USER DB_PASS DB_NAME; do
+            if [ -z "${!secret_name}" ]; then
+              echo "Falta el secret obligatorio: ${secret_name}"
+              missing=1
+            fi
+          done
+
+          if [ "$missing" -ne 0 ]; then
+            echo "Configura los secrets en Settings > Secrets and variables > Actions."
+            exit 1
+          fi
 
       - name: Checkout del repositorio
-        if: ${{ env.FTP_SERVER != '' && env.FTP_USERNAME != '' && env.FTP_PASSWORD != '' }}
         uses: actions/checkout@v6
 
+      - name: Generar archivo de secretos para produccion
+        uses: actions/github-script@v8
+        env:
+          DB_HOST: ${{ env.DB_HOST }}
+          DB_USER: ${{ env.DB_USER }}
+          DB_PASS: ${{ env.DB_PASS }}
+          DB_NAME: ${{ env.DB_NAME }}
+          DB_PORT: ${{ env.DB_PORT }}
+          SMTP_USER: ${{ env.SMTP_USER }}
+          SMTP_PASS: ${{ env.SMTP_PASS }}
+        with:
+          script: |
+            const fs = require('fs');
+            const phpString = (value = '') => `'${String(value).replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+            const lines = [
+              '<?php',
+              '// Archivo generado automaticamente por GitHub Actions. No editar manualmente.',
+              `$DB_HOST = ${phpString(process.env.DB_HOST)};`,
+              `$DB_USER = ${phpString(process.env.DB_USER)};`,
+              `$DB_PASS = ${phpString(process.env.DB_PASS)};`,
+              `$DB_NAME = ${phpString(process.env.DB_NAME)};`,
+              `$DB_PORT = ${Number(process.env.DB_PORT || '3306')};`,
+            ];
+
+            if (process.env.SMTP_USER) {
+              lines.push(`$SMTP_USER = ${phpString(process.env.SMTP_USER)};`);
+            }
+
+            if (process.env.SMTP_PASS) {
+              lines.push(`$SMTP_PASS = ${phpString(process.env.SMTP_PASS)};`);
+            }
+
+            fs.writeFileSync('includes/secrets.php', `${lines.join('\n')}\n`);
+
       - name: Subir archivos al hosting
-        if: ${{ env.FTP_SERVER != '' && env.FTP_USERNAME != '' && env.FTP_PASSWORD != '' }}
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ env.FTP_SERVER }}
@@ -54,7 +102,6 @@ jobs:
             **/.github/**
             **/node_modules/**
             **/.ftp-deploy-sync-state.json
-            includes/secrets.php
             includes/secrets.php.example
             *.sql
             **/*.sql
