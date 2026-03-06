@@ -17,27 +17,37 @@ permissions:
 jobs:
   deploy:
     name: Deploy al hosting
-    if: ${{ secrets.FTP_SERVER != '' && secrets.FTP_USERNAME != '' && secrets.FTP_PASSWORD != '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      FTP_PORT: ${{ secrets.FTP_PORT || '21' }}
-      FTP_PROTOCOL: ${{ secrets.FTP_PROTOCOL || 'ftp' }}
-      FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR || './' }}
+      FTP_SERVER: ${{ secrets.FTP_SERVER }}
+      FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+      FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+      FTP_PORT: ${{ secrets.FTP_PORT }}
+      FTP_PROTOCOL: ${{ secrets.FTP_PROTOCOL }}
+      FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR }}
 
     steps:
+      - name: Verificar configuracion
+        if: ${{ env.FTP_SERVER == '' || env.FTP_USERNAME == '' || env.FTP_PASSWORD == '' }}
+        run: |
+          echo "Faltan secrets obligatorios para el deploy: FTP_SERVER, FTP_USERNAME o FTP_PASSWORD."
+          echo "Configuralos en Settings > Secrets and variables > Actions."
+
       - name: Checkout del repositorio
+        if: ${{ env.FTP_SERVER != '' && env.FTP_USERNAME != '' && env.FTP_PASSWORD != '' }}
         uses: actions/checkout@v6
 
       - name: Subir archivos al hosting
+        if: ${{ env.FTP_SERVER != '' && env.FTP_USERNAME != '' && env.FTP_PASSWORD != '' }}
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ env.FTP_PORT }}
-          protocol: ${{ env.FTP_PROTOCOL }}
-          server-dir: ${{ env.FTP_SERVER_DIR }}
+          server: ${{ env.FTP_SERVER }}
+          username: ${{ env.FTP_USERNAME }}
+          password: ${{ env.FTP_PASSWORD }}
+          port: ${{ env.FTP_PORT != '' && env.FTP_PORT || '21' }}
+          protocol: ${{ env.FTP_PROTOCOL != '' && env.FTP_PROTOCOL || 'ftp' }}
+          server-dir: ${{ env.FTP_SERVER_DIR != '' && env.FTP_SERVER_DIR || '/htdocs/' }}
           exclude: |
             **/.git*
             **/.git*/**
