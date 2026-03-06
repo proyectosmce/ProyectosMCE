@@ -1,0 +1,138 @@
+﻿/* assets/css/estilo.css */
+/* Ajustes personalizados ademas de Tailwind */
+
+/* Transiciones suaves */
+.hover\:shadow-xl:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Animación para el menú móvil */
+#mobile-menu {
+    transition: all 0.3s ease;
+}
+
+/* Estilo para las tarjetas de servicios */
+.servicio-card {
+    transition: transform 0.3s ease;
+}
+
+.servicio-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Botones de filtro activos */
+.filter-btn.active {
+    background-color: #2563eb;
+    color: white;
+}
+
+/* Fondo de cuadrícula suave para hero */
+.bg-grid-white\/10 {
+    background-image: linear-gradient(rgba(255,255,255,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.6;
+}
+
+/* Personalizar scrollbar (opcional) */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2563eb;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1d4ed8;
+}
+
+/* Animaciones al hacer scroll */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+@-webkit-keyframes mceLogoRotate {
+    from {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes mceLogoRotate {
+    from {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes mceLogoPulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 rgba(37, 99, 235, 0), 0 10px 22px rgba(14, 116, 144, 0.16);
+    }
+    50% {
+        box-shadow: 0 0 12px rgba(59, 130, 246, 0.45), 0 12px 26px rgba(14, 116, 144, 0.24);
+    }
+}
+
+@keyframes mceLogoPulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 rgba(37, 99, 235, 0), 0 10px 22px rgba(14, 116, 144, 0.16);
+    }
+    50% {
+        box-shadow: 0 0 12px rgba(59, 130, 246, 0.45), 0 12px 26px rgba(14, 116, 144, 0.24);
+    }
+}
+
+.mce-logo-frame {
+    isolation: isolate;
+}
+
+.mce-logo-border {
+    display: block;
+    overflow: hidden;
+    pointer-events: none;
+    background: conic-gradient(
+        from 0deg,
+        #0f172a 0deg,
+        #2563eb 110deg,
+        #67e8f9 210deg,
+        #1d4ed8 290deg,
+        #0f172a 360deg
+    );
+    -webkit-animation: mceLogoRotate 4.5s linear infinite, mceLogoPulse 2.8s ease-in-out infinite;
+    animation: mceLogoRotate 4.5s linear infinite, mceLogoPulse 2.8s ease-in-out infinite;
+    -webkit-transform-origin: center;
+    transform-origin: center;
+}
+
+.mce-logo-frame:hover .mce-logo-border,
+.mce-logo-frame:active .mce-logo-border {
+    -webkit-animation-duration: 2.2s, 1.8s;
+    animation-duration: 2.2s, 1.8s;
+}
