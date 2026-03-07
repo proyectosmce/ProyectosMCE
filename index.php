@@ -97,29 +97,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-clipboard-check"></i></span>
                             <div>
-                                <p class="font-semibold">Kickoff y definición</p>
-                                <p class="text-sm text-blue-100">Entendemos procesos clave y priorizamos entregables.</p>
+                                <p class="font-semibold">Arranque y plan</p>
+                                <p class="text-sm text-blue-100">Conversamos de tus procesos y definimos lo más importante primero.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-pen-ruler"></i></span>
                             <div>
-                                <p class="font-semibold">UX/UI profesional</p>
-                                <p class="text-sm text-blue-100">Interfaces claras para equipos operativos y clientes.</p>
+                                <p class="font-semibold">Diseño claro</p>
+                                <p class="text-sm text-blue-100">Pantallas fáciles de usar para tu equipo y tus clientes.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-bolt"></i></span>
                             <div>
-                                <p class="font-semibold">Desarrollo ágil</p>
-                                <p class="text-sm text-blue-100">Sprints de desarrollo con demos y QA continuo.</p>
+                                <p class="font-semibold">Construcción por etapas</p>
+                                <p class="text-sm text-blue-100">Avanzamos en ciclos cortos con avances y pruebas visibles.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-shield-halved"></i></span>
                             <div>
-                                <p class="font-semibold">Seguridad y soporte</p>
-                                <p class="text-sm text-blue-100">Observabilidad, backups y soporte posterior al lanzamiento.</p>
+                                <p class="font-semibold">Cuidado y soporte</p>
+                                <p class="text-sm text-blue-100">Copias de seguridad, monitoreo y ayuda después de lanzar.</p>
                             </div>
                         </li>
                     </ul>
@@ -144,16 +144,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
                 <p class="text-sm font-semibold text-blue-600 uppercase tracking-wide">Presentación</p>
                 <h2 class="text-3xl font-bold text-slate-900">Proyectos MCE en pocas palabras</h2>
                 <p class="text-gray-700 leading-relaxed">
-                    Equipo senior de ingeniería y producto que arma soluciones end-to-end: entendemos el dominio, diseñamos la experiencia y entregamos software estable listo para producción.
+                    Equipo con experiencia que entiende tu negocio, diseña la experiencia y entrega software confiable listo para producción.
                 </p>
                 <div class="space-y-3">
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-magnifying-glass-chart"></i></span>
-                        <p class="text-gray-800">Entendemos objetivos, usuarios y dependencias antes de escribir código.</p>
+                        <p class="text-gray-800">Primero entendemos objetivos y quién usará la solución.</p>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-laptop-code"></i></span>
-                        <p class="text-gray-800">Diseñamos la arquitectura y APIs pensando en escalabilidad y seguridad.</p>
+                        <p class="text-gray-800">Definimos la base técnica para que crezca y se mantenga segura.</p>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-people-group"></i></span>
@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-headset"></i></span>
-                        <p class="text-gray-800">Soporte después del lanzamiento: monitoreo, alertas y mejoras planificadas.</p>
+                        <p class="text-gray-800">Seguimos contigo después de lanzar con monitoreo y mejoras planificadas.</p>
                     </div>
                 </div>
             </div>
@@ -172,28 +172,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
                         <span class="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center font-semibold">1</span>
                         <div>
                             <p class="font-semibold">Kickoff y plan</p>
-                            <p class="text-sm text-blue-100">Revisamos objetivos, KPIs y alcances técnicos.</p>
+                            <p class="text-sm text-blue-100">Revisamos tus objetivos y qué debe hacer la solución.</p>
                         </div>
                     </li>
                     <li class="flex items-start gap-3">
                         <span class="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center font-semibold">2</span>
                         <div>
                             <p class="font-semibold">Diseño y prototipos</p>
-                            <p class="text-sm text-blue-100">Validamos flujos con tu equipo antes de codificar.</p>
+                            <p class="text-sm text-blue-100">Te mostramos maquetas para confirmar que el flujo es correcto.</p>
                         </div>
                     </li>
                     <li class="flex items-start gap-3">
                         <span class="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center font-semibold">3</span>
                         <div>
                             <p class="font-semibold">Desarrollo incremental</p>
-                            <p class="text-sm text-blue-100">Sprints con demos, QA y documentación clara.</p>
+                            <p class="text-sm text-blue-100">Entregamos en ciclos cortos con pruebas y notas claras.</p>
                         </div>
                     </li>
                     <li class="flex items-start gap-3">
                         <span class="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center font-semibold">4</span>
                         <div>
                             <p class="font-semibold">Lanzamiento y soporte</p>
-                            <p class="text-sm text-blue-100">Despliegue, observabilidad y mejoras continuas.</p>
+                            <p class="text-sm text-blue-100">Publicamos, monitoreamos y mejoramos de forma continua.</p>
                         </div>
                     </li>
                 </ul>

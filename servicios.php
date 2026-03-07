@@ -58,36 +58,36 @@
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-clipboard-list"></i></span>
                             <div>
-                                <p class="font-semibold">Discovery & roadmap</p>
-                                <p class="text-sm text-blue-100">Entendemos objetivos y priorizamos entregables.</p>
+                                <p class="font-semibold">Plan inicial</p>
+                                <p class="text-sm text-blue-100">Definimos objetivos y el orden de las entregas.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-pen-ruler"></i></span>
                             <div>
-                                <p class="font-semibold">UI/UX profesional</p>
-                                <p class="text-sm text-blue-100">Prototipos navegables y pruebas con usuarios.</p>
+                                <p class="font-semibold">Diseño fácil de usar</p>
+                                <p class="text-sm text-blue-100">Prototipos que probamos contigo antes de construir.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-server"></i></span>
                             <div>
-                                <p class="font-semibold">Arquitectura y desarrollo</p>
-                                <p class="text-sm text-blue-100">Tecnologías modernas, APIs e integraciones.</p>
+                                <p class="font-semibold">Construcción técnica</p>
+                                <p class="text-sm text-blue-100">Usamos tecnología actual e integramos tus sistemas.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-vial-circle-check"></i></span>
                             <div>
-                                <p class="font-semibold">QA + DevOps</p>
-                                <p class="text-sm text-blue-100">Pruebas, CI/CD y despliegues controlados.</p>
+                                <p class="font-semibold">Pruebas y despliegue</p>
+                                <p class="text-sm text-blue-100">Probamos y publicamos de forma controlada para evitar sorpresas.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-headset"></i></span>
                             <div>
-                                <p class="font-semibold">Soporte y evolución</p>
-                                <p class="text-sm text-blue-100">Monitoreo, mejoras y acompañamiento continuo.</p>
+                                <p class="font-semibold">Soporte y mejoras</p>
+                                <p class="text-sm text-blue-100">Monitoreamos, atendemos incidencias y planificamos mejoras.</p>
                             </div>
                         </li>
                     </ul>

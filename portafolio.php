@@ -51,25 +51,25 @@ $featuredProject = $projects[0] ?? null;
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-laptop-code"></i></span>
                             <div>
-                            <p class="font-semibold">Aplicaciones y backoffice</p>
-                            <p class="text-sm text-blue-100">Paneles, roles, auditoría y flujos operativos.</p>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-globe"></i></span>
-                        <div>
-                            <p class="font-semibold">Sitios y eCommerce</p>
-                            <p class="text-sm text-blue-100">Catálogos, checkout, pasarelas y métricas de conversión.</p>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-gears"></i></span>
-                        <div>
-                            <p class="font-semibold">Automatizaciones</p>
-                            <p class="text-sm text-blue-100">Integraciones API, colas, webhooks y reducción de tareas manuales.</p>
-                        </div>
-                    </li>
-                </ul>
+                                <p class="font-semibold">Aplicaciones internas</p>
+                                <p class="text-sm text-blue-100">Paneles internos con roles y flujos simples.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-globe"></i></span>
+                            <div>
+                                <p class="font-semibold">Sitios y tiendas online</p>
+                                <p class="text-sm text-blue-100">Catálogos, carrito de compra, pagos y medición de ventas.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-gears"></i></span>
+                            <div>
+                                <p class="font-semibold">Automatizaciones</p>
+                                <p class="text-sm text-blue-100">Integraciones que conectan sistemas y reducen tareas manuales.</p>
+                            </div>
+                        </li>
+                    </ul>
                     <div class="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
                         <div>
                             <p class="text-sm text-blue-100">Entrega con visibilidad</p>
