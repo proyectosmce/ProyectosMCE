@@ -21,12 +21,12 @@ $featuredProject = $projects[0] ?? null;
                 </span>
                 <h1 class="text-4xl md:text-5xl font-bold leading-tight">Productos digitales y sistemas en producción</h1>
                 <p class="text-lg text-blue-50 max-w-3xl">
-                    Implementaciones reales con data, usuarios y soporte activo: backoffice, portales transaccionales, automatizaciones y sitios de marca conectados a APIs y pasarelas.
+                    Proyectos reales con usuarios y datos en vivo: paneles internos, portales, automatizaciones y sitios de marca conectados a pasarelas y APIs.
                 </p>
                 <div class="flex flex-wrap gap-3">
                     <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm"><i class="fas fa-industry mr-2 text-yellow-300"></i>Retail · Logística · Servicios</span>
                     <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm"><i class="fas fa-code-branch mr-2 text-yellow-300"></i>APIs, colas y webhooks</span>
-                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm"><i class="fas fa-lock mr-2 text-yellow-300"></i>Seguridad y pruebas end-to-end</span>
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm"><i class="fas fa-lock mr-2 text-yellow-300"></i>Seguridad y pruebas completas</span>
                 </div>
                 <div class="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
                     <a href="<?php echo app_url('contacto.php'); ?>" class="inline-flex items-center justify-center bg-yellow-300 text-slate-900 px-8 py-4 rounded-xl font-semibold shadow-lg shadow-yellow-900/20 hover:bg-yellow-200 transition">

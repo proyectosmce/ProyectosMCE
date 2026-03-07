@@ -34,33 +34,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
                     Proyectos MCE · Fábrica de software
                 </span>
                 <h1 class="text-4xl md:text-6xl font-bold leading-tight">
-                    Arquitectura y software a medida para operaciones críticas
+                    Software a medida para que tu operación no se detenga
                 </h1>
                 <p class="text-lg md:text-xl text-blue-50 max-w-3xl">
-                    Diseñamos, construimos y operamos plataformas web y backoffice que sostienen ventas, inventario, logística y servicio al cliente con métricas y trazabilidad.
+                    Planificamos, diseñamos y desarrollamos plataformas web que soportan ventas, inventarios y atención al cliente con control total y visibilidad.
                 </p>
 
                 <div class="flex flex-wrap gap-3">
                     <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm">
-                        <i class="fas fa-diagram-project mr-2 text-yellow-300"></i>Modelado de dominio y procesos
+                        <i class="fas fa-diagram-project mr-2 text-yellow-300"></i>Entendemos tu proceso primero
                     </span>
                     <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm">
-                        <i class="fas fa-pen-ruler mr-2 text-yellow-300"></i>Discovery, UX/UI y prototipos validados
+                        <i class="fas fa-pen-ruler mr-2 text-yellow-300"></i>Diseñamos y prototipamos antes de programar
                     </span>
                     <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm">
-                        <i class="fas fa-bolt mr-2 text-yellow-300"></i>Sprints con QA, CI/CD y monitoreo
+                        <i class="fas fa-bolt mr-2 text-yellow-300"></i>Entregas cortas con pruebas y control
                     </span>
                     <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm">
-                        <i class="fas fa-database mr-2 text-yellow-300"></i>Integraciones y calidad de datos
+                        <i class="fas fa-database mr-2 text-yellow-300"></i>Integraciones y datos en orden
                     </span>
                 </div>
 
                 <div class="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
                     <a href="<?php echo app_url('contacto.php'); ?>" class="inline-flex items-center justify-center bg-yellow-300 text-slate-900 px-8 py-4 rounded-xl font-semibold shadow-lg shadow-yellow-900/20 hover:bg-yellow-200 transition">
-                        <i class="fas fa-rocket mr-2"></i> Plan técnico inicial
+                        <i class="fas fa-rocket mr-2"></i> Armar mi plan
                     </a>
                     <a href="<?php echo app_url('portafolio.php'); ?>" class="inline-flex items-center justify-center border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-slate-900 transition">
-                        <i class="fas fa-eye mr-2"></i> Ver casos en producción
+                        <i class="fas fa-eye mr-2"></i> Ver casos en vivo
                     </a>
                     <a href="<?php echo app_url('servicios.php'); ?>" class="inline-flex items-center text-blue-100 hover:text-white font-semibold">
                         <span>Servicios</span>
@@ -71,15 +71,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
                 <div class="grid sm:grid-cols-3 gap-4 pt-6 border-t border-white/10 max-w-4xl">
                     <div class="bg-white/5 border border-white/10 rounded-xl p-4">
                         <p class="text-sm text-blue-100">Gobernanza</p>
-                        <p class="text-lg font-semibold">Historias priorizadas, Definition of Done y revisiones</p>
+                        <p class="text-lg font-semibold">Backlog claro, prioridades y criterios de entrega</p>
                     </div>
                     <div class="bg-white/5 border border-white/10 rounded-xl p-4">
                         <p class="text-sm text-blue-100">Entrega iterativa</p>
-                        <p class="text-lg font-semibold">Demos quincenales, QA automatizado y pruebas regresivas</p>
+                        <p class="text-lg font-semibold">Demos quincenales, pruebas automáticas y regresiones</p>
                     </div>
                     <div class="bg-white/5 border border-white/10 rounded-xl p-4">
                         <p class="text-sm text-blue-100">Operabilidad</p>
-                        <p class="text-lg font-semibold">Observabilidad, alertas y soporte continuo (SRE)</p>
+                        <p class="text-lg font-semibold">Monitoreo, alertas y soporte continuo</p>
                     </div>
                 </div>
             </div>
@@ -149,11 +149,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
                 <div class="space-y-3">
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-magnifying-glass-chart"></i></span>
-                        <p class="text-gray-800">Discovery técnico/funcional con KPIs, backlog priorizado y dependencias mapeadas.</p>
+                        <p class="text-gray-800">Entendemos objetivos, usuarios y dependencias antes de escribir código.</p>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-laptop-code"></i></span>
-                        <p class="text-gray-800">Arquitecturas modernas, APIs seguras, integración con ERP/CRM y servicios externos.</p>
+                        <p class="text-gray-800">Diseñamos la arquitectura y APIs pensando en escalabilidad y seguridad.</p>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-people-group"></i></span>
@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-headset"></i></span>
-                        <p class="text-gray-800">Soporte post-lanzamiento con monitoreo, alertas y roadmap evolutivo.</p>
+                        <p class="text-gray-800">Soporte después del lanzamiento: monitoreo, alertas y mejoras planificadas.</p>
                     </div>
                 </div>
             </div>

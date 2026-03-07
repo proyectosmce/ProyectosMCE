@@ -15,7 +15,7 @@
                 </span>
                 <h1 class="text-4xl md:text-5xl font-bold leading-tight">Software a medida para operaciones, ventas y servicio</h1>
                 <p class="text-lg text-blue-50 max-w-3xl">
-                    Servicios end-to-end: descubrimiento, diseño, ingeniería, QA, infraestructura y soporte. Integraciones con tu stack actual, datos consistentes y despliegues predecibles.
+                    Te acompañamos de punta a punta: entendemos el proceso, diseñamos la experiencia, desarrollamos, probamos, desplegamos y dejamos todo documentado.
                 </p>
                 <div class="space-y-3">
                     <div class="flex items-start gap-3">
@@ -24,7 +24,7 @@
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="text-yellow-300 mt-1"><i class="fas fa-check-circle"></i></span>
-                        <p class="text-blue-50">Sitios y tiendas pensadas para conversiones, SEO técnico y analítica.</p>
+                        <p class="text-blue-50">Sitios y tiendas pensadas para vender y posicionar tu marca.</p>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="text-yellow-300 mt-1"><i class="fas fa-check-circle"></i></span>
@@ -32,7 +32,7 @@
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="text-yellow-300 mt-1"><i class="fas fa-check-circle"></i></span>
-                        <p class="text-blue-50">Software personalizado con monitoreo, seguridad y observabilidad.</p>
+                        <p class="text-blue-50">Software personalizado con monitoreo y control de accesos.</p>
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
@@ -110,7 +110,7 @@
         <div>
             <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Catálogo de servicios</p>
             <h2 class="text-3xl font-bold text-slate-900">Soluciones diseñadas para automatizar y crecer</h2>
-            <p class="text-gray-700 mt-2 max-w-3xl">Elige un servicio o arma un roadmap combinado. Incluimos especificaciones, ambientes de staging, pipelines, documentación y handoff a tus equipos.</p>
+            <p class="text-gray-700 mt-2 max-w-3xl">Elige un servicio o combínalos en un solo plan. Entregamos especificaciones claras, ambiente de pruebas, despliegues controlados y documentación para tu equipo.</p>
         </div>
         <a href="<?php echo app_url('contacto.php'); ?>" class="inline-flex items-center px-5 py-3 rounded-xl bg-slate-900 text-white font-semibold shadow-lg hover:bg-slate-800 transition">
             <i class="fas fa-handshake mr-2"></i> Hablemos de tu proyecto

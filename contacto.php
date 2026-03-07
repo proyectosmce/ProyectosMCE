@@ -15,7 +15,7 @@
                 </span>
                 <h1 class="text-4xl md:text-5xl font-bold leading-tight">Agenda un diagnóstico técnico</h1>
                 <p class="text-lg text-blue-50 max-w-3xl">
-                    Cuéntanos qué proceso quieres automatizar o qué plataforma necesitas. Te respondemos con esfuerzo estimado, riesgos, stack propuesto y plan de arranque.
+                    Cuéntanos qué necesitas automatizar o lanzar. Te respondemos con esfuerzo estimado, riesgos visibles, tecnología recomendada y primeros pasos.
                 </p>
                 <div class="flex flex-wrap gap-3">
                     <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm"><i class="fas fa-bolt mr-2 text-yellow-300"></i>Respuesta en &lt; 24h</span>
