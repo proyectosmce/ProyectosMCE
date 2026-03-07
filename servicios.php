@@ -91,13 +91,13 @@
                             </div>
                         </li>
                     </ul>
-                    <div class="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                    <a href="https://wa.me/573114125971?text=Hola%21%20Quiero%20una%20consultoria%20para%20mi%20proyecto" target="_blank" rel="noopener" class="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between hover:bg-white/10 transition">
                         <div>
                             <p class="text-sm text-blue-100">Consultoría inicial</p>
                             <p class="font-semibold">Agenda un diagnóstico sin costo</p>
                         </div>
                         <i class="fas fa-arrow-right text-yellow-300"></i>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>

@@ -38,21 +38,27 @@
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-phone"></i></span>
                             <div>
                                 <p class="font-semibold">Teléfono</p>
-                                <p class="text-sm text-blue-100">+57 311 412 59 71</p>
+                                <p class="text-sm text-blue-100">
+                                    <a class="hover:underline" href="tel:+573114125971">+57 311 412 59 71</a>
+                                </p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-envelope"></i></span>
                             <div>
                                 <p class="font-semibold">Correo</p>
-                                <p class="text-sm text-blue-100">proyectosmceaa@gmail.com</p>
+                                <p class="text-sm text-blue-100">
+                                    <a class="hover:underline" href="mailto:proyectosmceaa@gmail.com">proyectosmceaa@gmail.com</a>
+                                </p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fab fa-whatsapp"></i></span>
                             <div>
                                 <p class="font-semibold">WhatsApp</p>
-                                <p class="text-sm text-blue-100">wa.me/573114125971</p>
+                                <p class="text-sm text-blue-100">
+                                    <a class="hover:underline" href="https://wa.me/573114125971?text=Hola%21%20Quiero%20consultar%20por%20un%20proyecto" target="_blank" rel="noopener">wa.me/573114125971</a>
+                                </p>
                             </div>
                         </li>
                     </ul>

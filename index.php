@@ -123,13 +123,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
                             </div>
                         </li>
                     </ul>
-                    <div class="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10">
+                    <a href="https://wa.me/573114125971?text=Hola%21%20Quiero%20agendar%20un%20discovery%20con%20MCE" target="_blank" rel="noopener" class="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition">
                         <div>
                             <p class="text-sm text-blue-100">Disponibilidad inmediata</p>
                             <p class="font-semibold">Agenda tu sesión de discovery sin costo</p>
                         </div>
                         <i class="fas fa-arrow-right text-yellow-300 text-xl"></i>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>

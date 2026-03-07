@@ -127,13 +127,13 @@ $hasProjectOptions = !empty($projectOptions);
                             </div>
                         </li>
                     </ul>
-                    <div class="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                    <a href="#form-testimonio" class="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between hover:bg-white/10 transition">
                         <div>
                             <p class="text-sm text-blue-100">Participa</p>
                             <p class="font-semibold">Deja tu testimonio y ayuda a otros equipos</p>
                         </div>
                         <i class="fas fa-arrow-right text-yellow-300"></i>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>
