@@ -1,6 +1,7 @@
 <?php
 require_once '../includes/config.php';
 require_once '../includes/testimonial-helpers.php';
+require_once '../includes/admin-helpers.php';
 
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: index.php');
@@ -8,6 +9,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 }
 
 $pendingTestimonials = getPendingTestimonialsCount($conn);
+$csrfToken = admin_get_csrf_token();
 $adminId = isset($_SESSION['admin_id']) ? (int) $_SESSION['admin_id'] : 0;
 $adminUsername = $_SESSION['admin_username'] ?? 'admin';
 $flashMessage = $_GET['msg'] ?? '';
@@ -18,7 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $newPassword = $_POST['new_password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
 
-    if ($currentPassword === '' || $newPassword === '' || $confirmPassword === '') {
+    if (!admin_validate_csrf($_POST['csrf_token'] ?? null)) {
+        $error = 'La sesion de seguridad no es valida. Recarga la pagina e intenta de nuevo.';
+    } elseif ($currentPassword === '' || $newPassword === '' || $confirmPassword === '') {
         $error = 'Debes completar los tres campos.';
     } elseif (strlen($newPassword) < 8) {
         $error = 'La nueva contrasena debe tener al menos 8 caracteres.';
@@ -51,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 if ($stmt->execute()) {
                     $stmt->close();
+                    admin_log_action($conn, 'change_password', 'admin_user', $adminId, 'Contrasena del administrador actualizada');
                     header('Location: cambiar-password.php?msg=updated');
                     exit;
                 }
@@ -99,6 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </a>
                     </li>
                     <li><a href="mensajes.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-envelope"></i><span>Mensajes</span></a></li>
+                    <li><a href="auditoria.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-clock-rotate-left"></i><span>Actividad</span></a></li>
                     <li>
                         <a href="cambiar-password.php" class="flex items-center space-x-2 rounded bg-blue-50 p-2 text-blue-600">
                             <i class="fas fa-lock"></i>
@@ -134,6 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
                     <form method="POST" class="rounded-2xl bg-white p-8 shadow">
+                        <input type="hidden" name="csrf_token" value="<?php echo admin_escape($csrfToken); ?>">
                         <div class="grid gap-6">
                             <div>
                                 <label class="mb-2 block text-gray-700">Contrasena actual *</label>

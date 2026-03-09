@@ -2,6 +2,7 @@
 // admin/servicio-editar.php
 require_once '../includes/config.php';
 require_once '../includes/testimonial-helpers.php';
+require_once '../includes/admin-helpers.php';
 
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: index.php');
@@ -9,6 +10,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 }
 
 $pendingTestimonials = getPendingTestimonialsCount($conn);
+$csrfToken = admin_get_csrf_token();
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $servicio = null;
@@ -22,6 +24,10 @@ if ($id > 0) {
 
 // Procesar formulario
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!admin_validate_csrf($_POST['csrf_token'] ?? null)) {
+        $error = 'La sesion de seguridad no es valida. Recarga la pagina e intenta de nuevo.';
+    }
+
     $titulo = sanitize($_POST['titulo']);
     $descripcion = sanitize($_POST['descripcion']);
     $icono = sanitize($_POST['icono']);
@@ -39,10 +45,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param("sssdii", $titulo, $descripcion, $icono, $precio_desde, $destacado, $orden);
     }
     
-    if ($stmt->execute()) {
+    if (!isset($error) && $stmt->execute()) {
+        $savedServiceId = $id > 0 ? $id : $stmt->insert_id;
+        admin_log_action($conn, $id > 0 ? 'update' : 'create', 'service', (int) $savedServiceId, 'Servicio guardado desde el formulario');
         header('Location: servicios.php?msg=saved');
         exit;
-    } else {
+    } else if (!isset($error)) {
         $error = "Error al guardar: " . $conn->error;
     }
 }
@@ -84,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </a>
                     </li>
                     <li><a href="mensajes.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-envelope"></i><span>Mensajes</span></a></li>
+                    <li><a href="auditoria.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-clock-rotate-left"></i><span>Actividad</span></a></li>
                     <li><a href="cambiar-password.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-lock"></i><span>Cambiar clave</span></a></li>
                     <li><a href="logout.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded text-red-600"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a></li>
                 </ul>
@@ -102,6 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php endif; ?>
                 
                 <form method="POST" class="bg-white p-8 rounded-lg shadow max-w-3xl">
+                    <input type="hidden" name="csrf_token" value="<?php echo admin_escape($csrfToken); ?>">
                     <div class="grid gap-6">
                         <div>
                             <label class="block text-gray-700 mb-2">Título del servicio *</label>

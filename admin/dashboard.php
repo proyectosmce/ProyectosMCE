@@ -2,6 +2,7 @@
 // admin/dashboard.php
 require_once '../includes/config.php';
 require_once '../includes/testimonial-helpers.php';
+require_once '../includes/admin-helpers.php';
 
 // Verificar si está logueado
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
@@ -11,6 +12,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 
 // Obtener estadísticas
 ensureTestimonialsSchema($conn);
+ensureAdminActivityLogSchema($conn);
 
 $total_proyectos = $conn->query("SELECT COUNT(*) as total FROM proyectos")->fetch_assoc()['total'];
 $total_servicios = $conn->query("SELECT COUNT(*) as total FROM servicios")->fetch_assoc()['total'];
@@ -36,6 +38,17 @@ while ($row = $mensajes_result->fetch_assoc()) {
 }
 $mensajes_labels = array_reverse($mensajes_labels);
 $mensajes_counts = array_reverse($mensajes_counts);
+
+$unreadPreview = $conn->query("SELECT id, nombre, email, created_at FROM mensajes WHERE leido = 0 ORDER BY created_at DESC LIMIT 5");
+$pendingPreview = $conn->query("
+    SELECT t.id, t.nombre, COALESCE(p.titulo, t.empresa, 'Sin proyecto') AS referencia
+    FROM testimonios t
+    LEFT JOIN proyectos p ON t.proyecto_id = p.id
+    WHERE t.aprobado = 0
+    ORDER BY t.created_at DESC
+    LIMIT 5
+");
+$activityPreview = $conn->query("SELECT admin_username, action, entity_type, created_at FROM admin_activity_log ORDER BY created_at DESC LIMIT 5");
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -102,6 +115,12 @@ $mensajes_counts = array_reverse($mensajes_counts);
                         <a href="cambiar-password.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
                             <i class="fas fa-lock"></i>
                             <span>Cambiar clave</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="auditoria.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
+                            <i class="fas fa-clock-rotate-left"></i>
+                            <span>Actividad</span>
                         </a>
                     </li>
                     <li>
@@ -204,6 +223,57 @@ $mensajes_counts = array_reverse($mensajes_counts);
                     </a>
                 </div>
 
+                <div class="mb-8 grid gap-6 xl:grid-cols-[1.2fr_1fr]">
+                    <div class="rounded-2xl bg-white p-6 shadow">
+                        <div class="mb-5 flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">Acciones rapidas</p>
+                                <h2 class="mt-2 text-2xl font-bold text-slate-900">Atajos del panel</h2>
+                            </div>
+                            <a href="auditoria.php" class="text-sm font-medium text-blue-600 hover:underline">Ver actividad</a>
+                        </div>
+                        <div class="grid gap-4 md:grid-cols-2">
+                            <a href="proyecto-editar.php" class="rounded-2xl border border-blue-100 bg-blue-50 p-5 transition hover:-translate-y-1 hover:shadow-md">
+                                <p class="text-lg font-bold text-blue-900">Nuevo proyecto</p>
+                                <p class="mt-2 text-sm text-blue-700">Carga un caso nuevo al portafolio.</p>
+                            </a>
+                            <a href="servicio-editar.php" class="rounded-2xl border border-emerald-100 bg-emerald-50 p-5 transition hover:-translate-y-1 hover:shadow-md">
+                                <p class="text-lg font-bold text-emerald-900">Nuevo servicio</p>
+                                <p class="mt-2 text-sm text-emerald-700">Agrega o ajusta tu oferta comercial.</p>
+                            </a>
+                            <a href="mensajes.php?estado=nuevo" class="rounded-2xl border border-sky-100 bg-sky-50 p-5 transition hover:-translate-y-1 hover:shadow-md">
+                                <p class="text-lg font-bold text-sky-900">Responder mensajes</p>
+                                <p class="mt-2 text-sm text-sky-700">Abre solo la cola de no leidos.</p>
+                            </a>
+                            <a href="testimonios.php?estado=pendientes" class="rounded-2xl border border-amber-100 bg-amber-50 p-5 transition hover:-translate-y-1 hover:shadow-md">
+                                <p class="text-lg font-bold text-amber-900">Confirmar testimonios</p>
+                                <p class="mt-2 text-sm text-amber-700">Revisa primero lo pendiente.</p>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="rounded-2xl bg-slate-900 p-6 text-white shadow">
+                        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-blue-300">Actividad reciente</p>
+                        <div class="mt-5 space-y-4">
+                            <?php if ($activityPreview instanceof mysqli_result && $activityPreview->num_rows > 0): ?>
+                                <?php while ($activity = $activityPreview->fetch_assoc()): ?>
+                                    <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+                                        <p class="text-sm font-semibold text-white"><?php echo admin_escape($activity['admin_username']); ?></p>
+                                        <p class="mt-1 text-sm text-slate-300">
+                                            <?php echo admin_escape($activity['action']); ?> sobre <?php echo admin_escape($activity['entity_type']); ?>
+                                        </p>
+                                        <p class="mt-2 text-xs text-slate-400"><?php echo date('d/m/Y H:i', strtotime($activity['created_at'])); ?></p>
+                                    </div>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <div class="rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
+                                    Aun no hay eventos registrados en la auditoria.
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Gráficos -->
                 <div class="grid md:grid-cols-2 gap-6 mb-8">
                     <!-- Gráfico de proyectos por categoría -->
@@ -271,6 +341,56 @@ $mensajes_counts = array_reverse($mensajes_counts);
                             <?php endwhile; ?>
                         </tbody>
                     </table>
+                    </div>
+                </div>
+
+                <div class="grid gap-6 mb-8 xl:grid-cols-2">
+                    <div class="rounded-2xl bg-white p-6 shadow">
+                        <div class="mb-4 flex items-center justify-between gap-4">
+                            <h2 class="text-xl font-bold">Testimonios pendientes</h2>
+                            <a href="testimonios.php?estado=pendientes" class="text-sm font-medium text-blue-600 hover:underline">Gestionar</a>
+                        </div>
+                        <div class="space-y-3">
+                            <?php if ($pendingPreview instanceof mysqli_result && $pendingPreview->num_rows > 0): ?>
+                                <?php while ($pending = $pendingPreview->fetch_assoc()): ?>
+                                    <div class="flex items-center justify-between gap-4 rounded-xl border border-amber-100 bg-amber-50 p-4">
+                                        <div>
+                                            <p class="font-semibold text-slate-900"><?php echo admin_escape($pending['nombre']); ?></p>
+                                            <p class="text-sm text-amber-800"><?php echo admin_escape($pending['referencia']); ?></p>
+                                        </div>
+                                        <a href="testimonio-editar.php?id=<?php echo (int) $pending['id']; ?>" class="rounded-lg bg-white px-3 py-2 text-sm font-medium text-amber-700 hover:bg-amber-100">Abrir</a>
+                                    </div>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <div class="rounded-xl border border-green-100 bg-green-50 p-4 text-sm text-green-700">
+                                    No hay testimonios pendientes por confirmar.
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="rounded-2xl bg-white p-6 shadow">
+                        <div class="mb-4 flex items-center justify-between gap-4">
+                            <h2 class="text-xl font-bold">Mensajes no leidos</h2>
+                            <a href="mensajes.php?estado=nuevo" class="text-sm font-medium text-blue-600 hover:underline">Gestionar</a>
+                        </div>
+                        <div class="space-y-3">
+                            <?php if ($unreadPreview instanceof mysqli_result && $unreadPreview->num_rows > 0): ?>
+                                <?php while ($pendingMessage = $unreadPreview->fetch_assoc()): ?>
+                                    <div class="flex items-center justify-between gap-4 rounded-xl border border-sky-100 bg-sky-50 p-4">
+                                        <div>
+                                            <p class="font-semibold text-slate-900"><?php echo admin_escape($pendingMessage['nombre']); ?></p>
+                                            <p class="text-sm text-sky-800"><?php echo admin_escape($pendingMessage['email']); ?></p>
+                                        </div>
+                                        <a href="mensaje-ver.php?id=<?php echo (int) $pendingMessage['id']; ?>" class="rounded-lg bg-white px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100">Abrir</a>
+                                    </div>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <div class="rounded-xl border border-green-100 bg-green-50 p-4 text-sm text-green-700">
+                                    No hay mensajes nuevos en este momento.
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
