@@ -1,5 +1,6 @@
 <?php require_once 'includes/config.php'; ?>
 <?php require_once 'includes/project-helpers.php'; ?>
+<?php require_once 'includes/form-guard.php'; ?>
 <?php
 // Asegurar tabla de testimonios
 $conn->query("CREATE TABLE IF NOT EXISTS testimonios (
@@ -15,13 +16,47 @@ $conn->query("CREATE TABLE IF NOT EXISTS testimonios (
 
 // Manejo de envío de testimonios (solo alta)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo_testimonio') {
-    $nombre  = trim($_POST['nombre'] ?? '');
-    $mensaje = trim($_POST['mensaje'] ?? '');
+    if (!form_guard_honeypot_is_clear($_POST['company_website'] ?? '')) {
+        redirect('testimonios.php?error=validation#form-testimonio');
+    }
+
+    $guardCheck = form_guard_verify('testimonios', $_POST['form_token'] ?? null, 3);
+    if (!$guardCheck['ok']) {
+        redirect('testimonios.php?error=validation#form-testimonio');
+    }
+
+    $nombre  = form_guard_normalize_whitespace($_POST['nombre'] ?? '');
+    $mensaje = form_guard_normalize_multiline($_POST['mensaje'] ?? '');
     $proyId  = (int) ($_POST['proyecto_id'] ?? 0);
     $valor   = (int) ($_POST['valoracion'] ?? 5);
     $valor   = max(1, min(5, $valor));
 
-    // Obtener nombre del proyecto para guardarlo en 'empresa'
+    if (!form_guard_validate_name($nombre, 2, 100) || !form_guard_validate_message($mensaje, 30, 1200) || $proyId <= 0) {
+        redirect('testimonios.php?error=validation#form-testimonio');
+    }
+
+    if (!form_guard_verify_recaptcha($_POST['g-recaptcha-response'] ?? null)) {
+        redirect('testimonios.php?error=captcha#form-testimonio');
+    }
+
+    $ipLimit = form_guard_rate_limit('testimonial_form_ip', form_guard_client_ip(), 3, 3600);
+    if (!$ipLimit['allowed']) {
+        redirect('testimonios.php?error=rate#form-testimonio');
+    }
+
+    $signatureName = function_exists('mb_strtolower')
+        ? mb_strtolower($nombre, 'UTF-8')
+        : strtolower($nombre);
+    $signatureLimit = form_guard_rate_limit(
+        'testimonial_form_signature',
+        $signatureName . '|' . $proyId,
+        2,
+        86400
+    );
+    if (!$signatureLimit['allowed']) {
+        redirect('testimonios.php?error=rate#form-testimonio');
+    }
+
     $empresa = '';
     if ($proyId > 0) {
         if ($stProj = $conn->prepare('SELECT titulo FROM proyectos WHERE id = ? LIMIT 1')) {
@@ -35,6 +70,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
         }
     }
 
+    if ($empresa === '') {
+        redirect('testimonios.php?error=validation#form-testimonio');
+    }
+
+    $nombre = trim(strip_tags($nombre));
+    $mensaje = trim(strip_tags($mensaje));
+
     if ($nombre !== '' && $mensaje !== '' && $proyId > 0) {
         if ($stmt = $conn->prepare('INSERT INTO testimonios (nombre, testimonio, proyecto_id, empresa, valoracion, destacado) VALUES (?, ?, ?, ?, ?, 0)')) {
             $stmt->bind_param('ssisi', $nombre, $mensaje, $proyId, $empresa, $valor);
@@ -44,14 +86,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
             exit;
         }
     }
+
+    redirect('testimonios.php?error=validation#form-testimonio');
 }
 
 $testimonios     = $conn->query("SELECT t.nombre, t.testimonio, t.valoracion, p.titulo AS proyecto FROM testimonios t LEFT JOIN proyectos p ON t.proyecto_id = p.id ORDER BY t.destacado DESC, t.created_at DESC LIMIT 9");
 $projectOptions  = fetchProjectDropdownOptions($conn);
 $testimonioOk    = isset($_GET['testimonio']) && $_GET['testimonio'] === 'ok';
+$testimonioError = $_GET['error'] ?? '';
 $testError       = !$testimonios instanceof mysqli_result;
 $hasTestimonios  = !$testError && $testimonios->num_rows > 0;
 $hasProjectOptions = !empty($projectOptions);
+$testimonialFormGuard = form_guard_issue('testimonios');
+$testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
 ?>
 <?php include 'includes/header.php'; ?>
 
@@ -147,6 +194,18 @@ $hasProjectOptions = !empty($projectOptions);
     </div>
     <?php endif; ?>
 
+    <?php if ($testimonioError !== ''): ?>
+    <div id="alert-testimonio-error" class="mb-8 rounded-lg border border-red-200 bg-red-50 text-red-800 px-4 py-3">
+        <?php if ($testimonioError === 'rate'): ?>
+            Has enviado demasiados testimonios en poco tiempo. Espera antes de intentar nuevamente.
+        <?php elseif ($testimonioError === 'captcha'): ?>
+            No pudimos validar la verificación anti-spam. Intenta nuevamente.
+        <?php else: ?>
+            No pudimos validar el testimonio. Revisa los datos del formulario e intenta otra vez.
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
     <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
         <div>
             <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Experiencias reales</p>
@@ -217,6 +276,11 @@ $hasProjectOptions = !empty($projectOptions);
         </div>
         <form id="testimonio-form" method="POST" action="#testimonios" class="grid md:grid-cols-2 gap-6">
             <input type="hidden" name="action" value="nuevo_testimonio">
+            <input type="hidden" name="form_token" value="<?php echo htmlspecialchars($testimonialFormGuard['token'], ENT_QUOTES, 'UTF-8'); ?>">
+            <div style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+                <label for="testimonial_company_website">No llenes este campo</label>
+                <input id="testimonial_company_website" type="text" name="company_website" tabindex="-1" autocomplete="off">
+            </div>
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Selecciona tu proyecto</label>
@@ -233,11 +297,11 @@ $hasProjectOptions = !empty($projectOptions);
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre completo</label>
-                    <input id="t-nombre" name="nombre" required type="text" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ej. Ana Martínez">
+                    <input id="t-nombre" name="nombre" required type="text" minlength="2" maxlength="100" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ej. Ana Martínez">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Escribe tu experiencia</label>
-                    <textarea id="t-mensaje" name="mensaje" required rows="5" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Cuenta cómo te fue con el proyecto"></textarea>
+                    <textarea id="t-mensaje" name="mensaje" required rows="5" minlength="30" maxlength="1200" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Cuenta cómo te fue con el proyecto"></textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Calificación (1 = no recomiendo, 5 = sí recomiendo)</label>
@@ -257,6 +321,12 @@ $hasProjectOptions = !empty($projectOptions);
                         Enviar testimonio
                     </button>
                 </div>
+
+                <?php if ($testimonialRecaptchaEnabled): ?>
+                    <div class="pt-2">
+                        <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars(form_guard_recaptcha_site_key(), ENT_QUOTES, 'UTF-8'); ?>"></div>
+                    </div>
+                <?php endif; ?>
             </div>
             <div class="space-y-3">
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
@@ -292,6 +362,10 @@ $hasProjectOptions = !empty($projectOptions);
         </div>
     </div>
 </section>
+
+<?php if ($testimonialRecaptchaEnabled): ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<?php endif; ?>
 
 <?php include 'includes/footer.php'; ?>
 
@@ -384,10 +458,13 @@ $hasProjectOptions = !empty($projectOptions);
 
     // Ocultar aviso y limpiar querystring
     const alertTestimonio = document.getElementById('alert-testimonio');
-    if (alertTestimonio) {
-        setTimeout(() => alertTestimonio.classList.add('hidden'), 4000);
+    const alertTestimonioError = document.getElementById('alert-testimonio-error');
+    const feedbackBanner = alertTestimonio || alertTestimonioError;
+    if (feedbackBanner) {
+        setTimeout(() => feedbackBanner.classList.add('hidden'), 4000);
         const url = new URL(window.location);
         url.searchParams.delete('testimonio');
+        url.searchParams.delete('error');
         window.history.replaceState({}, '', url);
     }
 

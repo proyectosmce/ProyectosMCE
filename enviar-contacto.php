@@ -1,5 +1,6 @@
 <?php
 require_once 'includes/config.php';
+require_once 'includes/form-guard.php';
 require_once __DIR__ . '/includes/PHPMailer/Exception.php';
 require_once __DIR__ . '/includes/PHPMailer/PHPMailer.php';
 require_once __DIR__ . '/includes/PHPMailer/SMTP.php';
@@ -27,24 +28,71 @@ if (stripos($smtpHost, 'gmail.com') !== false) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombre = sanitize($_POST['nombre']);
-    $email = sanitize($_POST['email']);
-    $telefono = sanitize($_POST['telefono'] ?? '');
-    $servicio = sanitize($_POST['servicio'] ?? '');
-    $mensaje = sanitize($_POST['mensaje']);
-    
-    // Validaciones basicas
-    if (empty($nombre) || empty($email) || empty($mensaje)) {
-        redirect('contacto.php?error=1');
+    if (!form_guard_honeypot_is_clear($_POST['company_website'] ?? '')) {
+        redirect('contacto.php?error=6#contacto-form');
     }
-    
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        redirect('contacto.php?error=2');
+
+    $guardCheck = form_guard_verify('contacto', $_POST['form_token'] ?? null, 3);
+    if (!$guardCheck['ok']) {
+        redirect('contacto.php?error=6#contacto-form');
     }
-    
+
+    $ipLimit = form_guard_rate_limit('contact_form_ip', form_guard_client_ip(), 5, 900);
+    if (!$ipLimit['allowed']) {
+        redirect('contacto.php?error=7#contacto-form');
+    }
+
+    $nombreRaw = form_guard_normalize_whitespace($_POST['nombre'] ?? '');
+    $emailRaw = trim((string) ($_POST['email'] ?? ''));
+    $telefonoRaw = trim((string) ($_POST['telefono'] ?? ''));
+    $servicioRaw = form_guard_normalize_whitespace($_POST['servicio'] ?? '');
+    $mensajeRaw = form_guard_normalize_multiline($_POST['mensaje'] ?? '');
+
+    if ($nombreRaw === '' || $emailRaw === '' || $mensajeRaw === '') {
+        redirect('contacto.php?error=6#contacto-form');
+    }
+
+    if (!form_guard_validate_name($nombreRaw)) {
+        redirect('contacto.php?error=6#contacto-form');
+    }
+
+    if (!filter_var($emailRaw, FILTER_VALIDATE_EMAIL) || strlen($emailRaw) > 120) {
+        redirect('contacto.php?error=6#contacto-form');
+    }
+
+    if (!form_guard_validate_phone($telefonoRaw)) {
+        redirect('contacto.php?error=6#contacto-form');
+    }
+
+    if ($servicioRaw !== '' && (strlen($servicioRaw) > 120 || preg_match('~https?://|www\.~i', $servicioRaw) === 1)) {
+        redirect('contacto.php?error=6#contacto-form');
+    }
+
+    if (!form_guard_validate_message($mensajeRaw, 20, 2000)) {
+        redirect('contacto.php?error=6#contacto-form');
+    }
+
+    $emailLimit = form_guard_rate_limit('contact_form_email', strtolower($emailRaw), 3, 900);
+    if (!$emailLimit['allowed']) {
+        redirect('contacto.php?error=7#contacto-form');
+    }
+
+    if (!form_guard_verify_recaptcha($_POST['g-recaptcha-response'] ?? null)) {
+        redirect('contacto.php?error=8#contacto-form');
+    }
+
+    $nombre = trim(strip_tags($nombreRaw));
+    $email = trim(strip_tags($emailRaw));
+    $telefono = trim(strip_tags($telefonoRaw));
+    $servicio = trim(strip_tags($servicioRaw));
+    $mensaje = trim(strip_tags($mensajeRaw));
+
     // Guardar en BD
     $sql = "INSERT INTO mensajes (nombre, email, telefono, mensaje) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        redirect('contacto.php?error=3#contacto-form');
+    }
     $stmt->bind_param("ssss", $nombre, $email, $telefono, $mensaje);
     
     if ($stmt->execute()) {

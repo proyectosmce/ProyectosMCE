@@ -1,4 +1,10 @@
 <?php require_once 'includes/config.php'; ?>
+<?php require_once 'includes/form-guard.php'; ?>
+<?php
+$contactFormGuard = form_guard_issue('contacto');
+$contactRecaptchaEnabled = form_guard_recaptcha_enabled();
+$selectedService = trim((string) ($_GET['servicio'] ?? ''));
+?>
 <?php include 'includes/header.php'; ?>
 
 <!-- Hero Contacto -->
@@ -76,7 +82,7 @@
 </section>
 
 <!-- Formulario de contacto -->
-<section class="max-w-7xl mx-auto px-4 -mt-10 lg:-mt-14 pb-16">
+<section id="contacto-form" class="max-w-7xl mx-auto px-4 -mt-10 lg:-mt-14 pb-16">
     <div class="grid lg:grid-cols-12 gap-8">
         <div class="lg:col-span-7 order-2 lg:order-1">
             <?php if (isset($_GET['success'])): ?>
@@ -95,25 +101,36 @@
                         El formulario se guardo, pero falta configurar el correo del sitio. Intentalo mas tarde.
                     <?php elseif ($_GET['error'] == 5): ?>
                         El formulario se guardo, pero no se pudo conectar con el servicio de correo. Revisa SMTP_USER, SMTP_PASS y la App Password.
+                    <?php elseif ($_GET['error'] == 6): ?>
+                        No pudimos validar el envio. Revisa los datos e intenta nuevamente.
+                    <?php elseif ($_GET['error'] == 7): ?>
+                        Has enviado demasiados mensajes en poco tiempo. Espera unos minutos antes de intentar otra vez.
+                    <?php elseif ($_GET['error'] == 8): ?>
+                        No pudimos validar la verificacion anti-spam. Intenta nuevamente.
                     <?php else: ?>
                         Hubo un error. Por favor intenta nuevamente.
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
 
-            <form action="enviar-contacto.php" method="POST" class="bg-white p-8 rounded-2xl shadow-2xl border border-slate-100 space-y-6">
+            <form id="contact-form" action="enviar-contacto.php" method="POST" class="bg-white p-8 rounded-2xl shadow-2xl border border-slate-100 space-y-6">
+                <input type="hidden" name="form_token" value="<?php echo htmlspecialchars($contactFormGuard['token'], ENT_QUOTES, 'UTF-8'); ?>">
+                <div style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+                    <label for="company_website">No llenes este campo</label>
+                    <input id="company_website" type="text" name="company_website" tabindex="-1" autocomplete="off">
+                </div>
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-gray-800 mb-2 font-semibold">Nombre *</label>
-                        <input type="text" name="nombre" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <input type="text" name="nombre" required minlength="2" maxlength="100" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     </div>
                     <div>
                         <label class="block text-gray-800 mb-2 font-semibold">Email *</label>
-                        <input type="email" name="email" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <input type="email" name="email" required maxlength="120" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     </div>
                     <div>
                         <label class="block text-gray-800 mb-2 font-semibold">Teléfono</label>
-                        <input type="tel" name="telefono" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <input type="tel" name="telefono" maxlength="25" inputmode="tel" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     </div>
                     <div>
                         <label class="block text-gray-800 mb-2 font-semibold">¿Qué servicio te interesa?</label>
@@ -122,16 +139,27 @@
                             <?php
                             $servicios = $conn->query("SELECT titulo FROM servicios ORDER BY orden");
                             while ($s = $servicios->fetch_assoc()) {
-                                echo "<option value='{$s['titulo']}'>{$s['titulo']}</option>";
+                                $serviceTitle = (string) ($s['titulo'] ?? '');
+                                ?>
+                                <option value="<?php echo htmlspecialchars($serviceTitle, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $selectedService !== '' && strcasecmp($selectedService, $serviceTitle) === 0 ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($serviceTitle, ENT_QUOTES, 'UTF-8'); ?>
+                                </option>
+                                <?php
                             }
                             ?>
                         </select>
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-gray-800 mb-2 font-semibold">Mensaje *</label>
-                        <textarea name="mensaje" rows="5" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"></textarea>
+                        <textarea name="mensaje" rows="5" required minlength="20" maxlength="2000" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"></textarea>
                     </div>
                 </div>
+
+                <?php if ($contactRecaptchaEnabled): ?>
+                    <div class="pt-2">
+                        <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars(form_guard_recaptcha_site_key(), ENT_QUOTES, 'UTF-8'); ?>"></div>
+                    </div>
+                <?php endif; ?>
 
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <p class="text-sm text-gray-600">Al enviar aceptas ser contactado por nuestro equipo.</p>
@@ -167,5 +195,9 @@
         </div>
     </div>
 </section>
+
+<?php if ($contactRecaptchaEnabled): ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<?php endif; ?>
 
 <?php include 'includes/footer.php'; ?>
