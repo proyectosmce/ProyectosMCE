@@ -267,7 +267,7 @@ function form_guard_recaptcha_enabled(): bool
 function form_guard_verify_recaptcha(?string $responseToken): bool
 {
     if (!form_guard_recaptcha_enabled()) {
-        return true;
+        return false;
     }
 
     $responseToken = trim((string) $responseToken);

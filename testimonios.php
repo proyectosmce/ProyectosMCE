@@ -199,7 +199,7 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
         <?php if ($testimonioError === 'rate'): ?>
             Has enviado demasiados testimonios en poco tiempo. Espera antes de intentar nuevamente.
         <?php elseif ($testimonioError === 'captcha'): ?>
-            No pudimos validar la verificación anti-spam. Intenta nuevamente.
+            Debes completar la verificación reCAPTCHA antes de enviar el testimonio.
         <?php else: ?>
             No pudimos validar el testimonio. Revisa los datos del formulario e intenta otra vez.
         <?php endif; ?>
@@ -317,7 +317,7 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
                 </div>
                 <div class="flex gap-3">
                     <button type="button" id="t-prev-btn" class="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 transition">Ver vista previa</button>
-                    <button type="submit" <?php echo $hasProjectOptions ? '' : 'disabled'; ?> class="border border-blue-600 text-blue-600 px-5 py-3 rounded-lg hover:bg-blue-50 transition disabled:border-gray-300 disabled:text-gray-400 disabled:bg-gray-100">
+                    <button type="submit" id="testimonial-submit" <?php echo ($hasProjectOptions && $testimonialRecaptchaEnabled) ? '' : 'disabled'; ?> class="border border-blue-600 text-blue-600 px-5 py-3 rounded-lg hover:bg-blue-50 transition disabled:border-gray-300 disabled:text-gray-400 disabled:bg-gray-100">
                         Enviar testimonio
                     </button>
                 </div>
@@ -325,6 +325,10 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
                 <?php if ($testimonialRecaptchaEnabled): ?>
                     <div class="pt-2">
                         <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars(form_guard_recaptcha_site_key(), ENT_QUOTES, 'UTF-8'); ?>"></div>
+                    </div>
+                <?php else: ?>
+                    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+                        reCAPTCHA es obligatorio, pero no está configurado correctamente en este entorno.
                     </div>
                 <?php endif; ?>
             </div>
@@ -472,6 +476,17 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
         if (submitting) return;
         e.preventDefault();
         updatePreview();
+
+        if (typeof window.grecaptcha === 'undefined') {
+            alert('reCAPTCHA aun no termina de cargar. Intenta nuevamente en unos segundos.');
+            return;
+        }
+
+        if (!window.grecaptcha.getResponse()) {
+            alert('Completa la verificacion reCAPTCHA antes de enviar.');
+            return;
+        }
+
         const ok = confirm(`Enviar este testimonio?\n\n${liveFinal.textContent}`);
         if (ok) {
             submitting = true;

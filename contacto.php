@@ -106,7 +106,7 @@ $selectedService = trim((string) ($_GET['servicio'] ?? ''));
                     <?php elseif ($_GET['error'] == 7): ?>
                         Has enviado demasiados mensajes en poco tiempo. Espera unos minutos antes de intentar otra vez.
                     <?php elseif ($_GET['error'] == 8): ?>
-                        No pudimos validar la verificacion anti-spam. Intenta nuevamente.
+                        Debes completar la verificacion reCAPTCHA antes de enviar el formulario.
                     <?php else: ?>
                         Hubo un error. Por favor intenta nuevamente.
                     <?php endif; ?>
@@ -159,11 +159,15 @@ $selectedService = trim((string) ($_GET['servicio'] ?? ''));
                     <div class="pt-2">
                         <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars(form_guard_recaptcha_site_key(), ENT_QUOTES, 'UTF-8'); ?>"></div>
                     </div>
+                <?php else: ?>
+                    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+                        reCAPTCHA es obligatorio, pero no est\u00e1 configurado correctamente en este entorno.
+                    </div>
                 <?php endif; ?>
 
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <p class="text-sm text-gray-600">Al enviar aceptas ser contactado por nuestro equipo.</p>
-                    <button type="submit" class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-slate-900 text-white font-semibold shadow-lg hover:bg-slate-800 transition w-full sm:w-auto">
+                    <button type="submit" id="contact-submit" <?php echo $contactRecaptchaEnabled ? '' : 'disabled'; ?> class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-slate-900 text-white font-semibold shadow-lg hover:bg-slate-800 transition w-full sm:w-auto disabled:cursor-not-allowed disabled:bg-slate-400">
                         <i class="fas fa-paper-plane mr-2"></i> Enviar mensaje
                     </button>
                 </div>
@@ -198,6 +202,25 @@ $selectedService = trim((string) ($_GET['servicio'] ?? ''));
 
 <?php if ($contactRecaptchaEnabled): ?>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script>
+(() => {
+    const form = document.getElementById('contact-form');
+    if (!form) return;
+
+    form.addEventListener('submit', (event) => {
+        if (typeof window.grecaptcha === 'undefined') {
+            event.preventDefault();
+            alert('reCAPTCHA aun no termina de cargar. Intenta nuevamente en unos segundos.');
+            return;
+        }
+
+        if (!window.grecaptcha.getResponse()) {
+            event.preventDefault();
+            alert('Completa la verificacion reCAPTCHA antes de enviar.');
+        }
+    });
+})();
+</script>
 <?php endif; ?>
 
 <?php include 'includes/footer.php'; ?>
