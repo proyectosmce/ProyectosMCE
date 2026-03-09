@@ -45,13 +45,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
                         <i class="fas fa-diagram-project mr-2 text-yellow-300"></i>Entendemos tu proceso primero
                     </span>
                     <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm">
-                        <i class="fas fa-pen-ruler mr-2 text-yellow-300"></i>Diseñamos y prototipamos antes de programar
+                        <i class="fas fa-pen-ruler mr-2 text-yellow-300"></i>Diseño gráfico (UX/UI) con maquetas claras
                     </span>
                     <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm">
                         <i class="fas fa-bolt mr-2 text-yellow-300"></i>Entregas cortas con pruebas y control
                     </span>
                     <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm">
-                        <i class="fas fa-database mr-2 text-yellow-300"></i>Integraciones y datos en orden
+                        <i class="fas fa-database mr-2 text-yellow-300"></i>Conexiones a servidores (APIs) y datos en orden
                     </span>
                 </div>
 
@@ -173,19 +173,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
                 <div class="space-y-3">
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-magnifying-glass-chart"></i></span>
-                        <p class="text-gray-800">Primero entendemos objetivos y quién usará la solución.</p>
+                        <p class="text-gray-800">Mapeamos objetivos, usuarios y métricas para no programar a ciegas.</p>
                     </div>
                     <div class="flex items-start gap-3">
-                        <span class="mt-1 text-blue-600"><i class="fas fa-laptop-code"></i></span>
-                        <p class="text-gray-800">Definimos la base técnica para que crezca y se mantenga segura.</p>
+                        <span class="mt-1 text-blue-600"><i class="fas fa-pen-ruler"></i></span>
+                        <p class="text-gray-800">Diseño gráfico (UX/UI) con flujos claros y pantallas que cualquier persona entiende.</p>
                     </div>
                     <div class="flex items-start gap-3">
-                        <span class="mt-1 text-blue-600"><i class="fas fa-people-group"></i></span>
-                        <p class="text-gray-800">UX/UI centrado en usuarios internos y clientes para acelerar adopción.</p>
+                        <span class="mt-1 text-blue-600"><i class="fas fa-server"></i></span>
+                        <p class="text-gray-800">Conexiones a servidores (APIs) y bases de datos para que todo hable entre sí.</p>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-headset"></i></span>
-                        <p class="text-gray-800">Seguimos contigo después de lanzar con monitoreo y mejoras planificadas.</p>
+                        <p class="text-gray-800">Soporte, monitoreo y mejoras continuas después de lanzar.</p>
                     </div>
                 </div>
             </div>
@@ -225,6 +225,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
                     <p class="text-sm text-blue-100">Disponibilidad</p>
                     <p class="font-semibold">Equipo listo para comenzar en menos de 7 días</p>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Glosario rapido -->
+<section class="max-w-7xl mx-auto px-4 py-14">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-8 md:p-12">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
+            <div>
+                <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Glosario en lenguaje simple</p>
+                <h3 class="text-3xl font-bold text-slate-900">Que significa cada palabra que usamos</h3>
+                <p class="text-gray-700 mt-2 max-w-3xl">Titulos claros para que cualquier cliente entienda qué hacemos y cómo le sirve.</p>
+            </div>
+            <a href="<?php echo app_url('servicios.php'); ?>" class="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-white font-semibold shadow-lg hover:bg-slate-800 transition">
+                <i class="fas fa-eye"></i>
+                <span>Ver servicios detallados</span>
+            </a>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="rounded-2xl border border-slate-100 bg-slate-50 p-6">
+                <p class="text-sm font-semibold text-blue-700">Diseño gráfico (UX/UI)</p>
+                <p class="mt-2 text-sm text-gray-700">Cómo se ve y cómo se usa. Pantallas claras, botones obvios y flujos sin enredos.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-100 bg-slate-50 p-6">
+                <p class="text-sm font-semibold text-blue-700">Conexiones a servidores (APIs)</p>
+                <p class="mt-2 text-sm text-gray-700">Puentes para que tu web o sistema se hable con pagos, inventarios, ERPs o CRMs.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-100 bg-slate-50 p-6">
+                <p class="text-sm font-semibold text-blue-700">Automatización de procesos</p>
+                <p class="mt-2 text-sm text-gray-700">Bots o flujos que eliminan pasos manuales: reportes, avisos, validaciones.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-100 bg-slate-50 p-6">
+                <p class="text-sm font-semibold text-blue-700">Infraestructura y seguridad</p>
+                <p class="mt-2 text-sm text-gray-700">Hosting, copias de seguridad y accesos con roles para que nada dependa de un solo equipo.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-100 bg-slate-50 p-6">
+                <p class="text-sm font-semibold text-blue-700">Operación y soporte</p>
+                <p class="mt-2 text-sm text-gray-700">Monitoreo, tickets y mejoras continuas para que el sistema no se caiga cuando más lo necesitas.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-100 bg-slate-50 p-6">
+                <p class="text-sm font-semibold text-blue-700">Analítica y tableros</p>
+                <p class="mt-2 text-sm text-gray-700">Reportes claros de ventas, uso y rendimiento para decidir con datos.</p>
             </div>
         </div>
     </div>
