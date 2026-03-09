@@ -9,6 +9,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 }
 
 ensureTestimonialsSchema($conn);
+$pendingTestimonials = getPendingTestimonialsCount($conn);
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $testimonio = null;
@@ -131,7 +132,21 @@ $isApproved = isset($testimonio['aprobado']) ? (int) $testimonio['aprobado'] ===
                     <li><a href="dashboard.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
                     <li><a href="proyectos.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-folder"></i><span>Proyectos</span></a></li>
                     <li><a href="servicios.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-cog"></i><span>Servicios</span></a></li>
-                    <li><a href="testimonios.php" class="flex items-center space-x-2 p-2 bg-blue-50 text-blue-600 rounded"><i class="fas fa-comment"></i><span>Testimonios</span></a></li>
+                    <li>
+                        <a href="testimonios.php" class="flex items-center space-x-2 rounded bg-blue-50 p-2 text-blue-600">
+                            <i class="fas fa-comment"></i>
+                            <span>Testimonios</span>
+                            <?php if ($pendingTestimonials > 0): ?>
+                                <span class="ml-auto inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500 opacity-75"></span>
+                                        <span class="relative inline-flex h-2 w-2 rounded-full bg-amber-600"></span>
+                                    </span>
+                                    <?php echo $pendingTestimonials; ?>
+                                </span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
                     <li><a href="mensajes.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-envelope"></i><span>Mensajes</span></a></li>
                     <li><a href="logout.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded text-red-600"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a></li>
                 </ul>

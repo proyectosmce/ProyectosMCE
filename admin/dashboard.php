@@ -1,6 +1,7 @@
 ﻿<?php
 // admin/dashboard.php
 require_once '../includes/config.php';
+require_once '../includes/testimonial-helpers.php';
 
 // Verificar si está logueado
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
@@ -9,10 +10,13 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 }
 
 // Obtener estadísticas
+ensureTestimonialsSchema($conn);
+
 $total_proyectos = $conn->query("SELECT COUNT(*) as total FROM proyectos")->fetch_assoc()['total'];
 $total_servicios = $conn->query("SELECT COUNT(*) as total FROM servicios")->fetch_assoc()['total'];
 $mensajes_no_leidos = $conn->query("SELECT COUNT(*) as total FROM mensajes WHERE leido = 0")->fetch_assoc()['total'];
 $total_mensajes = $conn->query("SELECT COUNT(*) as total FROM mensajes")->fetch_assoc()['total'];
+$testimonios_pendientes = getPendingTestimonialsCount($conn);
 
 // Datos para gráficos
 $categorias_result = $conn->query("SELECT categoria, COUNT(*) AS total FROM proyectos GROUP BY categoria");
@@ -74,6 +78,15 @@ $mensajes_counts = array_reverse($mensajes_counts);
                         <a href="testimonios.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
                             <i class="fas fa-comment"></i>
                             <span>Testimonios</span>
+                            <?php if ($testimonios_pendientes > 0): ?>
+                                <span class="ml-auto inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500 opacity-75"></span>
+                                        <span class="relative inline-flex h-2 w-2 rounded-full bg-amber-600"></span>
+                                    </span>
+                                    <?php echo $testimonios_pendientes; ?>
+                                </span>
+                            <?php endif; ?>
                         </a>
                     </li>
                     <li>
@@ -99,9 +112,27 @@ $mensajes_counts = array_reverse($mensajes_counts);
         <div class="flex-1 overflow-y-auto">
             <div class="p-8">
                 <h1 class="text-3xl font-bold mb-8">Dashboard</h1>
+
+                <?php if ($testimonios_pendientes > 0): ?>
+                    <a href="testimonios.php" class="mb-8 flex items-center justify-between gap-4 rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 via-orange-50 to-red-50 px-6 py-5 shadow-sm transition hover:shadow-md">
+                        <div class="flex items-center gap-4">
+                            <span class="relative flex h-4 w-4">
+                                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+                                <span class="relative inline-flex h-4 w-4 rounded-full bg-red-500"></span>
+                            </span>
+                            <div>
+                                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700">Alerta de moderacion</p>
+                                <p class="text-lg font-bold text-slate-900">
+                                    Tienes <?php echo $testimonios_pendientes; ?> testimonio<?php echo $testimonios_pendientes === 1 ? '' : 's'; ?> pendiente<?php echo $testimonios_pendientes === 1 ? '' : 's'; ?> de aprobacion
+                                </p>
+                            </div>
+                        </div>
+                        <span class="rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-amber-700">Revisar ahora</span>
+                    </a>
+                <?php endif; ?>
                 
                 <!-- Tarjetas de estadísticas -->
-                <div class="grid md:grid-cols-4 gap-6 mb-8">
+                <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-5">
                     <div class="bg-white p-6 rounded-lg shadow">
                         <div class="flex items-center justify-between">
                             <div>
@@ -139,6 +170,30 @@ $mensajes_counts = array_reverse($mensajes_counts);
                                 <p class="text-3xl font-bold text-red-600"><?php echo $mensajes_no_leidos; ?></p>
                             </div>
                             <i class="fas fa-envelope-open-text text-4xl text-red-600"></i>
+                        </div>
+                    </div>
+
+                    <div class="relative overflow-hidden rounded-lg border border-amber-100 bg-white p-6 shadow">
+                        <div class="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-amber-50 to-transparent"></div>
+                        <div class="relative flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500">Pendientes</p>
+                                <div class="mt-1 flex items-center gap-3">
+                                    <p class="text-3xl font-bold <?php echo $testimonios_pendientes > 0 ? 'text-amber-700' : 'text-green-600'; ?>">
+                                        <?php echo $testimonios_pendientes; ?>
+                                    </p>
+                                    <?php if ($testimonios_pendientes > 0): ?>
+                                        <span class="relative flex h-3 w-3">
+                                            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
+                                            <span class="relative inline-flex h-3 w-3 rounded-full bg-amber-500"></span>
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                                <p class="mt-2 text-sm <?php echo $testimonios_pendientes > 0 ? 'text-amber-700' : 'text-green-700'; ?>">
+                                    <?php echo $testimonios_pendientes > 0 ? 'Esperando revision' : 'Todo aprobado'; ?>
+                                </p>
+                            </div>
+                            <i class="fas fa-comment-dots text-4xl <?php echo $testimonios_pendientes > 0 ? 'text-amber-500' : 'text-green-500'; ?>"></i>
                         </div>
                     </div>
                 </div>

@@ -52,3 +52,19 @@ function ensureTestimonialsSchema(mysqli $conn): void
 
     $schemaReady = true;
 }
+
+function getPendingTestimonialsCount(mysqli $conn): int
+{
+    ensureTestimonialsSchema($conn);
+
+    $result = $conn->query('SELECT COUNT(*) AS total FROM testimonios WHERE aprobado = 0');
+
+    if (!$result instanceof mysqli_result) {
+        return 0;
+    }
+
+    $row = $result->fetch_assoc();
+    $result->free();
+
+    return (int) ($row['total'] ?? 0);
+}

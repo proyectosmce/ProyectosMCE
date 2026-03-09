@@ -52,12 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$pendingCount = 0;
-$pendingResult = $conn->query('SELECT COUNT(*) AS total FROM testimonios WHERE aprobado = 0');
-if ($pendingResult instanceof mysqli_result) {
-    $pendingCount = (int) ($pendingResult->fetch_assoc()['total'] ?? 0);
-    $pendingResult->free();
-}
+$pendingCount = getPendingTestimonialsCount($conn);
 
 $testimonios = $conn->query("
     SELECT t.*, p.titulo AS proyecto_titulo
@@ -86,7 +81,21 @@ $testimonios = $conn->query("
                     <li><a href="dashboard.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
                     <li><a href="proyectos.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-folder"></i><span>Proyectos</span></a></li>
                     <li><a href="servicios.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-cog"></i><span>Servicios</span></a></li>
-                    <li><a href="testimonios.php" class="flex items-center space-x-2 p-2 bg-blue-50 text-blue-600 rounded"><i class="fas fa-comment"></i><span>Testimonios</span></a></li>
+                    <li>
+                        <a href="testimonios.php" class="flex items-center space-x-2 rounded bg-blue-50 p-2 text-blue-600">
+                            <i class="fas fa-comment"></i>
+                            <span>Testimonios</span>
+                            <?php if ($pendingCount > 0): ?>
+                                <span class="ml-auto inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500 opacity-75"></span>
+                                        <span class="relative inline-flex h-2 w-2 rounded-full bg-amber-600"></span>
+                                    </span>
+                                    <?php echo $pendingCount; ?>
+                                </span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
                     <li><a href="mensajes.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-envelope"></i><span>Mensajes</span></a></li>
                     <li><a href="logout.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded text-red-600"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a></li>
                 </ul>
@@ -98,17 +107,34 @@ $testimonios = $conn->query("
                 <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
                     <div>
                         <h1 class="text-3xl font-bold">Testimonios de Clientes</h1>
-                        <p class="text-sm text-gray-600 mt-2">
-                            Pendientes de aprobacion:
-                            <span class="font-semibold <?php echo $pendingCount > 0 ? 'text-amber-600' : 'text-green-600'; ?>">
-                                <?php echo $pendingCount; ?>
-                            </span>
-                        </p>
+                        <div class="mt-3 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold <?php echo $pendingCount > 0 ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-700'; ?>">
+                            <?php if ($pendingCount > 0): ?>
+                                <span class="relative flex h-2.5 w-2.5">
+                                    <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500 opacity-75"></span>
+                                    <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-amber-600"></span>
+                                </span>
+                            <?php endif; ?>
+                            <?php echo $pendingCount; ?> pendiente<?php echo $pendingCount === 1 ? '' : 's'; ?> de aprobacion
+                        </div>
                     </div>
                     <a href="testimonio-editar.php" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                         <i class="fas fa-plus mr-2"></i>Nuevo Testimonio
                     </a>
                 </div>
+
+                <?php if ($pendingCount > 0): ?>
+                    <div class="mb-6 flex items-center justify-between gap-4 rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 via-orange-50 to-red-50 px-5 py-4 shadow-sm">
+                        <div class="flex items-center gap-4">
+                            <span class="relative flex h-4 w-4">
+                                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+                                <span class="relative inline-flex h-4 w-4 rounded-full bg-red-500"></span>
+                            </span>
+                            <p class="text-sm font-semibold text-amber-800">
+                                Hay testimonios nuevos esperando tu aprobacion. Publica solo los que quieras mostrar en la web.
+                            </p>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
                 <?php if (isset($_GET['msg'])): ?>
                     <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
