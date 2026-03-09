@@ -99,6 +99,12 @@ $mensajes_counts = array_reverse($mensajes_counts);
                         </a>
                     </li>
                     <li>
+                        <a href="cambiar-password.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
+                            <i class="fas fa-lock"></i>
+                            <span>Cambiar clave</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="logout.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded text-red-600">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Salir</span>
