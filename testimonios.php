@@ -94,7 +94,7 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
 <?php include 'includes/header.php'; ?>
 
 <!-- Hero Testimonios -->
-<section class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white">
+<section class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white mce-rounded-hero">
     <div class="absolute inset-0 bg-grid-white/10"></div>
     <div class="absolute -top-24 -left-16 w-72 h-72 bg-blue-500/30 blur-3xl rounded-full"></div>
     <div class="absolute -bottom-24 -right-10 w-80 h-80 bg-purple-500/25 blur-3xl rounded-full"></div>
@@ -341,7 +341,7 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
 
 <!-- CTA final -->
 <section class="max-w-7xl mx-auto px-4 pb-16">
-    <div class="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-800 text-white rounded-2xl p-10 shadow-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+    <div class="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-800 text-white rounded-2xl mce-rounded-panel p-10 shadow-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div>
             <p class="text-sm font-semibold text-blue-100 uppercase tracking-wide">Hablemos</p>
             <h3 class="text-2xl font-bold">¿Quieres aparecer en esta sección?</h3>

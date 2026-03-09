@@ -1,7 +1,7 @@
     </main>
     
     <!-- Footer profesional -->
-    <footer class="bg-gradient-to-t from-slate-950 via-slate-900 to-slate-900 text-white mt-16">
+    <footer class="bg-gradient-to-t from-slate-950 via-slate-900 to-slate-900 text-white mt-16 mce-rounded-footer">
         <!-- CTA superior -->
         <div class="border-b border-white/10">
             <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">

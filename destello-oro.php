@@ -122,7 +122,7 @@ $workerFlows = $normalizeFlowShots($workerFlows);
 ?>
 
 <!-- Hero -->
-<section class="relative bg-gradient-to-r from-[#f2b416] via-[#f7d370] to-[#d99a0a] text-white overflow-hidden">
+<section class="relative bg-gradient-to-r from-[#f2b416] via-[#f7d370] to-[#d99a0a] text-white overflow-hidden mce-rounded-hero">
     <div class="absolute inset-0 bg-white/10 mix-blend-overlay"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
     

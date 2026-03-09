@@ -64,6 +64,21 @@
     top: 6px;
 }
 
+.mce-rounded-hero {
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+}
+
+.mce-rounded-panel {
+    border-radius: 32px;
+}
+
+.mce-rounded-footer {
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px;
+    overflow: hidden;
+}
+
 @media (min-width: 768px) {
     .timeline:before {
         display: none;
@@ -73,6 +88,22 @@
     }
     .timeline-bullet {
         position: static;
+    }
+}
+
+@media (max-width: 767px) {
+    .mce-rounded-hero {
+        border-bottom-left-radius: 28px;
+        border-bottom-right-radius: 28px;
+    }
+
+    .mce-rounded-panel {
+        border-radius: 24px;
+    }
+
+    .mce-rounded-footer {
+        border-top-left-radius: 28px;
+        border-top-right-radius: 28px;
     }
 }
 
