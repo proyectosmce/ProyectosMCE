@@ -8,10 +8,13 @@
     $faviconFile = dirname(__DIR__) . '/favicon.ico';
     $faviconPngFile = dirname(__DIR__) . '/favicon.png';
     $appleTouchIconFile = dirname(__DIR__) . '/apple-touch-icon.png';
+    $styleFile = dirname(__DIR__) . '/assets/css/estilo.css';
     $faviconVersion = is_file($faviconFile) ? filemtime($faviconFile) : time();
+    $styleVersion = is_file($styleFile) ? filemtime($styleFile) : $faviconVersion;
     $faviconIcoUrl = app_url('favicon.ico') . '?v=' . $faviconVersion;
     $faviconPngUrl = app_url('favicon.png') . '?v=' . (is_file($faviconPngFile) ? filemtime($faviconPngFile) : $faviconVersion);
     $appleTouchIconUrl = app_url('apple-touch-icon.png') . '?v=' . (is_file($appleTouchIconFile) ? filemtime($appleTouchIconFile) : $faviconVersion);
+    $styleUrl = app_url('assets/css/estilo.css') . '?v=' . $styleVersion;
     ?>
 
     <?php include __DIR__ . '/metas.php'; ?>
@@ -23,7 +26,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <!-- Tu CSS personalizado (pequenas modificaciones) -->
-    <link rel="stylesheet" href="<?php echo app_url('assets/css/estilo.css'); ?>">
+    <link rel="stylesheet" href="<?php echo $styleUrl; ?>">
     <!-- Favicon -->
     <link rel="icon" href="<?php echo $faviconIcoUrl; ?>" sizes="any">
     <link rel="icon" type="image/png" href="<?php echo $faviconPngUrl; ?>" sizes="64x64">

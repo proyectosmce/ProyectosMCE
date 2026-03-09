@@ -116,6 +116,11 @@
     </script>
     
     <!-- Tu script personalizado -->
-    <script src="<?php echo app_url('assets/js/script.js'); ?>"></script>
+    <?php
+        $scriptFile = dirname(__DIR__) . '/assets/js/script.js';
+        $scriptVersion = is_file($scriptFile) ? filemtime($scriptFile) : time();
+        $scriptUrl = app_url('assets/js/script.js') . '?v=' . $scriptVersion;
+    ?>
+    <script src="<?php echo $scriptUrl; ?>"></script>
 </body>
 </html>
