@@ -31,14 +31,6 @@
     <link rel="apple-touch-icon" href="<?php echo $appleTouchIconUrl; ?>">
 </head>
 <body class="bg-gray-50">
-    <!-- Loader -->
-    <div id="loader" class="fixed inset-0 bg-white z-[60] flex items-center justify-center transition-opacity duration-500">
-        <div class="text-center">
-            <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p class="text-gray-600">Cargando Proyectos MCE...</p>
-        </div>
-    </div>
-    
     <!-- Navbar profesional -->
     <nav class="bg-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4">
