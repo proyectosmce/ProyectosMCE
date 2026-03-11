@@ -127,7 +127,7 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
                     <a href="#testimonios" class="inline-flex items-center justify-center bg-yellow-300 text-slate-900 px-8 py-4 rounded-xl font-semibold shadow-lg shadow-yellow-900/20 hover:bg-yellow-200 transition">
                         <i class="fas fa-comments mr-2"></i> Leer testimonios
                     </a>
-                    <a href="<?php echo app_url('contacto.php'); ?>" class="inline-flex items-center justify-center border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-slate-900 transition">
+                    <a href="#form-testimonio" class="inline-flex items-center justify-center border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-slate-900 transition">
                         <i class="fas fa-handshake mr-2"></i> Compartir mi experiencia
                     </a>
                 </div>
