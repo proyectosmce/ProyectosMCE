@@ -91,51 +91,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Admin - Proyectos MCE</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100">
-    <div class="min-h-screen flex items-center justify-center">
-        <div class="bg-white p-8 rounded-lg shadow-lg w-96">
-            <div class="text-center mb-8">
-                <h1 class="text-2xl font-bold text-gray-800">Proyectos MCE</h1>
-                <p class="text-gray-600">Panel de Administracion</p>
+<body class="min-h-screen bg-cover bg-center relative" style="background-image: url('../imag/MCE.jpg');">
+    <div class="absolute inset-0 bg-black/60"></div>
+
+    <div class="relative z-10 min-h-screen flex items-center justify-center px-4">
+        <div class="w-full max-w-md text-white">
+            <div class="text-center mb-8 drop-shadow">
+                <h1 class="text-3xl font-bold">Proyectos MCE</h1>
+                <p class="text-lg font-medium">Panel de Administracion</p>
             </div>
 
             <?php if ($error): ?>
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <div class="mb-4 bg-red-600/80 border border-red-300/60 text-white px-4 py-3 rounded">
                     <?php echo $error; ?>
                 </div>
             <?php endif; ?>
 
-            <form method="POST" action="">
+            <form method="POST" action="" class="space-y-6">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($loginCsrf, ENT_QUOTES, 'UTF-8'); ?>">
-                <div class="mb-4">
-                    <label class="block text-gray-700 mb-2">Usuario</label>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Usuario</label>
                     <input
                         type="text"
                         name="username"
                         required
-                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-600"
+                        class="w-full px-4 py-3 rounded-lg bg-white/90 text-gray-900 border border-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                 </div>
 
-                <div class="mb-6">
-                    <label class="block text-gray-700 mb-2">Contrasena</label>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Contrasena</label>
                     <input
                         type="password"
                         name="password"
                         required
-                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-600"
+                        class="w-full px-4 py-3 rounded-lg bg-white/90 text-gray-900 border border-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                 </div>
 
                 <button
                     type="submit"
-                    class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                    class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
                 >
                     Ingresar
                 </button>
             </form>
 
-            <div class="mt-4 text-center text-sm text-gray-500">
+            <div class="mt-6 text-center text-sm text-white/80 drop-shadow">
                 <p>Usa las credenciales de administrador configuradas en tu base de datos.</p>
                 <p class="text-xs mt-2">Si este sitio es nuevo, cambia la contrasena inicial apenas ingreses.</p>
             </div>
