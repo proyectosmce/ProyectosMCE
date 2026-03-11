@@ -91,8 +91,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Admin - Proyectos MCE</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-cover bg-center relative" style="background-image: url('../imag/MCE.jpg');">
-    <div class="absolute inset-0 bg-black/60"></div>
+<body
+    class="min-h-screen bg-center relative"
+    style="background: url('../imag/MCE.jpg') center center no-repeat; background-size: contain; background-color: #0b0b0b;"
+>
+    <div class="absolute inset-0 bg-black/55"></div>
 
     <div class="relative z-10 min-h-screen flex items-center justify-center px-4">
         <div class="w-full max-w-md text-white">
