@@ -64,10 +64,10 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
     <!-- Barra superior móvil -->
     <header class="md:hidden sticky top-0 z-30 flex items-center justify-between bg-white px-4 py-3 shadow">
         <div class="flex items-center gap-2">
+            <img src="../imag/MCE.jpg" alt="MCE Admin" class="h-10 w-auto object-contain">
             <button id="toggleSidebar" class="p-2 rounded border border-gray-200 hover:bg-gray-100 active:scale-95 transition">
                 <i class="fas fa-bars"></i>
             </button>
-            <img src="../imag/MCE.jpg" alt="MCE Admin" class="h-10 w-auto object-contain">
         </div>
         <a href="logout.php" class="text-red-600 text-sm flex items-center gap-1"><i class="fas fa-sign-out-alt"></i>Salir</a>
     </header>
@@ -484,4 +484,5 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
     </script>
 </body>
 </html>
+
 
