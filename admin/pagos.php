@@ -12,9 +12,68 @@ function valid_date_param($value)
     return is_string($value) && preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $value);
 }
 
+// Crea tablas financieras si no existen (evita errores 500 si faltan migraciones).
+function ensureFinanceSchema(mysqli $conn): void
+{
+    $conn->query("
+        CREATE TABLE IF NOT EXISTS pagos (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            cliente VARCHAR(150) NOT NULL,
+            proyecto VARCHAR(150),
+            monto DECIMAL(12,2) NOT NULL,
+            moneda VARCHAR(10) DEFAULT 'USD',
+            metodo VARCHAR(50) DEFAULT 'transferencia',
+            estado ENUM('pendiente','en_revision','confirmado','fallido','reembolsado') DEFAULT 'pendiente',
+            fee_pasarela DECIMAL(12,2) DEFAULT 0,
+            fecha_pago DATE NOT NULL,
+            fecha_confirmacion DATETIME NULL,
+            comprobante VARCHAR(255),
+            notas TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB;
+    ");
+
+    $conn->query("
+        CREATE TABLE IF NOT EXISTS ventas (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            proyecto VARCHAR(150) NOT NULL,
+            cliente VARCHAR(150),
+            precio DECIMAL(12,2) NOT NULL,
+            descuento DECIMAL(12,2) DEFAULT 0,
+            estado_entrega ENUM('pendiente','entregado','soporte') DEFAULT 'pendiente',
+            fecha_venta DATE NOT NULL,
+            pago_id INT NULL,
+            notas TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT fk_ventas_pago FOREIGN KEY (pago_id) REFERENCES pagos(id) ON DELETE SET NULL
+        ) ENGINE=InnoDB;
+    ");
+
+    $conn->query("
+        CREATE TABLE IF NOT EXISTS gastos (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            categoria VARCHAR(100) NOT NULL,
+            descripcion VARCHAR(255),
+            proveedor VARCHAR(150),
+            proyecto VARCHAR(150),
+            monto DECIMAL(12,2) NOT NULL,
+            moneda VARCHAR(10) DEFAULT 'USD',
+            impuesto DECIMAL(12,2) DEFAULT 0,
+            fecha_gasto DATE NOT NULL,
+            metodo VARCHAR(50) DEFAULT 'transferencia',
+            comprobante VARCHAR(255),
+            notas TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB;
+    ");
+}
+
 $hoy   = date('Y-m-d');
 $desde = (isset($_GET['desde']) && valid_date_param($_GET['desde'])) ? $_GET['desde'] : date('Y-m-01');
 $hasta = (isset($_GET['hasta']) && valid_date_param($_GET['hasta'])) ? $_GET['hasta'] : $hoy;
+
+// Asegura tablas antes de cualquier consulta.
+ensureFinanceSchema($conn);
 
 // Crear / actualizar registros
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
