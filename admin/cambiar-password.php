@@ -95,7 +95,7 @@ if ($flashMessage === 'updated') {
         <div class="w-64 bg-white shadow-lg">
             <div class="p-4 border-b">
                 <div class="relative h-10 w-10 shrink-0">
-    <span class="absolute inset-0 rounded-full border-2 border-blue-500/70 border-t-transparent animate-spin"></span>
+    <span class="logo-ring"></span>
     <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain rounded-full">
 </div>
             </div>
@@ -219,6 +219,8 @@ if ($flashMessage === 'updated') {
     </div>
 </body>
 </html>
+
+
 
 
 

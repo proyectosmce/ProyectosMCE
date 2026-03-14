@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <i class="fas fa-bars"></i>
             </button>
             <div class="relative h-10 w-10 shrink-0">
-    <span class="absolute inset-0 rounded-full border-2 border-blue-500/70 border-t-transparent animate-spin"></span>
+    <span class="logo-ring"></span>
     <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain rounded-full">
 </div>
         </div>
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div id="sidebar" class="fixed md:static inset-y-0 left-0 w-64 bg-white shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-200 z-40">
             <div class="p-4 border-b">
                 <div class="relative h-10 w-10 shrink-0">
-    <span class="absolute inset-0 rounded-full border-2 border-blue-500/70 border-t-transparent animate-spin"></span>
+    <span class="logo-ring"></span>
     <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain rounded-full">
 </div>
             </div>
@@ -206,6 +206,8 @@ if (toggleBtn){ toggleBtn.addEventListener('click', ()=> sidebar.classList.conta
 if (overlay){ overlay.addEventListener('click', closeSidebar); }
 </script>
 </html>
+
+
 
 
 

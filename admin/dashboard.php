@@ -65,7 +65,7 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
     <header class="md:hidden sticky top-0 z-30 flex items-center justify-between bg-white px-4 py-3 shadow">
         <div class="flex items-center gap-2">
             <div class="relative h-10 w-10 shrink-0">
-    <span class="absolute inset-0 rounded-full border-2 border-blue-500/70 border-t-transparent animate-spin"></span>
+    <span class="logo-ring"></span>
     <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain rounded-full">
 </div>
             <button id="toggleSidebar" class="p-2 rounded border border-gray-200 hover:bg-gray-100 active:scale-95 transition">
@@ -80,7 +80,7 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
         <div id="sidebar" class="fixed md:static inset-y-0 left-0 w-64 bg-white shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-200 z-40">
             <div class="p-4 border-b">
                 <div class="relative h-10 w-10 shrink-0">
-    <span class="absolute inset-0 rounded-full border-2 border-blue-500/70 border-t-transparent animate-spin"></span>
+    <span class="logo-ring"></span>
     <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain rounded-full">
 </div>
             </div>
@@ -490,6 +490,8 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
     </script>
 </body>
 </html>
+
+
 
 
 
