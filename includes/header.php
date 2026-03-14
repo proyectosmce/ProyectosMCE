@@ -8,10 +8,13 @@
     $faviconFile = dirname(__DIR__) . '/favicon.ico';
     $faviconPngFile = dirname(__DIR__) . '/favicon.png';
     $appleTouchIconFile = dirname(__DIR__) . '/apple-touch-icon.png';
+    $styleFile = dirname(__DIR__) . '/assets/css/estilo.css';
     $faviconVersion = is_file($faviconFile) ? filemtime($faviconFile) : time();
+    $styleVersion = is_file($styleFile) ? filemtime($styleFile) : $faviconVersion;
     $faviconIcoUrl = app_url('favicon.ico') . '?v=' . $faviconVersion;
     $faviconPngUrl = app_url('favicon.png') . '?v=' . (is_file($faviconPngFile) ? filemtime($faviconPngFile) : $faviconVersion);
     $appleTouchIconUrl = app_url('apple-touch-icon.png') . '?v=' . (is_file($appleTouchIconFile) ? filemtime($appleTouchIconFile) : $faviconVersion);
+    $styleUrl = app_url('assets/css/estilo.css') . '?v=' . $styleVersion;
     ?>
 
     <?php include __DIR__ . '/metas.php'; ?>
@@ -23,7 +26,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <!-- Tu CSS personalizado (pequenas modificaciones) -->
-    <link rel="stylesheet" href="<?php echo app_url('assets/css/estilo.css'); ?>">
+    <link rel="stylesheet" href="<?php echo $styleUrl; ?>">
     <!-- Favicon -->
     <link rel="icon" href="<?php echo $faviconIcoUrl; ?>" sizes="any">
     <link rel="icon" type="image/png" href="<?php echo $faviconPngUrl; ?>" sizes="64x64">
@@ -31,14 +34,6 @@
     <link rel="apple-touch-icon" href="<?php echo $appleTouchIconUrl; ?>">
 </head>
 <body class="bg-gray-50">
-    <!-- Loader -->
-    <div id="loader" class="fixed inset-0 bg-white z-[60] flex items-center justify-center transition-opacity duration-500">
-        <div class="text-center">
-            <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p class="text-gray-600">Cargando Proyectos MCE...</p>
-        </div>
-    </div>
-    
     <!-- Navbar profesional -->
     <nav class="bg-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4">
@@ -77,19 +72,13 @@
         </div>
         
         <!-- Menú móvil mejorado -->
-        <div id="mobile-menu" class="hidden md:hidden fixed inset-0 bg-white z-40 pt-20">
-            <div class="flex flex-col items-center space-y-6 p-8">
-                <a href="<?php echo app_url(); ?>" class="text-2xl font-semibold hover:text-blue-600 transition inline-flex items-center gap-3 <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'text-blue-600' : ''; ?>"><i class="fas fa-home text-blue-500/80"></i><span>Inicio</span></a>
-                <a href="<?php echo app_url('servicios.php'); ?>" class="text-2xl font-semibold hover:text-blue-600 transition inline-flex items-center gap-3 <?php echo basename($_SERVER['PHP_SELF']) == 'servicios.php' ? 'text-blue-600' : ''; ?>"><i class="fas fa-layer-group text-blue-500/80"></i><span>Servicios</span></a>
-                <a href="<?php echo app_url('portafolio.php'); ?>" class="text-2xl font-semibold hover:text-blue-600 transition inline-flex items-center gap-3 <?php echo basename($_SERVER['PHP_SELF']) == 'portafolio.php' ? 'text-blue-600' : ''; ?>"><i class="fas fa-briefcase text-blue-500/80"></i><span>Portafolio</span></a>
-                <a href="<?php echo app_url('testimonios.php'); ?>" class="text-2xl font-semibold hover:text-blue-600 transition inline-flex items-center gap-3 <?php echo basename($_SERVER['PHP_SELF']) == 'testimonios.php' ? 'text-blue-600' : ''; ?>"><i class="fas fa-comments text-blue-500/80"></i><span>Testimonios</span></a>
-                <a href="<?php echo app_url('contacto.php'); ?>" class="text-2xl font-semibold hover:text-blue-600 transition inline-flex items-center gap-3 <?php echo basename($_SERVER['PHP_SELF']) == 'contacto.php' ? 'text-blue-600' : ''; ?>"><i class="fas fa-envelope-open-text text-blue-500/80"></i><span>Contacto</span></a>
-                
-                <!-- Botón de contacto en móvil -->
-                <a href="<?php echo app_url('contacto.php'); ?>" 
-                   class="mt-6 bg-blue-600 text-white px-8 py-3 rounded-lg text-xl">
-                    <i class="fas fa-whatsapp mr-2"></i>Contactar
-                </a>
+        <div id="mobile-menu" class="hidden md:hidden fixed inset-0 z-40 pt-20" style="background-image: linear-gradient(rgba(16,23,40,0.78), rgba(16,23,40,0.85)), url('<?php echo app_url('imag/MCE.jpg'); ?>'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: #0f172a;">
+            <div class="flex flex-col items-center space-y-6 p-8 text-white drop-shadow">
+                <a href="<?php echo app_url(); ?>" class="text-2xl font-semibold hover:text-yellow-200 transition inline-flex items-center gap-3 <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'text-yellow-300 font-bold' : ''; ?>"><i class="fas fa-home text-yellow-300/90"></i><span>Inicio</span></a>
+                <a href="<?php echo app_url('servicios.php'); ?>" class="text-2xl font-semibold hover:text-yellow-200 transition inline-flex items-center gap-3 <?php echo basename($_SERVER['PHP_SELF']) == 'servicios.php' ? 'text-yellow-300 font-bold' : ''; ?>"><i class="fas fa-layer-group text-yellow-300/90"></i><span>Servicios</span></a>
+                <a href="<?php echo app_url('portafolio.php'); ?>" class="text-2xl font-semibold hover:text-yellow-200 transition inline-flex items-center gap-3 <?php echo basename($_SERVER['PHP_SELF']) == 'portafolio.php' ? 'text-yellow-300 font-bold' : ''; ?>"><i class="fas fa-briefcase text-yellow-300/90"></i><span>Portafolio</span></a>
+                <a href="<?php echo app_url('testimonios.php'); ?>" class="text-2xl font-semibold hover:text-yellow-200 transition inline-flex items-center gap-3 <?php echo basename($_SERVER['PHP_SELF']) == 'testimonios.php' ? 'text-yellow-300 font-bold' : ''; ?>"><i class="fas fa-comments text-yellow-300/90"></i><span>Testimonios</span></a>
+                <a href="<?php echo app_url('contacto.php'); ?>" class="text-2xl font-semibold hover:text-yellow-200 transition inline-flex items-center gap-3 <?php echo basename($_SERVER['PHP_SELF']) == 'contacto.php' ? 'text-yellow-300 font-bold' : ''; ?>"><i class="fas fa-envelope-open-text text-yellow-300/90"></i><span>Contacto</span></a>
             </div>
         </div>
     </nav>

@@ -1,27 +1,53 @@
 <?php require_once 'includes/config.php'; ?>
 <?php require_once 'includes/project-helpers.php'; ?>
+<?php require_once 'includes/form-guard.php'; ?>
+<?php require_once 'includes/testimonial-helpers.php'; ?>
 <?php
-// Asegurar tabla de testimonios
-$conn->query("CREATE TABLE IF NOT EXISTS testimonios (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    testimonio TEXT NOT NULL,
-    valoracion INT DEFAULT 5,
-    proyecto_id INT,
-    destacado BOOLEAN DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (proyecto_id) REFERENCES proyectos(id) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+ensureTestimonialsSchema($conn);
 
 // Manejo de envío de testimonios (solo alta)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo_testimonio') {
-    $nombre  = trim($_POST['nombre'] ?? '');
-    $mensaje = trim($_POST['mensaje'] ?? '');
+    if (!form_guard_honeypot_is_clear($_POST['company_website'] ?? '')) {
+        redirect('testimonios.php?error=validation#form-testimonio');
+    }
+
+    $guardCheck = form_guard_verify('testimonios', $_POST['form_token'] ?? null, 3);
+    if (!$guardCheck['ok']) {
+        redirect('testimonios.php?error=validation#form-testimonio');
+    }
+
+    $nombre  = form_guard_normalize_whitespace($_POST['nombre'] ?? '');
+    $mensaje = form_guard_normalize_multiline($_POST['mensaje'] ?? '');
     $proyId  = (int) ($_POST['proyecto_id'] ?? 0);
     $valor   = (int) ($_POST['valoracion'] ?? 5);
     $valor   = max(1, min(5, $valor));
 
-    // Obtener nombre del proyecto para guardarlo en 'empresa'
+    if (!form_guard_validate_name($nombre, 2, 100) || !form_guard_validate_message($mensaje, 30, 1200) || $proyId <= 0) {
+        redirect('testimonios.php?error=validation#form-testimonio');
+    }
+
+    if (!form_guard_verify_recaptcha($_POST['g-recaptcha-response'] ?? null)) {
+        redirect('testimonios.php?error=captcha#form-testimonio');
+    }
+
+    $ipLimit = form_guard_rate_limit('testimonial_form_ip', form_guard_client_ip(), 3, 3600);
+    if (!$ipLimit['allowed']) {
+        redirect('testimonios.php?error=rate#form-testimonio');
+    }
+
+    $signatureName = function_exists('mb_strtolower')
+        ? mb_strtolower($nombre, 'UTF-8')
+        : strtolower($nombre);
+    $signatureLimit = form_guard_rate_limit(
+        'testimonial_form_signature',
+        $signatureName . '|' . $proyId,
+        2,
+        86400
+    );
+    if (!$signatureLimit['allowed']) {
+        redirect('testimonios.php?error=rate#form-testimonio');
+    }
+
     $empresa = '';
     if ($proyId > 0) {
         if ($stProj = $conn->prepare('SELECT titulo FROM proyectos WHERE id = ? LIMIT 1')) {
@@ -35,8 +61,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
         }
     }
 
+    if ($empresa === '') {
+        redirect('testimonios.php?error=validation#form-testimonio');
+    }
+
+    $nombre = trim(strip_tags($nombre));
+    $mensaje = trim(strip_tags($mensaje));
+
     if ($nombre !== '' && $mensaje !== '' && $proyId > 0) {
-        if ($stmt = $conn->prepare('INSERT INTO testimonios (nombre, testimonio, proyecto_id, empresa, valoracion, destacado) VALUES (?, ?, ?, ?, ?, 0)')) {
+        if ($stmt = $conn->prepare('INSERT INTO testimonios (nombre, testimonio, proyecto_id, empresa, valoracion, destacado, aprobado) VALUES (?, ?, ?, ?, ?, 0, 0)')) {
             $stmt->bind_param('ssisi', $nombre, $mensaje, $proyId, $empresa, $valor);
             $stmt->execute();
             $stmt->close();
@@ -44,19 +77,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
             exit;
         }
     }
+
+    redirect('testimonios.php?error=validation#form-testimonio');
 }
 
-$testimonios     = $conn->query("SELECT t.nombre, t.testimonio, t.valoracion, p.titulo AS proyecto FROM testimonios t LEFT JOIN proyectos p ON t.proyecto_id = p.id ORDER BY t.destacado DESC, t.created_at DESC LIMIT 9");
+$testimonios     = $conn->query("SELECT t.nombre, t.testimonio, t.valoracion, COALESCE(p.titulo, t.empresa, 'Proyecto MCE') AS proyecto FROM testimonios t LEFT JOIN proyectos p ON t.proyecto_id = p.id WHERE t.aprobado = 1 ORDER BY t.destacado DESC, t.created_at DESC LIMIT 9");
 $projectOptions  = fetchProjectDropdownOptions($conn);
 $testimonioOk    = isset($_GET['testimonio']) && $_GET['testimonio'] === 'ok';
+$testimonioError = $_GET['error'] ?? '';
 $testError       = !$testimonios instanceof mysqli_result;
 $hasTestimonios  = !$testError && $testimonios->num_rows > 0;
 $hasProjectOptions = !empty($projectOptions);
+$testimonialFormGuard = form_guard_issue('testimonios');
+$testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
 ?>
 <?php include 'includes/header.php'; ?>
 
 <!-- Hero Testimonios -->
-<section class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white">
+<section class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white mce-rounded-hero">
     <div class="absolute inset-0 bg-grid-white/10"></div>
     <div class="absolute -top-24 -left-16 w-72 h-72 bg-blue-500/30 blur-3xl rounded-full"></div>
     <div class="absolute -bottom-24 -right-10 w-80 h-80 bg-purple-500/25 blur-3xl rounded-full"></div>
@@ -89,7 +127,7 @@ $hasProjectOptions = !empty($projectOptions);
                     <a href="#testimonios" class="inline-flex items-center justify-center bg-yellow-300 text-slate-900 px-8 py-4 rounded-xl font-semibold shadow-lg shadow-yellow-900/20 hover:bg-yellow-200 transition">
                         <i class="fas fa-comments mr-2"></i> Leer testimonios
                     </a>
-                    <a href="<?php echo app_url('contacto.php'); ?>" class="inline-flex items-center justify-center border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-slate-900 transition">
+                    <a href="#form-testimonio" class="inline-flex items-center justify-center border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-slate-900 transition">
                         <i class="fas fa-handshake mr-2"></i> Compartir mi experiencia
                     </a>
                 </div>
@@ -143,7 +181,19 @@ $hasProjectOptions = !empty($projectOptions);
 <section id="testimonios" class="max-w-7xl mx-auto px-4 py-12">
     <?php if ($testimonioOk): ?>
     <div id="alert-testimonio" class="mb-8 rounded-lg border border-green-200 bg-green-50 text-green-800 px-4 py-3">
-        ¡Gracias! Tu testimonio se guardó y ya es visible.
+        Gracias. Tu testimonio fue recibido y quedo pendiente de aprobacion.
+    </div>
+    <?php endif; ?>
+
+    <?php if ($testimonioError !== ''): ?>
+    <div id="alert-testimonio-error" class="mb-8 rounded-lg border border-red-200 bg-red-50 text-red-800 px-4 py-3">
+        <?php if ($testimonioError === 'rate'): ?>
+            Has enviado demasiados testimonios en poco tiempo. Espera antes de intentar nuevamente.
+        <?php elseif ($testimonioError === 'captcha'): ?>
+            Debes completar la verificación reCAPTCHA antes de enviar el testimonio.
+        <?php else: ?>
+            No pudimos validar el testimonio. Revisa los datos del formulario e intenta otra vez.
+        <?php endif; ?>
     </div>
     <?php endif; ?>
 
@@ -217,6 +267,11 @@ $hasProjectOptions = !empty($projectOptions);
         </div>
         <form id="testimonio-form" method="POST" action="#testimonios" class="grid md:grid-cols-2 gap-6">
             <input type="hidden" name="action" value="nuevo_testimonio">
+            <input type="hidden" name="form_token" value="<?php echo htmlspecialchars($testimonialFormGuard['token'], ENT_QUOTES, 'UTF-8'); ?>">
+            <div style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+                <label for="testimonial_company_website">No llenes este campo</label>
+                <input id="testimonial_company_website" type="text" name="company_website" tabindex="-1" autocomplete="off">
+            </div>
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Selecciona tu proyecto</label>
@@ -233,11 +288,11 @@ $hasProjectOptions = !empty($projectOptions);
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre completo</label>
-                    <input id="t-nombre" name="nombre" required type="text" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ej. Ana Martínez">
+                    <input id="t-nombre" name="nombre" required type="text" minlength="2" maxlength="100" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ej. Ana Martínez">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Escribe tu experiencia</label>
-                    <textarea id="t-mensaje" name="mensaje" required rows="5" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Cuenta cómo te fue con el proyecto"></textarea>
+                    <textarea id="t-mensaje" name="mensaje" required rows="5" minlength="30" maxlength="1200" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Cuenta cómo te fue con el proyecto"></textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Calificación (1 = no recomiendo, 5 = sí recomiendo)</label>
@@ -253,10 +308,20 @@ $hasProjectOptions = !empty($projectOptions);
                 </div>
                 <div class="flex gap-3">
                     <button type="button" id="t-prev-btn" class="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 transition">Ver vista previa</button>
-                    <button type="submit" <?php echo $hasProjectOptions ? '' : 'disabled'; ?> class="border border-blue-600 text-blue-600 px-5 py-3 rounded-lg hover:bg-blue-50 transition disabled:border-gray-300 disabled:text-gray-400 disabled:bg-gray-100">
+                    <button type="submit" id="testimonial-submit" <?php echo ($hasProjectOptions && $testimonialRecaptchaEnabled) ? '' : 'disabled'; ?> class="border border-blue-600 text-blue-600 px-5 py-3 rounded-lg hover:bg-blue-50 transition disabled:border-gray-300 disabled:text-gray-400 disabled:bg-gray-100">
                         Enviar testimonio
                     </button>
                 </div>
+
+                <?php if ($testimonialRecaptchaEnabled): ?>
+                    <div class="pt-2">
+                        <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars(form_guard_recaptcha_site_key(), ENT_QUOTES, 'UTF-8'); ?>"></div>
+                    </div>
+                <?php else: ?>
+                    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+                        reCAPTCHA es obligatorio, pero no está configurado correctamente en este entorno.
+                    </div>
+                <?php endif; ?>
             </div>
             <div class="space-y-3">
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
@@ -276,7 +341,7 @@ $hasProjectOptions = !empty($projectOptions);
 
 <!-- CTA final -->
 <section class="max-w-7xl mx-auto px-4 pb-16">
-    <div class="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-800 text-white rounded-2xl p-10 shadow-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+    <div class="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-800 text-white rounded-2xl mce-rounded-panel p-10 shadow-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div>
             <p class="text-sm font-semibold text-blue-100 uppercase tracking-wide">Hablemos</p>
             <h3 class="text-2xl font-bold">¿Quieres aparecer en esta sección?</h3>
@@ -292,6 +357,10 @@ $hasProjectOptions = !empty($projectOptions);
         </div>
     </div>
 </section>
+
+<?php if ($testimonialRecaptchaEnabled): ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<?php endif; ?>
 
 <?php include 'includes/footer.php'; ?>
 
@@ -384,10 +453,13 @@ $hasProjectOptions = !empty($projectOptions);
 
     // Ocultar aviso y limpiar querystring
     const alertTestimonio = document.getElementById('alert-testimonio');
-    if (alertTestimonio) {
-        setTimeout(() => alertTestimonio.classList.add('hidden'), 4000);
+    const alertTestimonioError = document.getElementById('alert-testimonio-error');
+    const feedbackBanner = alertTestimonio || alertTestimonioError;
+    if (feedbackBanner) {
+        setTimeout(() => feedbackBanner.classList.add('hidden'), 4000);
         const url = new URL(window.location);
         url.searchParams.delete('testimonio');
+        url.searchParams.delete('error');
         window.history.replaceState({}, '', url);
     }
 
@@ -395,6 +467,17 @@ $hasProjectOptions = !empty($projectOptions);
         if (submitting) return;
         e.preventDefault();
         updatePreview();
+
+        if (typeof window.grecaptcha === 'undefined') {
+            alert('reCAPTCHA aun no termina de cargar. Intenta nuevamente en unos segundos.');
+            return;
+        }
+
+        if (!window.grecaptcha.getResponse()) {
+            alert('Completa la verificacion reCAPTCHA antes de enviar.');
+            return;
+        }
+
         const ok = confirm(`Enviar este testimonio?\n\n${liveFinal.textContent}`);
         if (ok) {
             submitting = true;

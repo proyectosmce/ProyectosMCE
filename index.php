@@ -1,27 +1,9 @@
 ﻿<?php require_once 'includes/config.php'; ?>
 <?php require_once 'includes/project-helpers.php'; ?>
-<?php
-// Manejo de envío de testimonios (solo alta, sin edición)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo_testimonio') {
-    $nombre  = trim($_POST['nombre'] ?? '');
-    $mensaje = trim($_POST['mensaje'] ?? '');
-    $proyId  = (int) ($_POST['proyecto_id'] ?? 0);
-
-    if ($nombre !== '' && $mensaje !== '' && $proyId > 0) {
-        if ($stmt = $conn->prepare('INSERT INTO testimonios (nombre, testimonio, proyecto_id, valoracion, destacado) VALUES (?, ?, ?, 5, 0)')) {
-            $stmt->bind_param('ssi', $nombre, $mensaje, $proyId);
-            $stmt->execute();
-            $stmt->close();
-            header('Location: index.php?testimonio=ok#testimonios');
-            exit;
-        }
-    }
-}
-?>
 <?php include 'includes/header.php'; ?>
 
 <!-- Hero Section alineado con otras secciones -->
-<section class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white">
+<section class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white mce-rounded-hero">
     <div class="absolute inset-0 bg-grid-white/10"></div>
     <div class="absolute -top-24 -left-20 w-72 h-72 bg-blue-500/30 blur-3xl rounded-full"></div>
     <div class="absolute -bottom-32 -right-10 w-96 h-96 bg-purple-500/25 blur-3xl rounded-full"></div>
@@ -45,13 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
                         <i class="fas fa-diagram-project mr-2 text-yellow-300"></i>Entendemos tu proceso primero
                     </span>
                     <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm">
-                        <i class="fas fa-pen-ruler mr-2 text-yellow-300"></i>Diseñamos y prototipamos antes de programar
+                        <i class="fas fa-pen-ruler mr-2 text-yellow-300"></i>Diseño gráfico (UX/UI) con maquetas claras
                     </span>
                     <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm">
                         <i class="fas fa-bolt mr-2 text-yellow-300"></i>Entregas cortas con pruebas y control
                     </span>
                     <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm">
-                        <i class="fas fa-database mr-2 text-yellow-300"></i>Integraciones y datos en orden
+                        <i class="fas fa-database mr-2 text-yellow-300"></i>Conexiones a servidores (APIs) y datos en orden
                     </span>
                 </div>
 
@@ -136,30 +118,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
     </div>
 </section>
 
-<!-- Métricas de confianza -->
-<section class="max-w-7xl mx-auto px-4 -mt-10 lg:-mt-16">
-    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 px-6 py-6 md:px-10 md:py-8">
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
-            <div>
-                <p class="text-3xl font-bold text-slate-900">+120</p>
-                <p class="text-sm text-gray-600">proyectos entregados</p>
-            </div>
-            <div>
-                <p class="text-3xl font-bold text-slate-900">&lt; 48h</p>
-                <p class="text-sm text-gray-600">tiempo de respuesta</p>
-            </div>
-            <div>
-                <p class="text-3xl font-bold text-slate-900">99.9%</p>
-                <p class="text-sm text-gray-600">uptime en soportes</p>
-            </div>
-            <div>
-                <p class="text-3xl font-bold text-slate-900">9.2/10</p>
-                <p class="text-sm text-gray-600">satisfacción clientes</p>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- Presentación -->
 <section class="relative max-w-7xl mx-auto px-4 -mt-10 lg:-mt-16">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
@@ -173,19 +131,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
                 <div class="space-y-3">
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-magnifying-glass-chart"></i></span>
-                        <p class="text-gray-800">Primero entendemos objetivos y quién usará la solución.</p>
+                        <p class="text-gray-800">Mapeamos objetivos, usuarios y métricas para no programar a ciegas.</p>
                     </div>
                     <div class="flex items-start gap-3">
-                        <span class="mt-1 text-blue-600"><i class="fas fa-laptop-code"></i></span>
-                        <p class="text-gray-800">Definimos la base técnica para que crezca y se mantenga segura.</p>
+                        <span class="mt-1 text-blue-600"><i class="fas fa-pen-ruler"></i></span>
+                        <p class="text-gray-800">Diseño gráfico (UX/UI) con flujos claros y pantallas que cualquier persona entiende.</p>
                     </div>
                     <div class="flex items-start gap-3">
-                        <span class="mt-1 text-blue-600"><i class="fas fa-people-group"></i></span>
-                        <p class="text-gray-800">UX/UI centrado en usuarios internos y clientes para acelerar adopción.</p>
+                        <span class="mt-1 text-blue-600"><i class="fas fa-server"></i></span>
+                        <p class="text-gray-800">Conexiones a servidores (APIs) y bases de datos para que todo hable entre sí.</p>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-headset"></i></span>
-                        <p class="text-gray-800">Seguimos contigo después de lanzar con monitoreo y mejoras planificadas.</p>
+                        <p class="text-gray-800">Soporte, monitoreo y mejoras continuas después de lanzar.</p>
                     </div>
                 </div>
             </div>

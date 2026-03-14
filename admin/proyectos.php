@@ -1,19 +1,63 @@
 <?php
-// admin/proyectos.php
 require_once '../includes/config.php';
+require_once '../includes/testimonial-helpers.php';
+require_once '../includes/admin-helpers.php';
 
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: index.php');
     exit;
 }
 
-// Procesar eliminación
-if (isset($_GET['delete'])) {
-    $id = (int)$_GET['delete'];
-    $conn->query("DELETE FROM proyectos WHERE id = $id");
-    header('Location: proyectos.php?msg=deleted');
-    exit;
+$pendingTestimonials = getPendingTestimonialsCount($conn);
+$csrfToken = admin_get_csrf_token();
+$statusMessage = $_GET['msg'] ?? '';
+$searchTerm = trim((string) ($_GET['q'] ?? ''));
+$page = max(1, (int) ($_GET['page'] ?? 1));
+$perPage = 10;
+$toast = admin_build_toast($statusMessage, [
+    'deleted' => ['message' => 'Proyecto eliminado correctamente.'],
+    'saved' => ['message' => 'Proyecto guardado correctamente.'],
+    'csrf' => ['type' => 'error', 'title' => 'Sesion no valida', 'message' => 'Recarga la pagina e intenta de nuevo.'],
+]);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!admin_validate_csrf($_POST['csrf_token'] ?? null)) {
+        header('Location: ' . admin_build_url('proyectos.php', ['q' => $searchTerm, 'page' => $page, 'msg' => 'csrf']));
+        exit;
+    }
+
+    $action = $_POST['action'] ?? '';
+    $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
+
+    if ($action === 'delete' && $id > 0) {
+        if ($stmt = $conn->prepare('DELETE FROM proyectos WHERE id = ?')) {
+            $stmt->bind_param('i', $id);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        admin_log_action($conn, 'delete', 'project', $id, 'Proyecto eliminado desde el listado');
+        header('Location: ' . admin_build_url('proyectos.php', ['q' => trim((string) ($_POST['q'] ?? '')), 'page' => (int) ($_POST['page'] ?? 1), 'msg' => 'deleted']));
+        exit;
+    }
 }
+
+$whereSql = '';
+if ($searchTerm !== '') {
+    $safeSearch = $conn->real_escape_string($searchTerm);
+    $whereSql = " WHERE titulo LIKE '%{$safeSearch}%' OR categoria LIKE '%{$safeSearch}%' OR cliente LIKE '%{$safeSearch}%'";
+}
+
+$totalProjects = 0;
+$totalResult = $conn->query('SELECT COUNT(*) AS total FROM proyectos' . $whereSql);
+if ($totalResult instanceof mysqli_result) {
+    $totalProjects = (int) ($totalResult->fetch_assoc()['total'] ?? 0);
+    $totalResult->free();
+}
+
+$pagination = admin_paginate($totalProjects, $perPage, $page);
+$projectsSql = 'SELECT * FROM proyectos' . $whereSql . ' ORDER BY orden ASC, id DESC LIMIT ' . $pagination['offset'] . ', ' . $pagination['per_page'];
+$proyectos = $conn->query($projectsSql);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -25,8 +69,7 @@ if (isset($_GET['delete'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body class="bg-gray-100">
-    <div class="flex h-screen">
-        <!-- Sidebar (igual que en dashboard.php) -->
+    <div class="flex min-h-screen">
         <div class="w-64 bg-white shadow-lg">
             <div class="p-4 border-b">
                 <h2 class="text-xl font-bold text-blue-600">MCE Admin</h2>
@@ -34,76 +77,158 @@ if (isset($_GET['delete'])) {
             <nav class="p-4">
                 <ul class="space-y-2">
                     <li><a href="dashboard.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
-                    <li><a href="proyectos.php" class="flex items-center space-x-2 p-2 bg-blue-50 text-blue-600 rounded"><i class="fas fa-folder"></i><span>Proyectos</span></a></li>
+                    <li><a href="proyectos.php" class="flex items-center space-x-2 rounded bg-blue-50 p-2 text-blue-600"><i class="fas fa-folder"></i><span>Proyectos</span></a></li>
                     <li><a href="servicios.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-cog"></i><span>Servicios</span></a></li>
+<<<<<<< HEAD
                     <li><a href="pagos.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-credit-card"></i><span>Pagos</span></a></li>
+=======
+                    <li>
+                        <a href="testimonios.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
+                            <i class="fas fa-comment"></i>
+                            <span>Testimonios</span>
+                            <?php if ($pendingTestimonials > 0): ?>
+                                <span class="ml-auto inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500 opacity-75"></span>
+                                        <span class="relative inline-flex h-2 w-2 rounded-full bg-amber-600"></span>
+                                    </span>
+                                    <?php echo $pendingTestimonials; ?>
+                                </span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+>>>>>>> 141fcaf2e9f4a0d685dfa3a3001ee01e53efc611
                     <li><a href="mensajes.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-envelope"></i><span>Mensajes</span></a></li>
+                    <li><a href="auditoria.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-clock-rotate-left"></i><span>Actividad</span></a></li>
+                    <li><a href="cambiar-password.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-lock"></i><span>Cambiar clave</span></a></li>
                     <li><a href="logout.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded text-red-600"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a></li>
                 </ul>
             </nav>
         </div>
-        
-        <!-- Contenido -->
+
         <div class="flex-1 overflow-y-auto">
             <div class="p-8">
-                <div class="flex justify-between items-center mb-8">
-                    <h1 class="text-3xl font-bold">Proyectos</h1>
-                    <a href="proyecto-editar.php" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                <?php admin_render_toast($toast); ?>
+                <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold">Proyectos</h1>
+                        <p class="mt-2 text-sm text-gray-600">Busca, edita o elimina proyectos del portafolio desde este listado.</p>
+                    </div>
+                    <a href="proyecto-editar.php" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
                         <i class="fas fa-plus mr-2"></i>Nuevo Proyecto
                     </a>
                 </div>
-                
-                <?php if (isset($_GET['msg'])): ?>
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                        <?php 
-                        if ($_GET['msg'] == 'deleted') echo 'Proyecto eliminado correctamente';
-                        if ($_GET['msg'] == 'saved') echo 'Proyecto guardado correctamente';
-                        ?>
+
+                <div class="mb-6 flex flex-col gap-4 rounded-2xl bg-white p-5 shadow lg:flex-row lg:items-center lg:justify-between">
+                    <form method="GET" class="flex w-full flex-col gap-3 md:flex-row md:items-center">
+                        <div class="relative w-full md:max-w-xl">
+                            <i class="fas fa-search pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input
+                                type="text"
+                                name="q"
+                                value="<?php echo admin_escape($searchTerm); ?>"
+                                placeholder="Buscar por titulo, categoria o cliente"
+                                class="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-11 pr-4 focus:border-blue-600 focus:bg-white focus:outline-none"
+                            >
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="submit" class="rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800">Buscar</button>
+                            <a href="proyectos.php" class="rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50">Limpiar</a>
+                        </div>
+                    </form>
+                    <div class="text-sm text-gray-500">
+                        <?php echo $totalProjects; ?> proyecto<?php echo $totalProjects === 1 ? '' : 's'; ?> encontrado<?php echo $totalProjects === 1 ? '' : 's'; ?>
+                    </div>
+                </div>
+
+                <div class="overflow-hidden rounded-lg bg-white shadow">
+                    <div class="overflow-x-auto">
+                        <table class="w-full min-w-[900px]">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Titulo</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Categoria</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Cliente</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Fecha</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Destacado</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if ($proyectos instanceof mysqli_result && $proyectos->num_rows > 0): ?>
+                                    <?php while ($p = $proyectos->fetch_assoc()): ?>
+                                        <tr class="border-t hover:bg-gray-50">
+                                            <td class="px-6 py-4 font-medium">
+                                                <a href="proyecto-editar.php?id=<?php echo (int) $p['id']; ?>" class="text-slate-900 hover:text-blue-600 hover:underline">
+                                                    <?php echo admin_escape($p['titulo']); ?>
+                                                </a>
+                                            </td>
+                                            <td class="px-6 py-4"><?php echo admin_escape($p['categoria'] ?? '-'); ?></td>
+                                            <td class="px-6 py-4"><?php echo admin_escape($p['cliente'] ?? '-'); ?></td>
+                                            <td class="px-6 py-4 text-sm text-gray-600">
+                                                <?php echo !empty($p['fecha_completado']) ? date('d/m/Y', strtotime($p['fecha_completado'])) : '-'; ?>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <?php if (!empty($p['destacado'])): ?>
+                                                    <span class="rounded bg-green-100 px-2 py-1 text-sm text-green-700">Si</span>
+                                                <?php else: ?>
+                                                    <span class="rounded bg-gray-100 px-2 py-1 text-sm text-gray-700">No</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <a href="proyecto-editar.php?id=<?php echo (int) $p['id']; ?>" class="inline-flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100">
+                                                        <i class="fas fa-edit"></i>
+                                                        <span>Editar</span>
+                                                    </a>
+                                                    <form method="POST" class="inline" onsubmit="return confirm('Eliminar este proyecto?');">
+                                                        <input type="hidden" name="csrf_token" value="<?php echo admin_escape($csrfToken); ?>">
+                                                        <input type="hidden" name="action" value="delete">
+                                                        <input type="hidden" name="id" value="<?php echo (int) $p['id']; ?>">
+                                                        <input type="hidden" name="q" value="<?php echo admin_escape($searchTerm); ?>">
+                                                        <input type="hidden" name="page" value="<?php echo (int) $pagination['page']; ?>">
+                                                        <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-100">
+                                                            <i class="fas fa-trash"></i>
+                                                            <span>Eliminar</span>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                <?php else: ?>
+                                    <tr class="border-t">
+                                        <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                                            <?php echo $searchTerm !== '' ? 'No encontramos proyectos con ese criterio de busqueda.' : 'Todavia no hay proyectos registrados.'; ?>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <?php if ($pagination['total_pages'] > 1): ?>
+                    <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
+                        <p class="text-sm text-gray-600">
+                            Pagina <?php echo $pagination['page']; ?> de <?php echo $pagination['total_pages']; ?>
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <?php if ($pagination['has_prev']): ?>
+                                <a href="<?php echo admin_build_url('proyectos.php', ['q' => $searchTerm, 'page' => $pagination['page'] - 1]); ?>" class="rounded-lg border px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Anterior</a>
+                            <?php endif; ?>
+                            <?php for ($pageNumber = 1; $pageNumber <= $pagination['total_pages']; $pageNumber++): ?>
+                                <?php if (abs($pageNumber - $pagination['page']) > 2 && $pageNumber !== 1 && $pageNumber !== $pagination['total_pages']) continue; ?>
+                                <a href="<?php echo admin_build_url('proyectos.php', ['q' => $searchTerm, 'page' => $pageNumber]); ?>" class="rounded-lg px-4 py-2 text-sm font-medium <?php echo $pageNumber === $pagination['page'] ? 'bg-blue-600 text-white' : 'border text-gray-700 hover:bg-gray-50'; ?>">
+                                    <?php echo $pageNumber; ?>
+                                </a>
+                            <?php endfor; ?>
+                            <?php if ($pagination['has_next']): ?>
+                                <a href="<?php echo admin_build_url('proyectos.php', ['q' => $searchTerm, 'page' => $pagination['page'] + 1]); ?>" class="rounded-lg border px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Siguiente</a>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 <?php endif; ?>
-                
-                <div class="bg-white rounded-lg shadow overflow-hidden">
-                    <table class="w-full">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left">Título</th>
-                                <th class="px-6 py-3 text-left">Categoría</th>
-                                <th class="px-6 py-3 text-left">Cliente</th>
-                                <th class="px-6 py-3 text-left">Destacado</th>
-                                <th class="px-6 py-3 text-left">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $proyectos = $conn->query("SELECT * FROM proyectos ORDER BY orden, id DESC");
-                            while ($p = $proyectos->fetch_assoc()):
-                            ?>
-                            <tr class="border-t hover:bg-gray-50">
-                                <td class="px-6 py-4"><?php echo $p['titulo']; ?></td>
-                                <td class="px-6 py-4"><?php echo $p['categoria']; ?></td>
-                                <td class="px-6 py-4"><?php echo $p['cliente'] ?? '-'; ?></td>
-                                <td class="px-6 py-4">
-                                    <?php if ($p['destacado']): ?>
-                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">Sí</span>
-                                    <?php else: ?>
-                                        <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">No</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <a href="proyecto-editar.php?id=<?php echo $p['id']; ?>" class="text-blue-600 hover:text-blue-800 mr-3">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="?delete=<?php echo $p['id']; ?>" 
-                                       class="text-red-600 hover:text-red-800"
-                                       onclick="return confirm('¿Eliminar este proyecto?')">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </div>
     </div>

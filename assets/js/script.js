@@ -1,19 +1,5 @@
 ﻿// assets/js/script.js
 
-// Loader para la pagina (fallback por si load se retrasa)
-const hideLoader = () => {
-    const loader = document.getElementById('loader');
-    if (loader) {
-        loader.style.opacity = '0';
-        setTimeout(() => {
-            loader.style.display = 'none';
-        }, 500);
-    }
-};
-
-window.addEventListener('load', hideLoader);
-document.addEventListener('DOMContentLoaded', () => setTimeout(hideLoader, 1500));
-
 document.querySelectorAll('[data-auto-dismiss]').forEach(alert => {
     const timeout = Number(alert.dataset.autoDismiss) || 5000;
     const queryFlag = alert.dataset.queryFlag;

@@ -2,11 +2,17 @@
 // admin/proyecto-editar.php
 require_once '../includes/config.php';
 require_once '../includes/project-helpers.php';
+require_once '../includes/testimonial-helpers.php';
+require_once '../includes/admin-helpers.php';
+require_once '../includes/image-helpers.php';
 
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: index.php');
     exit;
 }
+
+$pendingTestimonials = getPendingTestimonialsCount($conn);
+$csrfToken = admin_get_csrf_token();
 
 function canDeleteManagedProjectImage(?string $imagePath): bool
 {
@@ -37,6 +43,10 @@ if ($id > 0) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!admin_validate_csrf($_POST['csrf_token'] ?? null)) {
+        $error = 'La sesion de seguridad no es valida. Recarga la pagina e intenta de nuevo.';
+    }
+
     $titulo = sanitize($_POST['titulo'] ?? '');
     $descripcion = sanitize($_POST['descripcion'] ?? '');
     $categoria = sanitize($_POST['categoria'] ?? '');
@@ -51,37 +61,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $imagen = ltrim(str_replace('\\', '/', $imagen), '/');
     $currentImage = $project['imagen'] ?? null;
 
-    if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
-        $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        $filename = $_FILES['imagen']['name'];
-        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    if (!isset($error) && ($titulo === '' || $descripcion === '' || $categoria === '')) {
+        $error = 'Titulo, descripcion y categoria son obligatorios.';
+    }
 
-        if (!in_array($ext, $allowed, true)) {
-            $error = 'La imagen debe estar en formato JPG, PNG, GIF o WEBP.';
+    if (!isset($error) && isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+        $uploadResult = image_helper_store_upload(
+            $_FILES['imagen'],
+            '../assets/img/proyectos',
+            'proy_',
+            [
+                'max_width' => 1600,
+                'max_height' => 1200,
+                'jpeg_quality' => 82,
+                'webp_quality' => 80,
+                'png_compression' => 6,
+            ]
+        );
+
+        if (empty($uploadResult['ok'])) {
+            $error = $uploadResult['error'] ?? 'No se pudo subir la imagen del proyecto.';
         } else {
-            $uploadDir = '../assets/img/proyectos';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
+            if (canDeleteManagedProjectImage($currentImage) && file_exists('../' . $currentImage)) {
+                unlink('../' . $currentImage);
             }
-
-            $newFilename = uniqid('proy_', true) . '.' . $ext;
-            $uploadPath = $uploadDir . '/' . $newFilename;
-
-            if (!move_uploaded_file($_FILES['imagen']['tmp_name'], $uploadPath)) {
-                $error = 'No se pudo subir la imagen del proyecto.';
-            } else {
-                if (canDeleteManagedProjectImage($currentImage) && file_exists('../' . $currentImage)) {
-                    unlink('../' . $currentImage);
-                }
-                $imagen = 'assets/img/proyectos/' . $newFilename;
-            }
+            $imagen = 'assets/img/proyectos/' . $uploadResult['filename'];
         }
     }
 
     if (!isset($error)) {
-        if ($titulo === '' || $descripcion === '' || $categoria === '') {
-            $error = 'Titulo, descripcion y categoria son obligatorios.';
-        } elseif ($id > 0) {
+        if ($id > 0) {
             $stmt = $conn->prepare('UPDATE proyectos SET titulo = ?, descripcion = ?, imagen = ?, categoria = ?, url_demo = ?, url_repo = ?, cliente = ?, fecha_completado = ?, destacado = ?, orden = ? WHERE id = ?');
             $stmt->bind_param('ssssssssiii', $titulo, $descripcion, $imagen, $categoria, $url_demo, $url_repo, $cliente, $fecha_completado, $destacado, $orden, $id);
         } else {
@@ -91,6 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!isset($error) && isset($stmt) && $stmt->execute()) {
+        $savedProjectId = $id > 0 ? $id : $stmt->insert_id;
+        admin_log_action($conn, $id > 0 ? 'update' : 'create', 'project', (int) $savedProjectId, 'Proyecto guardado desde el formulario');
         header('Location: proyectos.php?msg=saved');
         exit;
     }
@@ -135,8 +146,28 @@ $currentImageUrl = !empty($project['imagen']) ? getProjectImageUrl($project) : n
                     <li><a href="dashboard.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
                     <li><a href="proyectos.php" class="flex items-center space-x-2 p-2 bg-blue-50 text-blue-600 rounded"><i class="fas fa-folder"></i><span>Proyectos</span></a></li>
                     <li><a href="servicios.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-cog"></i><span>Servicios</span></a></li>
+<<<<<<< HEAD
                     <li><a href="pagos.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-credit-card"></i><span>Pagos</span></a></li>
+=======
+                    <li>
+                        <a href="testimonios.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
+                            <i class="fas fa-comment"></i>
+                            <span>Testimonios</span>
+                            <?php if ($pendingTestimonials > 0): ?>
+                                <span class="ml-auto inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500 opacity-75"></span>
+                                        <span class="relative inline-flex h-2 w-2 rounded-full bg-amber-600"></span>
+                                    </span>
+                                    <?php echo $pendingTestimonials; ?>
+                                </span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+>>>>>>> 141fcaf2e9f4a0d685dfa3a3001ee01e53efc611
                     <li><a href="mensajes.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-envelope"></i><span>Mensajes</span></a></li>
+                    <li><a href="auditoria.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-clock-rotate-left"></i><span>Actividad</span></a></li>
+                    <li><a href="cambiar-password.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-lock"></i><span>Cambiar clave</span></a></li>
                     <li><a href="logout.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded text-red-600"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a></li>
                 </ul>
             </nav>
@@ -153,6 +184,7 @@ $currentImageUrl = !empty($project['imagen']) ? getProjectImageUrl($project) : n
                 <?php endif; ?>
 
                 <form method="POST" enctype="multipart/form-data" class="bg-white p-8 rounded-lg shadow max-w-4xl">
+                    <input type="hidden" name="csrf_token" value="<?php echo admin_escape($csrfToken); ?>">
                     <div class="grid gap-6">
                         <div class="grid md:grid-cols-2 gap-6">
                             <div>
@@ -251,8 +283,21 @@ $currentImageUrl = !empty($project['imagen']) ? getProjectImageUrl($project) : n
 
                             <div>
                                 <label class="block text-gray-700 mb-2">Subir nueva imagen</label>
-                                <input type="file" name="imagen" accept="image/*" class="w-full px-4 py-2 border rounded-lg">
-                                <p class="text-sm text-gray-500 mt-1">Si subes una imagen, reemplaza la ruta actual.</p>
+                                <div id="project-image-dropzone" class="rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50/60 p-6 transition hover:border-blue-400 hover:bg-blue-50" tabindex="0" role="button" aria-label="Arrastrar o seleccionar imagen del proyecto">
+                                    <div class="flex flex-col items-center justify-center text-center">
+                                        <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-blue-600 shadow-sm">
+                                            <i class="fas fa-cloud-arrow-up text-2xl"></i>
+                                        </span>
+                                        <p class="mt-4 text-sm font-semibold text-slate-900">Arrastra una imagen aqui o haz clic para seleccionarla</p>
+                                        <p id="project-image-dropzone-label" class="mt-2 text-sm text-blue-700">JPG, PNG, GIF o WEBP. Se optimiza automaticamente al guardar.</p>
+                                    </div>
+                                    <input id="project-image-input" type="file" name="imagen" accept="image/*" class="sr-only">
+                                </div>
+                                <div id="project-image-preview-wrapper" class="mt-4 hidden">
+                                    <p class="mb-2 text-sm font-semibold text-gray-700">Vista previa nueva</p>
+                                    <img id="project-image-preview" src="" alt="Vista previa nueva del proyecto" class="h-52 w-full max-w-md rounded-lg border border-blue-200 object-cover shadow-sm">
+                                    <p id="project-image-preview-name" class="mt-2 text-sm text-blue-700"></p>
+                                </div>
                             </div>
                         </div>
 
@@ -298,5 +343,97 @@ $currentImageUrl = !empty($project['imagen']) ? getProjectImageUrl($project) : n
             </div>
         </div>
     </div>
+    <script>
+        (function () {
+            var input = document.getElementById('project-image-input');
+            var dropzone = document.getElementById('project-image-dropzone');
+            var dropzoneLabel = document.getElementById('project-image-dropzone-label');
+            var wrapper = document.getElementById('project-image-preview-wrapper');
+            var preview = document.getElementById('project-image-preview');
+            var fileName = document.getElementById('project-image-preview-name');
+            var currentObjectUrl = null;
+            var defaultLabel = 'JPG, PNG, GIF o WEBP. Se optimiza automaticamente al guardar.';
+
+            if (!input || !dropzone || !dropzoneLabel || !wrapper || !preview || !fileName) {
+                return;
+            }
+
+            function setPreview(file) {
+                if (!file) {
+                    wrapper.classList.add('hidden');
+                    preview.src = '';
+                    fileName.textContent = '';
+                    dropzoneLabel.textContent = defaultLabel;
+                    return;
+                }
+
+                if (currentObjectUrl) {
+                    URL.revokeObjectURL(currentObjectUrl);
+                }
+
+                currentObjectUrl = URL.createObjectURL(file);
+                preview.src = currentObjectUrl;
+                fileName.textContent = file.name;
+                dropzoneLabel.textContent = 'Archivo seleccionado: ' + file.name;
+                wrapper.classList.remove('hidden');
+            }
+
+            function activateDropzone(active) {
+                dropzone.classList.toggle('border-blue-500', active);
+                dropzone.classList.toggle('bg-blue-100', active);
+                dropzone.classList.toggle('shadow-lg', active);
+            }
+
+            dropzone.addEventListener('click', function () {
+                input.click();
+            });
+
+            dropzone.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    input.click();
+                }
+            });
+
+            ['dragenter', 'dragover'].forEach(function (eventName) {
+                dropzone.addEventListener(eventName, function (event) {
+                    event.preventDefault();
+                    activateDropzone(true);
+                });
+            });
+
+            ['dragleave', 'dragend', 'drop'].forEach(function (eventName) {
+                dropzone.addEventListener(eventName, function (event) {
+                    event.preventDefault();
+                    activateDropzone(false);
+                });
+            });
+
+            dropzone.addEventListener('drop', function (event) {
+                var files = event.dataTransfer && event.dataTransfer.files ? event.dataTransfer.files : null;
+                if (!files || !files.length) {
+                    return;
+                }
+
+                if (typeof DataTransfer !== 'undefined') {
+                    var dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(files[0]);
+                    input.files = dataTransfer.files;
+                } else {
+                    try {
+                        input.files = files;
+                    } catch (error) {
+                    }
+                }
+
+                setPreview(files[0]);
+            });
+
+            input.addEventListener('change', function () {
+                var file = input.files && input.files[0] ? input.files[0] : null;
+                setPreview(file);
+            });
+        }());
+    </script>
 </body>
 </html>

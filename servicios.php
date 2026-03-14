@@ -2,7 +2,7 @@
 <?php include 'includes/header.php'; ?>
 
 <!-- Hero Servicios -->
-<section class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white">
+<section class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white mce-rounded-hero">
     <div class="absolute inset-0 bg-grid-white/10"></div>
     <div class="absolute -top-24 -left-16 w-72 h-72 bg-blue-500/30 blur-3xl rounded-full"></div>
     <div class="absolute -bottom-24 -right-10 w-80 h-80 bg-purple-500/25 blur-3xl rounded-full"></div>
@@ -24,15 +24,15 @@
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="text-yellow-300 mt-1"><i class="fas fa-check-circle"></i></span>
-                        <p class="text-blue-50">Sitios y tiendas pensadas para vender y posicionar tu marca.</p>
+                        <p class="text-blue-50">Sitios, tiendas y landing pages pensadas para vender y posicionar tu marca.</p>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="text-yellow-300 mt-1"><i class="fas fa-check-circle"></i></span>
-                        <p class="text-blue-50">Automatización de flujos, integraciones API y reducción de tareas manuales.</p>
+                        <p class="text-blue-50">Automatización de procesos (bots) e integraciones con servidores (APIs) para reducir tareas manuales.</p>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="text-yellow-300 mt-1"><i class="fas fa-check-circle"></i></span>
-                        <p class="text-blue-50">Software personalizado con monitoreo y control de accesos.</p>
+                        <p class="text-blue-50">Software personalizado con monitoreo, seguridad y control de accesos por rol.</p>
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
@@ -154,7 +154,7 @@
 
 <!-- CTA final -->
 <section class="max-w-7xl mx-auto px-4 pb-16">
-    <div class="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-800 text-white rounded-2xl p-10 shadow-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+    <div class="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-800 text-white rounded-2xl mce-rounded-panel p-10 shadow-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div>
             <p class="text-sm font-semibold text-blue-100 uppercase tracking-wide">Siguiente paso</p>
             <h3 class="text-2xl font-bold">Cuéntanos qué quieres automatizar o lanzar</h3>
