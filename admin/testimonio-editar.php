@@ -84,9 +84,21 @@ $projectOptions = fetchProjectDropdownOptions($conn);
 </head>
 <body class="bg-gray-100">
     <div class="flex h-screen">
-        <!-- Sidebar (igual) -->
         <div class="w-64 bg-white shadow-lg">
-            <!-- ... mismo sidebar ... -->
+            <div class="p-4 border-b">
+                <h2 class="text-xl font-bold text-blue-600">MCE Admin</h2>
+            </div>
+            <nav class="p-4">
+                <ul class="space-y-2">
+                    <li><a href="dashboard.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                    <li><a href="proyectos.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-folder"></i><span>Proyectos</span></a></li>
+                    <li><a href="servicios.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-cog"></i><span>Servicios</span></a></li>
+                    <li><a href="pagos.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-credit-card"></i><span>Pagos</span></a></li>
+                    <li><a href="testimonios.php" class="flex items-center space-x-2 p-2 bg-blue-50 text-blue-600 rounded"><i class="fas fa-comment"></i><span>Testimonios</span></a></li>
+                    <li><a href="mensajes.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-envelope"></i><span>Mensajes</span></a></li>
+                    <li><a href="logout.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded text-red-600"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a></li>
+                </ul>
+            </nav>
         </div>
         
         <div class="flex-1 overflow-y-auto">
