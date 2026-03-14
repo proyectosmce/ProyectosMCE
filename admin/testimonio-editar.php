@@ -147,8 +147,19 @@ $isApproved = isset($testimonio['aprobado']) ? (int) $testimonio['aprobado'] ===
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body class="bg-gray-100">
-    <div class="flex h-screen">
-        <div class="w-64 bg-white shadow-lg">
+    <!-- Barra móvil -->
+    <header class="md:hidden sticky top-0 z-30 flex items-center justify-between bg-white px-4 py-3 shadow">
+        <div class="flex items-center gap-2">
+            <button id="toggleSidebar" class="p-2 rounded border border-gray-200 hover:bg-gray-100 active:scale-95 transition">
+                <i class="fas fa-bars"></i>
+            </button>
+            <span class="font-semibold text-blue-600">MCE Admin</span>
+        </div>
+        <a href="logout.php" class="text-red-600 text-sm flex items-center gap-1"><i class="fas fa-sign-out-alt"></i>Salir</a>
+    </header>
+
+    <div class="flex min-h-screen">
+        <div id="sidebar" class="fixed md:static inset-y-0 left-0 w-64 bg-white shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-200 z-40">
             <div class="p-4 border-b">
                 <h2 class="text-xl font-bold text-blue-600">MCE Admin</h2>
             </div>
@@ -158,10 +169,8 @@ $isApproved = isset($testimonio['aprobado']) ? (int) $testimonio['aprobado'] ===
                     <li><a href="proyectos.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-folder"></i><span>Proyectos</span></a></li>
                     <li><a href="servicios.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-cog"></i><span>Servicios</span></a></li>
                     <li><a href="pagos.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-credit-card"></i><span>Pagos</span></a></li>
-                    <li><a href="testimonios.php" class="flex items-center space-x-2 p-2 bg-blue-50 text-blue-600 rounded"><i class="fas fa-comment"></i><span>Testimonios</span></a></li>
-                    <li><a href="mensajes.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-envelope"></i><span>Mensajes</span></a></li>
                     <li>
-                        <a href="testimonios.php" class="flex items-center space-x-2 rounded bg-blue-50 p-2 text-blue-600">
+                        <a href="testimonios.php" class="flex items-center space-x-2 p-2 bg-blue-50 text-blue-600 rounded">
                             <i class="fas fa-comment"></i>
                             <span>Testimonios</span>
                             <?php if ($pendingTestimonials > 0): ?>
@@ -178,11 +187,11 @@ $isApproved = isset($testimonio['aprobado']) ? (int) $testimonio['aprobado'] ===
                     <li><a href="mensajes.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-envelope"></i><span>Mensajes</span></a></li>
                     <li><a href="auditoria.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-clock-rotate-left"></i><span>Actividad</span></a></li>
                     <li><a href="cambiar-password.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-lock"></i><span>Cambiar clave</span></a></li>
- 141fcaf2e9f4a0d685dfa3a3001ee01e53efc611
                     <li><a href="logout.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded text-red-600"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a></li>
                 </ul>
             </nav>
         </div>
+        <div id="sidebarOverlay" class="fixed inset-0 bg-black/30 z-30 hidden md:hidden"></div>
 
         <div class="flex-1 overflow-y-auto">
             <div class="p-8">
@@ -404,4 +413,13 @@ $isApproved = isset($testimonio['aprobado']) ? (int) $testimonio['aprobado'] ===
         }());
     </script>
 </body>
+<script>
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+const toggleBtn = document.getElementById('toggleSidebar');
+function closeSidebar(){ sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
+function openSidebar(){ sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); }
+if (toggleBtn){ toggleBtn.addEventListener('click', ()=> sidebar.classList.contains('-translate-x-full') ? openSidebar() : closeSidebar()); }
+if (overlay){ overlay.addEventListener('click', closeSidebar); }
+</script>
 </html>
