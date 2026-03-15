@@ -97,7 +97,7 @@ if ($flashMessage === 'updated') {
             <div class="p-4 border-b">
                 <div class="relative h-10 w-10 shrink-0">
     <span class="logo-ring"></span>
-    <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain rounded-full">
+    <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain">
 </div>
             </div>
             <nav class="p-4">
@@ -220,6 +220,7 @@ if ($flashMessage === 'updated') {
     </div>
 </body>
 </html>
+
 
 
 

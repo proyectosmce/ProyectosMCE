@@ -142,7 +142,7 @@ $currentImageUrl = !empty($project['imagen']) ? getProjectImageUrl($project) : n
         <div class="flex items-center gap-2">
             <div class="relative h-10 w-10 shrink-0">
     <span class="logo-ring"></span>
-    <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain rounded-full">
+    <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain">
 </div>
             <button id="toggleSidebar" class="p-2 rounded border border-gray-200 hover:bg-gray-100 active:scale-95 transition">
                 <i class="fas fa-bars"></i>
@@ -156,7 +156,7 @@ $currentImageUrl = !empty($project['imagen']) ? getProjectImageUrl($project) : n
             <div class="p-4 border-b">
                 <div class="relative h-10 w-10 shrink-0">
     <span class="logo-ring"></span>
-    <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain rounded-full">
+    <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain">
 </div>
             </div>
             <nav class="p-4">
@@ -463,6 +463,7 @@ if (toggleBtn){ toggleBtn.addEventListener('click', ()=> sidebar.classList.conta
 if (overlay){ overlay.addEventListener('click', closeSidebar); }
 </script>
 </html>
+
 
 
 
