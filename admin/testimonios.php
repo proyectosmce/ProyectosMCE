@@ -185,8 +185,8 @@ $totalCount = $pendingCount + $publishedCount;
     <!-- Barra móvil -->
     <header class="md:hidden sticky top-0 z-30 flex items-center justify-between bg-white px-4 py-3 shadow">
         <div class="flex items-center gap-2">
-            <button id="toggleSidebar" class="p-2 rounded border border-gray-200 hover:bg-gray-100 active:scale-95 transition">
-                <i class="fas fa-bars"></i>
+            <button id="toggleSidebar" class="p-2 rounded border border-blue-500/60 bg-gradient-to-br from-blue-500 via-blue-400 to-cyan-300 text-white shadow-[0_0_12px_rgba(59,130,246,0.65)] hover:shadow-[0_0_16px_rgba(56,189,248,0.75)] active:scale-95 transition">
+                <i class="fas fa-bars text-white"></i>
             </button>
             <div class="relative h-10 w-10 shrink-0">
     <span class="logo-ring"></span>
@@ -482,6 +482,7 @@ if (toggleBtn){ toggleBtn.addEventListener('click', ()=> sidebar.classList.conta
 if (overlay){ overlay.addEventListener('click', closeSidebar); }
 </script>
 </html>
+
 
 
 
