@@ -81,7 +81,7 @@ $proyectos = $conn->query($projectsSql);
                 <i class="fas fa-bars text-white"></i>
             </button>
         </div>
-        <a href="logout.php" class="text-red-600 text-sm flex items-center gap-1"><i class="fas fa-sign-out-alt"></i>Salir</a>
+        <a href="logout.php" onclick="return confirm('¿Cerrar sesión?' );" class="text-red-600 text-sm flex items-center gap-1"><i class="fas fa-sign-out-alt"></i>Salir</a>
     </header>
 
     <div class="flex min-h-screen">
@@ -259,6 +259,7 @@ if (toggleBtn){ toggleBtn.addEventListener('click', ()=>{ sidebar.classList.cont
 if (overlay){ overlay.addEventListener('click', closeSidebar); }
 </script>
 </html>
+
 
 
 

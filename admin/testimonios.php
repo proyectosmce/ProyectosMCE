@@ -193,7 +193,7 @@ $totalCount = $pendingCount + $publishedCount;
     <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain">
 </div>
         </div>
-        <a href="logout.php" class="text-red-600 text-sm flex items-center gap-1"><i class="fas fa-sign-out-alt"></i>Salir</a>
+        <a href="logout.php" onclick="return confirm('¿Cerrar sesión?' );" class="text-red-600 text-sm flex items-center gap-1"><i class="fas fa-sign-out-alt"></i>Salir</a>
     </header>
 
     <div class="flex min-h-screen">
@@ -482,6 +482,7 @@ if (toggleBtn){ toggleBtn.addEventListener('click', ()=> sidebar.classList.conta
 if (overlay){ overlay.addEventListener('click', closeSidebar); }
 </script>
 </html>
+
 
 
 
