@@ -1,0 +1,13 @@
+# Solo archivos estáticos; bloquea ejecución de scripts
+<FilesMatch "\.(php|phtml|php[0-9]?|phar|cgi|pl|py|sh)$">
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+</FilesMatch>
+
+RemoveHandler .php .phtml .php[0-9] .phar
+RemoveType .php .phtml .php[0-9] .phar

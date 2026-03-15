@@ -1,0 +1,14 @@
+# Deshabilita ejecución de PHP o scripts en la carpeta de assets
+<FilesMatch "\.(php|phtml|php[0-9]?|phar|cgi|pl|py|sh)$">
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+</FilesMatch>
+
+# Evita que el servidor trate los uploads como ejecutables
+RemoveHandler .php .phtml .php[0-9] .phar
+RemoveType .php .phtml .php[0-9] .phar

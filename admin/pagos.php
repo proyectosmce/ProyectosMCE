@@ -1,6 +1,7 @@
 <?php
 // admin/pagos.php
 require_once '../includes/config.php';
+require_once '../includes/admin-helpers.php';
 
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: index.php');
@@ -75,8 +76,15 @@ $hasta = (isset($_GET['hasta']) && valid_date_param($_GET['hasta'])) ? $_GET['ha
 // Asegura tablas antes de cualquier consulta.
 ensureFinanceSchema($conn);
 
+$csrfToken = admin_get_csrf_token();
+
 // Crear / actualizar registros
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    if (!admin_validate_csrf($_POST['csrf_token'] ?? null)) {
+        header("Location: pagos.php?msg=csrf&desde=$desde&hasta=$hasta");
+        exit;
+    }
+
     $action = $_POST['action'];
 
     if ($action === 'crear_pago') {
@@ -177,66 +185,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         header("Location: pagos.php?msg=venta_creada&desde=$desde&hasta=$hasta");
         exit;
     }
-}
 
-// Acciones sobre pagos (confirmar, reembolsar, eliminar)
-if (isset($_GET['accion'], $_GET['pago_id'])) {
-    $pagoId = (int) $_GET['pago_id'];
-    $accion = $_GET['accion'];
+    if ($action === 'accion_pago') {
+        $pagoId = (int) ($_POST['pago_id'] ?? 0);
+        $accion = sanitize($_POST['accion'] ?? '');
 
-    if ($accion === 'eliminar') {
-        $stmt = $conn->prepare("DELETE FROM pagos WHERE id = ?");
-        $stmt->bind_param("i", $pagoId);
-        $stmt->execute();
-        $stmt->close();
-        header("Location: pagos.php?msg=pago_eliminado&desde=$desde&hasta=$hasta");
+        if ($pagoId > 0) {
+            if ($accion === 'eliminar') {
+                if ($stmt = $conn->prepare("DELETE FROM pagos WHERE id = ?")) {
+                    $stmt->bind_param("i", $pagoId);
+                    $stmt->execute();
+                    $stmt->close();
+                }
+                header("Location: pagos.php?msg=pago_eliminado&desde=$desde&hasta=$hasta");
+                exit;
+            }
+
+            $estadoMap = [
+                'confirmar'   => 'confirmado',
+                'en_revision' => 'en_revision',
+                'reembolsar'  => 'reembolsado',
+                'pendiente'   => 'pendiente',
+            ];
+
+            if (isset($estadoMap[$accion])) {
+                $nuevoEstado = $estadoMap[$accion];
+                $fechaConfirm = $nuevoEstado === 'confirmado' ? date('Y-m-d H:i:s') : null;
+
+                if ($stmt = $conn->prepare("UPDATE pagos SET estado = ?, fecha_confirmacion = ? WHERE id = ?")) {
+                    $stmt->bind_param("ssi", $nuevoEstado, $fechaConfirm, $pagoId);
+                    $stmt->execute();
+                    $stmt->close();
+                }
+                header("Location: pagos.php?msg=pago_actualizado&desde=$desde&hasta=$hasta");
+                exit;
+            }
+        }
+    }
+
+    if ($action === 'eliminar_gasto') {
+        $id = (int) ($_POST['gasto_id'] ?? 0);
+        if ($id > 0 && $stmt = $conn->prepare("DELETE FROM gastos WHERE id = ?")) {
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $stmt->close();
+        }
+        header("Location: pagos.php?msg=gasto_eliminado&desde=$desde&hasta=$hasta");
         exit;
     }
 
-    $nuevoEstado = null;
-    $fechaConfirm = null;
-
-    if ($accion === 'confirmar') {
-        $nuevoEstado = 'confirmado';
-        $fechaConfirm = date('Y-m-d H:i:s');
-    } elseif ($accion === 'reembolsar') {
-        $nuevoEstado = 'reembolsado';
-    } elseif ($accion === 'pendiente') {
-        $nuevoEstado = 'pendiente';
-    } elseif ($accion === 'en_revision') {
-        $nuevoEstado = 'en_revision';
-    }
-
-    if ($nuevoEstado !== null) {
-        $stmt = $conn->prepare("UPDATE pagos SET estado = ?, fecha_confirmacion = ? WHERE id = ?");
-        $stmt->bind_param("ssi", $nuevoEstado, $fechaConfirm, $pagoId);
-        $stmt->execute();
-        $stmt->close();
-        header("Location: pagos.php?msg=pago_actualizado&desde=$desde&hasta=$hasta");
+    if ($action === 'eliminar_venta') {
+        $id = (int) ($_POST['venta_id'] ?? 0);
+        if ($id > 0 && $stmt = $conn->prepare("DELETE FROM ventas WHERE id = ?")) {
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $stmt->close();
+        }
+        header("Location: pagos.php?msg=venta_eliminada&desde=$desde&hasta=$hasta");
         exit;
     }
-}
-
-// Borrar gasto
-if (isset($_GET['delete_gasto'])) {
-    $id = (int) $_GET['delete_gasto'];
-    $stmt = $conn->prepare("DELETE FROM gastos WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $stmt->close();
-    header("Location: pagos.php?msg=gasto_eliminado&desde=$desde&hasta=$hasta");
-    exit;
-}
-
-// Borrar venta
-if (isset($_GET['delete_venta'])) {
-    $id = (int) $_GET['delete_venta'];
-    $stmt = $conn->prepare("DELETE FROM ventas WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $stmt->close();
-    header("Location: pagos.php?msg=venta_eliminada&desde=$desde&hasta=$hasta");
-    exit;
 }
 
 // Estadísticas
@@ -354,7 +361,8 @@ $pagosConfirmados = $conn->query("SELECT id, cliente, proyecto, monto, moneda FR
                             'pago_eliminado' => 'Pago eliminado.',
                             'gasto_eliminado' => 'Gasto eliminado.',
                             'venta_eliminada' => 'Venta eliminada.',
-                            'pago_actualizado' => 'Estado de pago actualizado.'
+                            'pago_actualizado' => 'Estado de pago actualizado.',
+                            'csrf' => 'La sesión de seguridad expiró. Vuelve a intentar.'
                         ];
                         $key = $_GET['msg'];
                         echo $msgs[$key] ?? 'Acción realizada.';
@@ -392,6 +400,7 @@ $pagosConfirmados = $conn->query("SELECT id, cliente, proyecto, monto, moneda FR
                         <h3 class="text-lg font-semibold mb-3 flex items-center gap-2"><i class="fas fa-plus-circle text-blue-600"></i>Nuevo pago/cobro</h3>
                         <form method="post" class="space-y-3">
                             <input type="hidden" name="action" value="crear_pago">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
                             <div>
                                 <label class="text-sm text-gray-600">Cliente *</label>
                                 <input type="text" name="cliente" required class="w-full border rounded px-3 py-2">
@@ -461,6 +470,7 @@ $pagosConfirmados = $conn->query("SELECT id, cliente, proyecto, monto, moneda FR
                         <h3 class="text-lg font-semibold mb-3 flex items-center gap-2"><i class="fas fa-receipt text-amber-600"></i>Registrar gasto</h3>
                         <form method="post" class="space-y-3">
                             <input type="hidden" name="action" value="crear_gasto">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
                             <div>
                                 <label class="text-sm text-gray-600">Categoría</label>
                                 <select name="categoria" class="w-full border rounded px-3 py-2">
@@ -538,6 +548,7 @@ $pagosConfirmados = $conn->query("SELECT id, cliente, proyecto, monto, moneda FR
                         <h3 class="text-lg font-semibold mb-3 flex items-center gap-2"><i class="fas fa-box-open text-green-600"></i>Registrar proyecto vendido</h3>
                         <form method="post" class="space-y-3">
                             <input type="hidden" name="action" value="crear_venta">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
                             <div>
                                 <label class="text-sm text-gray-600">Proyecto *</label>
                                 <input type="text" name="proyecto" required class="w-full border rounded px-3 py-2">
@@ -629,10 +640,34 @@ $pagosConfirmados = $conn->query("SELECT id, cliente, proyecto, monto, moneda FR
                                             </td>
                                             <td class="px-3 py-2"><?php echo date('d/m/Y', strtotime($p['fecha_pago'])); ?></td>
                                             <td class="px-3 py-2 space-x-2">
-                                                <a class="text-green-600" href="?accion=confirmar&pago_id=<?php echo $p['id']; ?>&desde=<?php echo $desde; ?>&hasta=<?php echo $hasta; ?>" title="Confirmar"><i class="fas fa-check"></i></a>
-                                                <a class="text-yellow-600" href="?accion=en_revision&pago_id=<?php echo $p['id']; ?>&desde=<?php echo $desde; ?>&hasta=<?php echo $hasta; ?>" title="En revisión"><i class="fas fa-eye"></i></a>
-                                                <a class="text-red-600" href="?accion=reembolsar&pago_id=<?php echo $p['id']; ?>&desde=<?php echo $desde; ?>&hasta=<?php echo $hasta; ?>" title="Reembolsar"><i class="fas fa-undo"></i></a>
-                                                <a class="text-gray-500" href="?accion=eliminar&pago_id=<?php echo $p['id']; ?>&desde=<?php echo $desde; ?>&hasta=<?php echo $hasta; ?>" onclick="return confirm('¿Eliminar este pago?')" title="Eliminar"><i class="fas fa-trash"></i></a>
+                                                <form method="post" style="display:inline">
+                                                    <input type="hidden" name="action" value="accion_pago">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
+                                                    <input type="hidden" name="pago_id" value="<?php echo $p['id']; ?>">
+                                                    <input type="hidden" name="accion" value="confirmar">
+                                                    <button class="text-green-600" title="Confirmar" type="submit"><i class="fas fa-check"></i></button>
+                                                </form>
+                                                <form method="post" style="display:inline">
+                                                    <input type="hidden" name="action" value="accion_pago">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
+                                                    <input type="hidden" name="pago_id" value="<?php echo $p['id']; ?>">
+                                                    <input type="hidden" name="accion" value="en_revision">
+                                                    <button class="text-yellow-600" title="En revisión" type="submit"><i class="fas fa-eye"></i></button>
+                                                </form>
+                                                <form method="post" style="display:inline">
+                                                    <input type="hidden" name="action" value="accion_pago">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
+                                                    <input type="hidden" name="pago_id" value="<?php echo $p['id']; ?>">
+                                                    <input type="hidden" name="accion" value="reembolsar">
+                                                    <button class="text-red-600" title="Reembolsar" type="submit"><i class="fas fa-undo"></i></button>
+                                                </form>
+                                                <form method="post" style="display:inline" onsubmit="return confirm('¿Eliminar este pago?');">
+                                                    <input type="hidden" name="action" value="accion_pago">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
+                                                    <input type="hidden" name="pago_id" value="<?php echo $p['id']; ?>">
+                                                    <input type="hidden" name="accion" value="eliminar">
+                                                    <button class="text-gray-500" title="Eliminar" type="submit"><i class="fas fa-trash"></i></button>
+                                                </form>
                                             </td>
                                         </tr>
                                     <?php endwhile; ?>
@@ -668,7 +703,12 @@ $pagosConfirmados = $conn->query("SELECT id, cliente, proyecto, monto, moneda FR
                                                 <?php if (!empty($g['comprobante'])): ?>
                                                     <a class="text-blue-600" href="<?php echo $g['comprobante']; ?>" target="_blank" title="Ver comprobante"><i class="fas fa-link"></i></a>
                                                 <?php endif; ?>
-                                                <a class="text-gray-500" href="?delete_gasto=<?php echo $g['id']; ?>&desde=<?php echo $desde; ?>&hasta=<?php echo $hasta; ?>" onclick="return confirm('¿Eliminar este gasto?')" title="Eliminar"><i class="fas fa-trash"></i></a>
+                                                <form method="post" style="display:inline" onsubmit="return confirm('¿Eliminar este gasto?');">
+                                                    <input type="hidden" name="action" value="eliminar_gasto">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
+                                                    <input type="hidden" name="gasto_id" value="<?php echo $g['id']; ?>">
+                                                    <button class="text-gray-500" title="Eliminar" type="submit"><i class="fas fa-trash"></i></button>
+                                                </form>
                                             </td>
                                         </tr>
                                     <?php endwhile; ?>
@@ -721,7 +761,12 @@ $pagosConfirmados = $conn->query("SELECT id, cliente, proyecto, monto, moneda FR
                                         </td>
                                         <td class="px-3 py-2"><?php echo date('d/m/Y', strtotime($v['fecha_venta'])); ?></td>
                                         <td class="px-3 py-2 space-x-2">
-                                            <a class="text-gray-500" href="?delete_venta=<?php echo $v['id']; ?>&desde=<?php echo $desde; ?>&hasta=<?php echo $hasta; ?>" onclick="return confirm('¿Eliminar esta venta?')" title="Eliminar"><i class="fas fa-trash"></i></a>
+                                            <form method="post" style="display:inline" onsubmit="return confirm('¿Eliminar esta venta?');">
+                                                <input type="hidden" name="action" value="eliminar_venta">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
+                                                <input type="hidden" name="venta_id" value="<?php echo $v['id']; ?>">
+                                                <button class="text-gray-500" title="Eliminar" type="submit"><i class="fas fa-trash"></i></button>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>
