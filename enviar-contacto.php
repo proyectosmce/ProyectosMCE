@@ -28,18 +28,26 @@ if (stripos($smtpHost, 'gmail.com') !== false) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $formContextRaw = strtolower(trim((string) ($_POST['form_context'] ?? 'contacto')));
+    $formContext = $formContextRaw === 'agenda' ? 'agenda' : 'contacto';
+    $allowedAnchors = ['form-feedback', 'contacto-form', 'agenda-llamada'];
+    $redirectAnchorInput = trim((string) ($_POST['redirect_anchor'] ?? ''));
+    $redirectAnchor = in_array($redirectAnchorInput, $allowedAnchors, true) ? $redirectAnchorInput : 'form-feedback';
+    $redirectHash = '#' . $redirectAnchor;
+    $isAgendaForm = $formContext === 'agenda';
+
     if (!form_guard_honeypot_is_clear($_POST['company_website'] ?? '')) {
-        redirect('contacto.php?error=6#contacto-form');
+        redirect('contacto.php?error=6' . $redirectHash);
     }
 
     $guardCheck = form_guard_verify('contacto', $_POST['form_token'] ?? null, 3);
     if (!$guardCheck['ok']) {
-        redirect('contacto.php?error=6#contacto-form');
+        redirect('contacto.php?error=6' . $redirectHash);
     }
 
     $ipLimit = form_guard_rate_limit('contact_form_ip', form_guard_client_ip(), 5, 900);
     if (!$ipLimit['allowed']) {
-        redirect('contacto.php?error=7#contacto-form');
+        redirect('contacto.php?error=7' . $redirectHash);
     }
 
     $nombreRaw = form_guard_normalize_whitespace($_POST['nombre'] ?? '');
@@ -47,53 +55,99 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $telefonoRaw = trim((string) ($_POST['telefono'] ?? ''));
     $servicioRaw = form_guard_normalize_whitespace($_POST['servicio'] ?? '');
     $mensajeRaw = form_guard_normalize_multiline($_POST['mensaje'] ?? '');
+    $fechaCitaRaw = trim((string) ($_POST['fecha_llamada'] ?? ''));
+    $horaCitaRaw = trim((string) ($_POST['hora_llamada'] ?? ''));
+    $zonaHorariaRaw = form_guard_normalize_whitespace($_POST['zona_horaria'] ?? '');
 
     if ($nombreRaw === '' || $emailRaw === '' || $mensajeRaw === '') {
-        redirect('contacto.php?error=6#contacto-form');
+        redirect('contacto.php?error=6' . $redirectHash);
     }
 
     if (!form_guard_validate_name($nombreRaw)) {
-        redirect('contacto.php?error=6#contacto-form');
+        redirect('contacto.php?error=6' . $redirectHash);
     }
 
     if (!filter_var($emailRaw, FILTER_VALIDATE_EMAIL) || strlen($emailRaw) > 120) {
-        redirect('contacto.php?error=6#contacto-form');
+        redirect('contacto.php?error=6' . $redirectHash);
     }
 
     if (!form_guard_validate_phone($telefonoRaw)) {
-        redirect('contacto.php?error=6#contacto-form');
+        redirect('contacto.php?error=6' . $redirectHash);
     }
 
     if ($servicioRaw !== '' && (strlen($servicioRaw) > 120 || preg_match('~https?://|www\.~i', $servicioRaw) === 1)) {
-        redirect('contacto.php?error=6#contacto-form');
+        redirect('contacto.php?error=6' . $redirectHash);
     }
 
-    if (!form_guard_validate_message($mensajeRaw, 20, 2000)) {
-        redirect('contacto.php?error=6#contacto-form');
+    $fechaCitaLabel = 'No aplica';
+    $horaCitaLabel = 'No aplica';
+    $zonaHorariaLabel = 'No aplica';
+
+    if ($isAgendaForm) {
+        if ($fechaCitaRaw === '' || $horaCitaRaw === '') {
+            redirect('contacto.php?error=6' . $redirectHash);
+        }
+
+        $fechaObj = DateTime::createFromFormat('Y-m-d', $fechaCitaRaw);
+        $horaObj = DateTime::createFromFormat('H:i', $horaCitaRaw);
+
+        if (!$fechaObj || $fechaObj->format('Y-m-d') !== $fechaCitaRaw) {
+            redirect('contacto.php?error=6' . $redirectHash);
+        }
+
+        if (!$horaObj || $horaObj->format('H:i') !== $horaCitaRaw) {
+            redirect('contacto.php?error=6' . $redirectHash);
+        }
+
+        if ($zonaHorariaRaw !== '' && (strlen($zonaHorariaRaw) > 60 || preg_match('~https?://|www\\.~i', $zonaHorariaRaw) === 1)) {
+            redirect('contacto.php?error=6' . $redirectHash);
+        }
+
+        $fechaCitaLabel = $fechaObj->format('d/m/Y');
+        $horaCitaLabel = $horaObj->format('H:i');
+        $zonaHorariaLabel = $zonaHorariaRaw !== '' ? $zonaHorariaRaw : 'GMT-5 (referencia)';
+    }
+
+    $messageMin = $isAgendaForm ? 10 : 20;
+
+    if (!form_guard_validate_message($mensajeRaw, $messageMin, 2000)) {
+        redirect('contacto.php?error=6' . $redirectHash);
     }
 
     $emailLimit = form_guard_rate_limit('contact_form_email', strtolower($emailRaw), 3, 900);
     if (!$emailLimit['allowed']) {
-        redirect('contacto.php?error=7#contacto-form');
+        redirect('contacto.php?error=7' . $redirectHash);
     }
 
     if (!form_guard_verify_recaptcha($_POST['g-recaptcha-response'] ?? null)) {
-        redirect('contacto.php?error=8#contacto-form');
+        redirect('contacto.php?error=8' . $redirectHash);
     }
 
     $nombre = trim(strip_tags($nombreRaw));
     $email = trim(strip_tags($emailRaw));
     $telefono = trim(strip_tags($telefonoRaw));
     $servicio = trim(strip_tags($servicioRaw));
+    if ($isAgendaForm && $servicio === '') {
+        $servicio = 'Agenda de llamada';
+    }
     $mensaje = trim(strip_tags($mensajeRaw));
+
+    $horaCitaPlain = $horaCitaLabel;
+    if ($horaCitaLabel !== 'No aplica' && $zonaHorariaLabel !== '') {
+        $horaCitaPlain .= ' (' . $zonaHorariaLabel . ')';
+    }
+    $mensajeParaGuardar = $mensaje;
+    if ($isAgendaForm) {
+        $mensajeParaGuardar = trim($mensaje . "\n\nAgenda solicitada:\nFecha: {$fechaCitaLabel}\nHora: {$horaCitaPlain}\nZona horaria: " . ($zonaHorariaLabel !== '' ? $zonaHorariaLabel : 'No indicada'));
+    }
 
     // Guardar en BD
     $sql = "INSERT INTO mensajes (nombre, email, telefono, mensaje) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
-        redirect('contacto.php?error=3#contacto-form');
+        redirect('contacto.php?error=3' . $redirectHash);
     }
-    $stmt->bind_param("ssss", $nombre, $email, $telefono, $mensaje);
+    $stmt->bind_param("ssss", $nombre, $email, $telefono, $mensajeParaGuardar);
     
     if ($stmt->execute()) {
         // Enviar email con PHPMailer
@@ -116,6 +170,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $telefonoHtml = htmlspecialchars($telefonoMail !== '' ? $telefonoMail : 'No proporcionado', ENT_QUOTES, 'UTF-8');
             $servicioHtml = htmlspecialchars($servicioMail !== '' ? $servicioMail : 'No especificado', ENT_QUOTES, 'UTF-8');
             $mensajeHtml = nl2br(htmlspecialchars($mensajeMail, ENT_QUOTES, 'UTF-8'));
+            $fechaCitaHtml = htmlspecialchars($fechaCitaLabel, ENT_QUOTES, 'UTF-8');
+            $horaCitaHtml = htmlspecialchars($horaCitaLabel, ENT_QUOTES, 'UTF-8');
+            $zonaHorariaHtml = htmlspecialchars($zonaHorariaLabel, ENT_QUOTES, 'UTF-8');
+            $horaZonaHtml = htmlspecialchars($horaCitaPlain, ENT_QUOTES, 'UTF-8');
             $portfolioAbsoluteUrl = htmlspecialchars(app_absolute_url('portafolio.php'), ENT_QUOTES, 'UTF-8');
 
             $serviceKey = function_exists('mb_strtolower')
@@ -134,7 +192,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $clientPlainIntro = 'Recibimos tu solicitud en Proyectos MCE y la revisaremos para responderte por este mismo medio.';
             $clientPlainNext = 'Revisaremos la información que enviaste y te responderemos con los siguientes pasos.';
 
-            if (strpos($serviceKey, 'tienda') !== false || strpos($serviceKey, 'e-commerce') !== false || strpos($serviceKey, 'ecommerce') !== false) {
+            if ($isAgendaForm) {
+                $clientSubject = 'Confirmamos tu llamada con Proyectos MCE';
+                $clientHeroTitle = "Hola {$nombreHtml}, agenda recibida";
+                $clientHeroText = 'Recibimos tu solicitud para agendar una llamada. Revisaremos disponibilidad y te enviaremos la confirmaciÃ³n con el enlace de reuniÃ³n.';
+                $clientSummaryTitle = 'Detalle de la llamada';
+                $clientMessageTitle = 'Notas que nos compartiste';
+                $clientNextTitle = 'QuÃ© sigue ahora';
+                $clientNextText = 'Validaremos el horario y te responderemos con la confirmaciÃ³n o una alternativa cercana.';
+                $clientFooterText = 'Este es un correo automÃ¡tico de confirmaciÃ³n de agenda. Si necesitas ajustar el horario, responde a este mensaje.';
+                $clientCtaText = 'Ver portafolio';
+                $clientPlainIntro = 'Recibimos tu solicitud para agendar una llamada. Confirmaremos el horario y te enviaremos el enlace.';
+                $clientPlainNext = 'Validaremos el horario y te responderemos con la confirmaciÃ³n o una alternativa cercana.';
+            } elseif (strpos($serviceKey, 'tienda') !== false || strpos($serviceKey, 'e-commerce') !== false || strpos($serviceKey, 'ecommerce') !== false) {
                 $clientSubject = 'Recibimos tu solicitud para tu tienda online';
                 $clientHeroTitle = "Hola {$nombreHtml}, tu solicitud para tienda online ya está en revisión";
                 $clientHeroText = 'Gracias por contarnos sobre tu idea de venta en línea. Revisaremos tu solicitud para orientarte sobre estructura, catálogo, pagos y el siguiente paso más conveniente.';
@@ -196,7 +266,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $internalPlainIntro = 'Llegó un nuevo lead desde el formulario web.';
             $internalPlainAction = "Siguiente acción sugerida: responde a {$nombreMail} y valida el alcance inicial.";
 
-            if (strpos($serviceKey, 'tienda') !== false || strpos($serviceKey, 'e-commerce') !== false || strpos($serviceKey, 'ecommerce') !== false) {
+            if ($isAgendaForm) {
+                $internalSubject = "Nueva agenda de llamada - {$nombreMail}";
+                $internalHeroTitle = "Solicitud de llamada: {$nombreHtml}";
+                $internalHeroText = 'Se registrÃ³ una agenda de llamada. Revisa horario solicitado y responde con la confirmaciÃ³n.';
+                $internalSummaryTitle = 'Resumen de la llamada';
+                $internalMessageTitle = 'Notas del cliente';
+                $internalActionTitle = 'Siguiente acciÃ³n';
+                $internalActionText = "Confirma el horario solicitado y envÃ­a el enlace de reuniÃ³n a {$nombreHtml}.";
+                $internalFooterText = 'Lead interno generado automÃ¡ticamente desde el formulario de agenda de llamada.';
+                $internalCtaText = 'Responder y confirmar';
+                $internalPlainIntro = 'Nueva solicitud de llamada recibida.';
+                $internalPlainAction = "Confirma horario y envÃ­a enlace a {$nombreMail}.";
+            } elseif (strpos($serviceKey, 'tienda') !== false || strpos($serviceKey, 'e-commerce') !== false || strpos($serviceKey, 'ecommerce') !== false) {
                 $internalSubject = "Nuevo lead de tienda online - {$nombreMail}";
                 $internalHeroTitle = "Nuevo lead para tienda online: {$nombreHtml}";
                 $internalHeroText = 'El cliente quiere avanzar con una solución de venta en línea. Revisa productos, pagos y alcance comercial antes de responder.';
@@ -329,6 +411,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             </div>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td width="50%" valign="top" style="padding:0 8px 14px 0;">
+                                            <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Fecha solicitada</div>
+                                                <div style="font-size:16px; font-weight:700; color:#0f172a;">{$fechaCitaHtml}</div>
+                                            </div>
+                                        </td>
+                                        <td width="50%" valign="top" style="padding:0 0 14px 8px;">
+                                            <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Hora y zona</div>
+                                                <div style="font-size:16px; font-weight:700; color:#0f172a;">{$horaZonaHtml}</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="50%" valign="top" style="padding:0 8px 14px 0;">
+                                            <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Fecha solicitada</div>
+                                                <div style="font-size:16px; font-weight:700; color:#0f172a;">{$fechaCitaHtml}</div>
+                                            </div>
+                                        </td>
+                                        <td width="50%" valign="top" style="padding:0 0 14px 8px;">
+                                            <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Hora y zona</div>
+                                                <div style="font-size:16px; font-weight:700; color:#0f172a;">{$horaZonaHtml}</div>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 </table>
                                 <div style="background:linear-gradient(180deg, #eff6ff 0%, #f8fafc 100%); border:1px solid #bfdbfe; border-radius:18px; padding:18px 20px;">
                                     <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#2563eb; font-weight:700; margin-bottom:10px;">{$internalMessageTitle}</div>
@@ -366,7 +476,10 @@ HTML;
                 . "Nombre: {$nombreMail}\n"
                 . "Correo: {$emailMail}\n"
                 . "Telefono: " . ($telefonoMail !== '' ? $telefonoMail : 'No proporcionado') . "\n"
-                . "Servicio: " . ($servicioMail !== '' ? $servicioMail : 'No especificado') . "\n\n"
+                . "Servicio: " . ($servicioMail !== '' ? $servicioMail : 'No especificado') . "\n"
+                . "Fecha solicitada: {$fechaCitaLabel}\n"
+                . "Hora: {$horaCitaPlain}\n"
+                . "Zona horaria: {$zonaHorariaLabel}\n\n"
                 . "Mensaje:\n{$mensajeMail}\n\n"
                 . "{$internalPlainAction}";
             
@@ -456,7 +569,10 @@ HTML;
                 $mail->AltBody = "Hola {$nombreMail},\n\n"
                     . "{$clientPlainIntro}\n\n"
                     . "Servicio de interes: " . ($servicioMail !== '' ? $servicioMail : 'No especificado') . "\n"
-                    . "Canal de respuesta: {$emailMail}\n\n"
+                    . "Canal de respuesta: {$emailMail}\n"
+                    . "Fecha solicitada: {$fechaCitaLabel}\n"
+                    . "Hora: {$horaCitaPlain}\n"
+                    . "Zona horaria: {$zonaHorariaLabel}\n\n"
                     . "Resumen de tu consulta:\n{$mensajeMail}\n\n"
                     . "{$clientPlainNext}\n\n"
                     . "Si quieres agregar mas informacion, puedes responder a este correo.";
@@ -466,7 +582,7 @@ HTML;
                 error_log('Error al enviar confirmacion al cliente: ' . $clientMailException->getMessage());
             }
 
-            redirect('contacto.php?success=1');
+            redirect('contacto.php?success=1' . $redirectHash);
         } catch (Exception $e) {
             error_log('Error al enviar correo: ' . $e->getMessage());
             if (!empty($mail->ErrorInfo)) {
@@ -476,10 +592,10 @@ HTML;
                 error_log("SMTP debug:\n" . implode("\n", $smtpDebugLog));
             }
             $code = (empty($smtpUser) || empty($smtpPass)) ? 4 : 5;
-            redirect('contacto.php?error=' . $code);
+            redirect('contacto.php?error=' . $code . $redirectHash);
         }
     } else {
-        redirect('contacto.php?error=3');
+        redirect('contacto.php?error=3' . $redirectHash);
     }
     
     $stmt->close();

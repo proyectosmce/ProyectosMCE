@@ -274,7 +274,7 @@ $featuredProject = $projects[0] ?? null;
             <p class="text-blue-100 mt-2">Agenda una llamada y en 24 horas preparamos un recorrido de referencia.</p>
         </div>
         <div class="flex flex-wrap gap-3">
-            <a href="<?php echo app_url('contacto.php'); ?>" class="inline-flex items-center px-5 py-3 rounded-xl bg-white text-slate-900 font-semibold shadow-lg hover:bg-blue-50 transition">
+            <a href="<?php echo app_url('contacto.php'); ?>#agenda-llamada" class="inline-flex items-center px-5 py-3 rounded-xl bg-white text-slate-900 font-semibold shadow-lg hover:bg-blue-50 transition">
                 <i class="fas fa-comments mr-2"></i> Agendar llamada
             </a>
             <a href="#proyectos-grid" class="inline-flex items-center px-5 py-3 rounded-xl border border-white/60 text-white font-semibold hover:bg-white/10 transition">

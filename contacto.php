@@ -81,40 +81,141 @@ $selectedService = trim((string) ($_GET['servicio'] ?? ''));
     </div>
 </section>
 
+<!-- Feedback de formularios -->
+<section id="form-feedback" class="max-w-7xl mx-auto px-4 mt-8">
+    <?php if (isset($_GET['success'])): ?>
+        <div
+            data-auto-dismiss="5000"
+            data-query-flag="success"
+            class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 transition-opacity duration-500"
+        >
+            Mensaje enviado. Te contactaremos a la brevedad.
+        </div>
+    <?php endif; ?>
+
+    <?php if (isset($_GET['error'])): ?>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            <?php if ($_GET['error'] == 4): ?>
+                El formulario se guardo, pero falta configurar el correo del sitio. Intentalo mas tarde.
+            <?php elseif ($_GET['error'] == 5): ?>
+                El formulario se guardo, pero no se pudo conectar con el servicio de correo. Revisa SMTP_USER, SMTP_PASS y la App Password.
+            <?php elseif ($_GET['error'] == 6): ?>
+                No pudimos validar el envio. Revisa los datos e intenta nuevamente.
+            <?php elseif ($_GET['error'] == 7): ?>
+                Has enviado demasiados mensajes en poco tiempo. Espera unos minutos antes de intentar otra vez.
+            <?php elseif ($_GET['error'] == 8): ?>
+                Debes completar la verificacion reCAPTCHA antes de enviar el formulario.
+            <?php else: ?>
+                Hubo un error. Por favor intenta nuevamente.
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+</section>
+
+<!-- Agenda de llamada -->
+<section id="agenda-llamada" class="max-w-7xl mx-auto px-4 mt-10 lg:mt-14">
+    <div class="grid lg:grid-cols-12 gap-8 items-start">
+        <div class="lg:col-span-5 space-y-4 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white rounded-2xl shadow-2xl p-8 border border-white/10">
+            <p class="text-sm font-semibold text-blue-100 uppercase tracking-wide">Coordina tu llamada</p>
+            <h2 class="text-3xl font-bold leading-tight">Elige fecha y hora para hablar</h2>
+            <p class="text-blue-50">Agendamos una llamada corta para revisar tu necesidad y darte siguientes pasos. Confirmamos por correo con el enlace de la reuniÃ³n.</p>
+            <ul class="space-y-3 text-blue-100">
+                <li class="flex items-start gap-3"><span class="mt-1 text-yellow-300"><i class="fas fa-clock"></i></span><span>DuraciÃ³n estimada: 20 minutos.</span></li>
+                <li class="flex items-start gap-3"><span class="mt-1 text-yellow-300"><i class="fas fa-video"></i></span><span>Formato: videollamada o telÃ©fono, segÃºn prefieras.</span></li>
+                <li class="flex items-start gap-3"><span class="mt-1 text-yellow-300"><i class="fas fa-bolt"></i></span><span>ConfirmaciÃ³n rÃ¡pida con link y agenda en tu correo.</span></li>
+            </ul>
+            <div class="p-4 rounded-xl bg-white/10 border border-white/20 text-blue-50">
+                <p class="font-semibold">Zona horaria de referencia</p>
+                <p class="text-sm">GMT-5 (BogotÃ¡ / Lima). Indica tu zona si es diferente y ajustamos el horario.</p>
+            </div>
+        </div>
+
+        <div class="lg:col-span-7 order-2 lg:order-1">
+            <form id="agenda-form" action="enviar-contacto.php" method="POST" class="bg-white p-8 rounded-2xl mce-rounded-panel shadow-2xl border border-slate-100 overflow-hidden space-y-6">
+                <input type="hidden" name="form_token" value="<?php echo htmlspecialchars($contactFormGuard['token'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="hidden" name="form_context" value="agenda">
+                <input type="hidden" name="redirect_anchor" value="form-feedback">
+                <div style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+                    <label for="agenda_company_website">No llenes este campo</label>
+                    <input id="agenda_company_website" type="text" name="company_website" tabindex="-1" autocomplete="off">
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-800 mb-2 font-semibold">Nombre *</label>
+                        <input type="text" name="nombre" required minlength="2" maxlength="100" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    </div>
+                    <div>
+                        <label class="block text-gray-800 mb-2 font-semibold">Email *</label>
+                        <input type="email" name="email" required maxlength="120" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    </div>
+                    <div>
+                        <label class="block text-gray-800 mb-2 font-semibold">TelÃ©fono</label>
+                        <input type="tel" name="telefono" maxlength="25" inputmode="tel" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    </div>
+                    <div>
+                        <label class="block text-gray-800 mb-2 font-semibold">Servicio de interÃ©s (opcional)</label>
+                        <select name="servicio" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                            <option value="">Solo llamada de exploraciÃ³n</option>
+                            <?php
+                            $servicios = $conn->query("SELECT titulo FROM servicios ORDER BY orden");
+                            while ($s = $servicios->fetch_assoc()) {
+                                $serviceTitle = (string) ($s['titulo'] ?? '');
+                                ?>
+                                <option value="<?php echo htmlspecialchars($serviceTitle, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $selectedService !== '' && strcasecmp($selectedService, $serviceTitle) === 0 ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($serviceTitle, ENT_QUOTES, 'UTF-8'); ?>
+                                </option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-800 mb-2 font-semibold">Fecha de la llamada *</label>
+                        <input type="date" name="fecha_llamada" required min="<?php echo date('Y-m-d'); ?>" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    </div>
+                    <div>
+                        <label class="block text-gray-800 mb-2 font-semibold">Hora preferida *</label>
+                        <input type="time" name="hora_llamada" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-800 mb-2 font-semibold">Zona horaria</label>
+                        <input type="text" name="zona_horaria" maxlength="60" placeholder="Ej: GMT-5 (BogotÃ¡) o tu zona local" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-800 mb-2 font-semibold">Objetivo de la llamada *</label>
+                        <textarea name="mensaje" rows="4" required minlength="10" maxlength="2000" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" placeholder="CuÃ©ntanos en breve quÃ© necesitas revisar en la llamada."></textarea>
+                    </div>
+                </div>
+
+                <?php if ($contactRecaptchaEnabled): ?>
+                    <div class="pt-2">
+                        <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars(form_guard_recaptcha_site_key(), ENT_QUOTES, 'UTF-8'); ?>"></div>
+                    </div>
+                <?php else: ?>
+                    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+                        reCAPTCHA es obligatorio, pero no estÃ¡ configurado correctamente en este entorno.
+                    </div>
+                <?php endif; ?>
+
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <p class="text-sm text-gray-600">Confirmaremos tu llamada por correo con el enlace de reuniÃ³n.</p>
+                    <button type="submit" id="agenda-submit" <?php echo $contactRecaptchaEnabled ? '' : 'disabled'; ?> class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-slate-900 text-white font-semibold shadow-lg hover:bg-slate-800 transition w-full sm:w-auto disabled:cursor-not-allowed disabled:bg-slate-400">
+                        <i class="fas fa-calendar-check mr-2"></i> Confirmar llamada
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
 <!-- Formulario de contacto -->
 <section id="contacto-form" class="max-w-7xl mx-auto px-4 mt-10 lg:mt-14 pb-16">
     <div class="grid lg:grid-cols-12 gap-8">
         <div class="lg:col-span-7 order-2 lg:order-1">
-            <?php if (isset($_GET['success'])): ?>
-                <div
-                    data-auto-dismiss="5000"
-                    data-query-flag="success"
-                    class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 transition-opacity duration-500"
-                >
-                    Mensaje enviado. Te contactaremos a la brevedad.
-                </div>
-            <?php endif; ?>
-
-            <?php if (isset($_GET['error'])): ?>
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-                    <?php if ($_GET['error'] == 4): ?>
-                        El formulario se guardo, pero falta configurar el correo del sitio. Intentalo mas tarde.
-                    <?php elseif ($_GET['error'] == 5): ?>
-                        El formulario se guardo, pero no se pudo conectar con el servicio de correo. Revisa SMTP_USER, SMTP_PASS y la App Password.
-                    <?php elseif ($_GET['error'] == 6): ?>
-                        No pudimos validar el envio. Revisa los datos e intenta nuevamente.
-                    <?php elseif ($_GET['error'] == 7): ?>
-                        Has enviado demasiados mensajes en poco tiempo. Espera unos minutos antes de intentar otra vez.
-                    <?php elseif ($_GET['error'] == 8): ?>
-                        Debes completar la verificacion reCAPTCHA antes de enviar el formulario.
-                    <?php else: ?>
-                        Hubo un error. Por favor intenta nuevamente.
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
-
             <form id="contact-form" action="enviar-contacto.php" method="POST" class="bg-white p-8 rounded-2xl mce-rounded-panel shadow-2xl border border-slate-100 overflow-hidden space-y-6">
                 <input type="hidden" name="form_token" value="<?php echo htmlspecialchars($contactFormGuard['token'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="hidden" name="form_context" value="contacto">
+                <input type="hidden" name="redirect_anchor" value="form-feedback">
                 <div style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
                     <label for="company_website">No llenes este campo</label>
                     <input id="company_website" type="text" name="company_website" tabindex="-1" autocomplete="off">
@@ -204,20 +305,29 @@ $selectedService = trim((string) ($_GET['servicio'] ?? ''));
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script>
 (() => {
-    const form = document.getElementById('contact-form');
-    if (!form) return;
+    const forms = ['contact-form', 'agenda-form']
+        .map(id => document.getElementById(id))
+        .filter(Boolean);
 
-    form.addEventListener('submit', (event) => {
-        if (typeof window.grecaptcha === 'undefined') {
-            event.preventDefault();
-            alert('reCAPTCHA aun no termina de cargar. Intenta nuevamente en unos segundos.');
-            return;
-        }
+    forms.forEach((form) => {
+        form.addEventListener('submit', (event) => {
+            if (typeof window.grecaptcha === 'undefined') {
+                event.preventDefault();
+                alert('reCAPTCHA aun no termina de cargar. Intenta nuevamente en unos segundos.');
+                return;
+            }
 
-        if (!window.grecaptcha.getResponse()) {
-            event.preventDefault();
-            alert('Completa la verificacion reCAPTCHA antes de enviar.');
-        }
+            const widget = form.querySelector('.g-recaptcha');
+            const widgetId = widget?.getAttribute('data-widget-id');
+            const response = typeof window.grecaptcha.getResponse === 'function'
+                ? window.grecaptcha.getResponse(widgetId ? Number(widgetId) : undefined)
+                : '';
+
+            if (!response) {
+                event.preventDefault();
+                alert('Completa la verificacion reCAPTCHA antes de enviar.');
+            }
+        });
     });
 })();
 </script>
