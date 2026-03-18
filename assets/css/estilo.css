@@ -119,6 +119,39 @@
     animation: mceWhatsappIconBreath 3.2s ease-in-out infinite;
 }
 
+/* Llamada animada */
+.mce-call-ringing {
+    position: relative;
+    overflow: visible;
+}
+.mce-call-ringing .call-ico-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+}
+.mce-call-ringing .call-ico-wrap .call-ring {
+    position: absolute;
+    inset: 0;
+    border: 2px solid currentColor;
+    border-radius: 999px;
+    opacity: 0;
+    transform: scale(0.6);
+    animation: mceCallPulse 1.8s ease-out infinite;
+}
+.mce-call-ringing .call-ring--2 { animation-delay: 0.25s; }
+.mce-call-ringing .call-ring--3 { animation-delay: 0.5s; }
+
+@keyframes mceCallPulse {
+    0%   { opacity: 0.6; transform: scale(0.6); }
+    60%  { opacity: 0.12; transform: scale(1.4); }
+    100% { opacity: 0; transform: scale(1.65); }
+}
+
 .mce-whatsapp-float:hover,
 .mce-whatsapp-float:focus-visible,
 .mce-whatsapp-float:hover::before,

@@ -10,8 +10,14 @@
                     <p class="text-lg md:text-xl font-semibold">Transformamos tus ideas en software listo para usar.</p>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <a href="<?php echo app_url('contacto.php'); ?>#agenda-llamada" class="inline-flex items-center px-4 py-3 rounded-lg bg-white text-slate-900 font-semibold shadow hover:bg-blue-50 transition">
-                        <i class="fas fa-calendar-check mr-2"></i> Agenda una llamada
+                    <a href="<?php echo app_url('contacto.php'); ?>#agenda-llamada" class="inline-flex items-center px-4 py-3 rounded-lg bg-white text-slate-900 font-semibold shadow hover:bg-blue-50 transition mce-call-ringing">
+                        <span class="call-ico-wrap mr-2 text-slate-900">
+                            <i class="fas fa-phone-alt"></i>
+                            <span class="call-ring call-ring--1"></span>
+                            <span class="call-ring call-ring--2"></span>
+                            <span class="call-ring call-ring--3"></span>
+                        </span>
+                        Agenda una llamada
                     </a>
                     <a href="https://wa.me/573114125971?text=Hola%21%20Quiero%20consultar%20por%20un%20proyecto" target="_blank" rel="noopener" class="inline-flex items-center px-4 py-3 rounded-lg border border-white/30 text-white font-semibold hover:bg-white/10 transition">
                         <i class="fab fa-whatsapp mr-2"></i> WhatsApp inmediato
@@ -106,8 +112,14 @@
 
     <!-- Botón flotante extra para llamada (desktop) -->
     <a href="<?php echo app_url('contacto.php'); ?>#agenda-llamada"
-       class="hidden md:inline-flex fixed bottom-6 left-6 bg-white text-slate-900 px-4 py-3 rounded-full shadow-lg hover:bg-blue-50 transition-all duration-300 hover:scale-105 z-50 border border-slate-200">
-        <i class="fas fa-phone-alt mr-2"></i> Agenda una llamada
+       class="hidden md:inline-flex fixed bottom-6 left-6 bg-white text-slate-900 px-4 py-3 rounded-full shadow-lg hover:bg-blue-50 transition-all duration-300 hover:scale-105 z-50 border border-slate-200 mce-call-ringing">
+        <span class="call-ico-wrap mr-2 text-slate-900">
+            <i class="fas fa-phone-alt"></i>
+            <span class="call-ring call-ring--1"></span>
+            <span class="call-ring call-ring--2"></span>
+            <span class="call-ring call-ring--3"></span>
+        </span>
+        Agenda una llamada
     </a>
     
     <!-- Script para menú móvil -->
