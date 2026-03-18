@@ -41,6 +41,20 @@ CREATE TABLE IF NOT EXISTS mensajes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+-- Tabla de citas (agenda de llamadas)
+CREATE TABLE IF NOT EXISTS citas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(120) NOT NULL,
+    telefono VARCHAR(50),
+    servicio VARCHAR(120),
+    notas TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uniq_fecha_hora (fecha, hora)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Tabla de usuarios (admin)
 CREATE TABLE IF NOT EXISTS usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
