@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             redirect('contacto.php?error=6' . $redirectHash);
         }
 
-        $fechaCitaLabel = $fechaObj->format('d/m/Y');
+        $fechaCitaLabel = $fechaObj->format('Y-m-d');
         $horaCitaLabel = $horaObj->format('H:i');
     }
 
@@ -132,7 +132,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mensajeParaGuardar = trim($mensaje . "\n\nAgenda solicitada:\nFecha: {$fechaCitaLabel}\nHora: {$horaCitaPlain}");
     }
 
-    // Guardar en BD
+    // Crear tabla de citas si no existe
+    $conn->query("
+        CREATE TABLE IF NOT EXISTS citas (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            fecha DATE NOT NULL,
+            hora TIME NOT NULL,
+            nombre VARCHAR(100) NOT NULL,
+            email VARCHAR(120) NOT NULL,
+            telefono VARCHAR(50),
+            servicio VARCHAR(120),
+            notas TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY uniq_fecha_hora (fecha, hora)
+        ) ENGINE=InnoDB
+    ");
+
+    // Verificar disponibilidad
+    if ($isAgendaForm) {
+        $checkSlot = $conn->prepare("SELECT COUNT(*) FROM citas WHERE fecha = ? AND hora = ?");
+        if ($checkSlot) {
+            $checkSlot->bind_param("ss", $fechaCitaLabel, $horaCitaLabel);
+            $checkSlot->execute();
+            $checkSlot->bind_result($slotCount);
+            $checkSlot->fetch();
+            $checkSlot->close();
+            if ($slotCount > 0) {
+                redirect('contacto.php?error=9' . $redirectHash);
+            }
+        }
+    }
+
+    // Guardar en BD mensajes
     $sql = "INSERT INTO mensajes (nombre, email, telefono, mensaje) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
@@ -141,6 +172,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("ssss", $nombre, $email, $telefono, $mensajeParaGuardar);
     
     if ($stmt->execute()) {
+        // Guardar cita si aplica
+        if ($isAgendaForm) {
+            $insertCita = $conn->prepare("INSERT INTO citas (fecha, hora, nombre, email, telefono, servicio, notas) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            if ($insertCita) {
+                $insertCita->bind_param("sssssss", $fechaCitaLabel, $horaCitaLabel, $nombre, $email, $telefono, $servicio, $mensaje);
+                if (!$insertCita->execute()) {
+                    // si falla por duplicado, redirige a horario ocupado
+                    if ($conn->errno === 1062) {
+                        redirect('contacto.php?error=9' . $redirectHash);
+                    }
+                }
+                $insertCita->close();
+            }
+        }
+
         // Enviar email con PHPMailer
         $mail = new PHPMailer(true);
         try {
@@ -467,7 +513,7 @@ HTML;
                 . "Telefono: " . ($telefonoMail !== '' ? $telefonoMail : 'No proporcionado') . "\n"
                 . "Servicio: " . ($servicioMail !== '' ? $servicioMail : 'No especificado') . "\n"
                 . "Fecha solicitada: {$fechaCitaLabel}\n"
-                . "Hora: {$horaCitaPlain}\n\n"
+                . "Hora: {$horaCitaLabel}\n\n"
                 . "Mensaje:\n{$mensajeMail}\n\n"
                 . "{$internalPlainAction}";
             
@@ -559,7 +605,7 @@ HTML;
                     . "Servicio de interes: " . ($servicioMail !== '' ? $servicioMail : 'No especificado') . "\n"
                     . "Canal de respuesta: {$emailMail}\n"
                     . "Fecha solicitada: {$fechaCitaLabel}\n"
-                    . "Hora: {$horaCitaPlain}\n\n"
+                    . "Hora: {$horaCitaLabel}\n\n"
                     . "Resumen de tu consulta:\n{$mensajeMail}\n\n"
                     . "{$clientPlainNext}\n\n"
                     . "Si quieres agregar mas informacion, puedes responder a este correo.";

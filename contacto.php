@@ -4,6 +4,41 @@
 $contactFormGuard = form_guard_issue('contacto');
 $contactRecaptchaEnabled = form_guard_recaptcha_enabled();
 $selectedService = trim((string) ($_GET['servicio'] ?? ''));
+
+// Crear tabla de citas si no existe (agenda de llamadas)
+$conn->query("
+    CREATE TABLE IF NOT EXISTS citas (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        fecha DATE NOT NULL,
+        hora TIME NOT NULL,
+        nombre VARCHAR(100) NOT NULL,
+        email VARCHAR(120) NOT NULL,
+        telefono VARCHAR(50),
+        servicio VARCHAR(120),
+        notas TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE KEY uniq_fecha_hora (fecha, hora)
+    ) ENGINE=InnoDB
+");
+
+// Cargar citas ocupadas proximos 14 dias
+$bookedSlotsByDate = [];
+$bookedQuery = $conn->query("
+    SELECT fecha, DATE_FORMAT(hora, '%H:%i') AS hora
+    FROM citas
+    WHERE fecha BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 14 DAY)
+");
+if ($bookedQuery) {
+    while ($row = $bookedQuery->fetch_assoc()) {
+        $d = $row['fecha'];
+        $h = $row['hora'];
+        if (!isset($bookedSlotsByDate[$d])) {
+            $bookedSlotsByDate[$d] = [];
+        }
+        $bookedSlotsByDate[$d][] = $h;
+    }
+}
+$availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:00','17:00'];
 ?>
 <?php include 'includes/header.php'; ?>
 
@@ -105,6 +140,8 @@ $selectedService = trim((string) ($_GET['servicio'] ?? ''));
                 Has enviado demasiados mensajes en poco tiempo. Espera unos minutos antes de intentar otra vez.
             <?php elseif ($_GET['error'] == 8): ?>
                 Debes completar la verificacion reCAPTCHA antes de enviar el formulario.
+            <?php elseif ($_GET['error'] == 9): ?>
+                El horario elegido ya no está disponible. Por favor elige otra hora.
             <?php else: ?>
                 Hubo un error. Por favor intenta nuevamente.
             <?php endif; ?>
@@ -167,11 +204,13 @@ $selectedService = trim((string) ($_GET['servicio'] ?? ''));
                     </div>
                     <div>
                         <label class="block text-gray-800 mb-2 font-semibold">Fecha de la llamada *</label>
-                        <input type="date" name="fecha_llamada" required min="<?php echo date('Y-m-d'); ?>" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <input type="date" id="agenda-fecha" name="fecha_llamada" required min="<?php echo date('Y-m-d'); ?>" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold">Hora preferida *</label>
-                        <input type="time" name="hora_llamada" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <label class="block text-gray-800 mb-2 font-semibold">Hora disponible *</label>
+                        <select id="agenda-hora" name="hora_llamada" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        </select>
+                        <p id="agenda-hora-msg" class="text-sm text-red-600 mt-2 hidden">No hay horarios disponibles para esta fecha.</p>
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-gray-800 mb-2 font-semibold">Objetivo de la llamada *</label>
@@ -318,6 +357,40 @@ $selectedService = trim((string) ($_GET['servicio'] ?? ''));
     const forms = ['contact-form', 'agenda-form']
         .map(id => document.getElementById(id))
         .filter(Boolean);
+
+    // Slots disponibles
+    const availableHours = <?php echo json_encode($availableHours, JSON_UNESCAPED_UNICODE); ?>;
+    const bookedSlots = <?php echo json_encode($bookedSlotsByDate, JSON_UNESCAPED_UNICODE); ?>;
+    const horaSelect = document.getElementById('agenda-hora');
+    const fechaInput = document.getElementById('agenda-fecha');
+    const horaMsg = document.getElementById('agenda-hora-msg');
+
+    const renderHours = (dateStr) => {
+        if (!horaSelect || !fechaInput) return;
+        const booked = bookedSlots[dateStr] || [];
+        const options = availableHours.filter(h => !booked.includes(h));
+        horaSelect.innerHTML = '';
+        if (options.length === 0) {
+            horaSelect.disabled = true;
+            horaMsg?.classList.remove('hidden');
+            return;
+        }
+        horaSelect.disabled = false;
+        horaMsg?.classList.add('hidden');
+        options.forEach(h => {
+            const opt = document.createElement('option');
+            opt.value = h;
+            opt.textContent = h;
+            horaSelect.appendChild(opt);
+        });
+    };
+
+    if (fechaInput) {
+        fechaInput.addEventListener('change', (e) => {
+            renderHours(e.target.value);
+        });
+        renderHours(fechaInput.value || fechaInput.getAttribute('min'));
+    }
 
     forms.forEach((form) => {
         form.addEventListener('submit', (event) => {
