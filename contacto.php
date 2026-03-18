@@ -118,15 +118,15 @@ $selectedService = trim((string) ($_GET['servicio'] ?? ''));
         <div class="lg:col-span-5 space-y-4 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white rounded-2xl shadow-2xl p-8 border border-white/10">
             <p class="text-sm font-semibold text-blue-100 uppercase tracking-wide">Coordina tu llamada</p>
             <h2 class="text-3xl font-bold leading-tight">Elige fecha y hora para hablar</h2>
-            <p class="text-blue-50">Agendamos una llamada corta para revisar tu necesidad y darte siguientes pasos. Confirmamos por correo con el enlace de la reuniÃ³n.</p>
+            <p class="text-blue-50">Agendamos una llamada corta para revisar tu necesidad y darte siguientes pasos. Confirmamos por correo con el enlace de la reuni&oacute;n.</p>
             <ul class="space-y-3 text-blue-100">
-                <li class="flex items-start gap-3"><span class="mt-1 text-yellow-300"><i class="fas fa-clock"></i></span><span>DuraciÃ³n estimada: 20 minutos.</span></li>
-                <li class="flex items-start gap-3"><span class="mt-1 text-yellow-300"><i class="fas fa-video"></i></span><span>Formato: videollamada o telÃ©fono, segÃºn prefieras.</span></li>
-                <li class="flex items-start gap-3"><span class="mt-1 text-yellow-300"><i class="fas fa-bolt"></i></span><span>ConfirmaciÃ³n rÃ¡pida con link y agenda en tu correo.</span></li>
+                <li class="flex items-start gap-3"><span class="mt-1 text-yellow-300"><i class="fas fa-clock"></i></span><span>Duraci&oacute;n estimada: 20 minutos.</span></li>
+                <li class="flex items-start gap-3"><span class="mt-1 text-yellow-300"><i class="fas fa-video"></i></span><span>Formato: videollamada o tel&eacute;fono, seg&uacute;n prefieras.</span></li>
+                <li class="flex items-start gap-3"><span class="mt-1 text-yellow-300"><i class="fas fa-bolt"></i></span><span>Confirmaci&oacute;n r&aacute;pida con link y agenda en tu correo.</span></li>
             </ul>
             <div class="p-4 rounded-xl bg-white/10 border border-white/20 text-blue-50">
                 <p class="font-semibold">Zona horaria de referencia</p>
-                <p class="text-sm">GMT-5 (BogotÃ¡ / Lima). Indica tu zona si es diferente y ajustamos el horario.</p>
+                <p class="text-sm">GMT-5 (Bogot&aacute; / Lima). Indica tu zona si es diferente y ajustamos el horario.</p>
             </div>
         </div>
 
@@ -149,13 +149,13 @@ $selectedService = trim((string) ($_GET['servicio'] ?? ''));
                         <input type="email" name="email" required maxlength="120" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold">TelÃ©fono</label>
+                        <label class="block text-gray-800 mb-2 font-semibold">Tel&eacute;fono</label>
                         <input type="tel" name="telefono" maxlength="25" inputmode="tel" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold">Servicio de interÃ©s (opcional)</label>
+                        <label class="block text-gray-800 mb-2 font-semibold">Servicio de inter&eacute;s (opcional)</label>
                         <select name="servicio" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                            <option value="">Solo llamada de exploraciÃ³n</option>
+                            <option value="">Solo llamada de exploraci&oacute;n</option>
                             <?php
                             $servicios = $conn->query("SELECT titulo FROM servicios ORDER BY orden");
                             while ($s = $servicios->fetch_assoc()) {
@@ -179,11 +179,11 @@ $selectedService = trim((string) ($_GET['servicio'] ?? ''));
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-gray-800 mb-2 font-semibold">Zona horaria</label>
-                        <input type="text" name="zona_horaria" maxlength="60" placeholder="Ej: GMT-5 (BogotÃ¡) o tu zona local" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <input type="text" name="zona_horaria" maxlength="60" placeholder="Ej: GMT-5 (Bogot&aacute;) o tu zona local" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-gray-800 mb-2 font-semibold">Objetivo de la llamada *</label>
-                        <textarea name="mensaje" rows="4" required minlength="10" maxlength="2000" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" placeholder="CuÃ©ntanos en breve quÃ© necesitas revisar en la llamada."></textarea>
+                        <textarea name="mensaje" rows="4" required minlength="10" maxlength="2000" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" placeholder="Cu&eacute;ntanos en breve qu&eacute; necesitas revisar en la llamada."></textarea>
                     </div>
                 </div>
 
@@ -198,7 +198,7 @@ $selectedService = trim((string) ($_GET['servicio'] ?? ''));
                 <?php endif; ?>
 
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <p class="text-sm text-gray-600">Confirmaremos tu llamada por correo con el enlace de reuniÃ³n.</p>
+                    <p class="text-sm text-gray-600">Confirmaremos tu llamada por correo con el enlace de reuni&oacute;n.</p>
                     <button type="submit" id="agenda-submit" <?php echo $contactRecaptchaEnabled ? '' : 'disabled'; ?> class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-slate-900 text-white font-semibold shadow-lg hover:bg-slate-800 transition w-full sm:w-auto disabled:cursor-not-allowed disabled:bg-slate-400">
                         <i class="fas fa-calendar-check mr-2"></i> Confirmar llamada
                     </button>
@@ -208,8 +208,26 @@ $selectedService = trim((string) ($_GET['servicio'] ?? ''));
     </div>
 </section>
 
-<!-- Formulario de contacto -->
-<section id="contacto-form" class="max-w-7xl mx-auto px-4 mt-10 lg:mt-14 pb-16">
+<!-- Separador visual -->
+<div class="max-w-7xl mx-auto px-4 mt-14">
+    <div class="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
+</div>
+
+<!-- Formulario de contacto (correo) -->
+<section id="contacto-form" class="max-w-7xl mx-auto px-4 mt-12 pb-16">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-100 p-8 lg:p-10 mb-10">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+                <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Contacto por correo</p>
+                <h2 class="text-3xl font-bold text-slate-900">Prefieres escribirnos</h2>
+                <p class="text-gray-600 mt-2">Envíanos detalles y te respondemos por el mismo medio en menos de 24h.</p>
+            </div>
+            <a href="#agenda-llamada" class="inline-flex items-center text-blue-700 font-semibold hover:text-blue-900">
+                <i class="fas fa-phone-alt mr-2"></i> ¿Mejor una llamada? Agenda aquí
+            </a>
+        </div>
+    </div>
+
     <div class="grid lg:grid-cols-12 gap-8">
         <div class="lg:col-span-7 order-2 lg:order-1">
             <form id="contact-form" action="enviar-contacto.php" method="POST" class="bg-white p-8 rounded-2xl mce-rounded-panel shadow-2xl border border-slate-100 overflow-hidden space-y-6">
