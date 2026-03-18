@@ -57,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mensajeRaw = form_guard_normalize_multiline($_POST['mensaje'] ?? '');
     $fechaCitaRaw = trim((string) ($_POST['fecha_llamada'] ?? ''));
     $horaCitaRaw = trim((string) ($_POST['hora_llamada'] ?? ''));
-    $zonaHorariaRaw = form_guard_normalize_whitespace($_POST['zona_horaria'] ?? '');
 
     if ($nombreRaw === '' || $emailRaw === '' || $mensajeRaw === '') {
         redirect('contacto.php?error=6' . $redirectHash);
@@ -81,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $fechaCitaLabel = 'No aplica';
     $horaCitaLabel = 'No aplica';
-    $zonaHorariaLabel = 'No aplica';
+    $zonaHorariaLabel = '';
 
     if ($isAgendaForm) {
         if ($fechaCitaRaw === '' || $horaCitaRaw === '') {
@@ -99,13 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             redirect('contacto.php?error=6' . $redirectHash);
         }
 
-        if ($zonaHorariaRaw !== '' && (strlen($zonaHorariaRaw) > 60 || preg_match('~https?://|www\\.~i', $zonaHorariaRaw) === 1)) {
-            redirect('contacto.php?error=6' . $redirectHash);
-        }
-
         $fechaCitaLabel = $fechaObj->format('d/m/Y');
         $horaCitaLabel = $horaObj->format('H:i');
-        $zonaHorariaLabel = $zonaHorariaRaw !== '' ? $zonaHorariaRaw : 'GMT-5 (referencia)';
     }
 
     $messageMin = $isAgendaForm ? 10 : 20;
@@ -133,12 +127,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mensaje = trim(strip_tags($mensajeRaw));
 
     $horaCitaPlain = $horaCitaLabel;
-    if ($horaCitaLabel !== 'No aplica' && $zonaHorariaLabel !== '') {
-        $horaCitaPlain .= ' (' . $zonaHorariaLabel . ')';
-    }
     $mensajeParaGuardar = $mensaje;
     if ($isAgendaForm) {
-        $mensajeParaGuardar = trim($mensaje . "\n\nAgenda solicitada:\nFecha: {$fechaCitaLabel}\nHora: {$horaCitaPlain}\nZona horaria: " . ($zonaHorariaLabel !== '' ? $zonaHorariaLabel : 'No indicada'));
+        $mensajeParaGuardar = trim($mensaje . "\n\nAgenda solicitada:\nFecha: {$fechaCitaLabel}\nHora: {$horaCitaPlain}");
     }
 
     // Guardar en BD
@@ -172,8 +163,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mensajeHtml = nl2br(htmlspecialchars($mensajeMail, ENT_QUOTES, 'UTF-8'));
             $fechaCitaHtml = htmlspecialchars($fechaCitaLabel, ENT_QUOTES, 'UTF-8');
             $horaCitaHtml = htmlspecialchars($horaCitaLabel, ENT_QUOTES, 'UTF-8');
-            $zonaHorariaHtml = htmlspecialchars($zonaHorariaLabel, ENT_QUOTES, 'UTF-8');
-            $horaZonaHtml = htmlspecialchars($horaCitaPlain, ENT_QUOTES, 'UTF-8');
             $portfolioAbsoluteUrl = htmlspecialchars(app_absolute_url('portafolio.php'), ENT_QUOTES, 'UTF-8');
 
             $serviceKey = function_exists('mb_strtolower')
@@ -420,8 +409,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         </td>
                                         <td width="50%" valign="top" style="padding:0 0 14px 8px;">
                                             <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
-                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Hora y zona</div>
-                                                <div style="font-size:16px; font-weight:700; color:#0f172a;">{$horaZonaHtml}</div>
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Hora</div>
+                                                <div style="font-size:16px; font-weight:700; color:#0f172a;">{$horaCitaHtml}</div>
                                             </div>
                                         </td>
                                     </tr>
@@ -434,8 +423,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         </td>
                                         <td width="50%" valign="top" style="padding:0 0 14px 8px;">
                                             <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
-                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Hora y zona</div>
-                                                <div style="font-size:16px; font-weight:700; color:#0f172a;">{$horaZonaHtml}</div>
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Hora</div>
+                                                <div style="font-size:16px; font-weight:700; color:#0f172a;">{$horaCitaHtml}</div>
                                             </div>
                                         </td>
                                     </tr>
@@ -478,8 +467,7 @@ HTML;
                 . "Telefono: " . ($telefonoMail !== '' ? $telefonoMail : 'No proporcionado') . "\n"
                 . "Servicio: " . ($servicioMail !== '' ? $servicioMail : 'No especificado') . "\n"
                 . "Fecha solicitada: {$fechaCitaLabel}\n"
-                . "Hora: {$horaCitaPlain}\n"
-                . "Zona horaria: {$zonaHorariaLabel}\n\n"
+                . "Hora: {$horaCitaPlain}\n\n"
                 . "Mensaje:\n{$mensajeMail}\n\n"
                 . "{$internalPlainAction}";
             
@@ -571,8 +559,7 @@ HTML;
                     . "Servicio de interes: " . ($servicioMail !== '' ? $servicioMail : 'No especificado') . "\n"
                     . "Canal de respuesta: {$emailMail}\n"
                     . "Fecha solicitada: {$fechaCitaLabel}\n"
-                    . "Hora: {$horaCitaPlain}\n"
-                    . "Zona horaria: {$zonaHorariaLabel}\n\n"
+                    . "Hora: {$horaCitaPlain}\n\n"
                     . "Resumen de tu consulta:\n{$mensajeMail}\n\n"
                     . "{$clientPlainNext}\n\n"
                     . "Si quieres agregar mas informacion, puedes responder a este correo.";

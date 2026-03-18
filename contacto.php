@@ -124,10 +124,6 @@ $selectedService = trim((string) ($_GET['servicio'] ?? ''));
                 <li class="flex items-start gap-3"><span class="mt-1 text-yellow-300"><i class="fas fa-video"></i></span><span>Formato: videollamada o tel&eacute;fono, seg&uacute;n prefieras.</span></li>
                 <li class="flex items-start gap-3"><span class="mt-1 text-yellow-300"><i class="fas fa-bolt"></i></span><span>Confirmaci&oacute;n r&aacute;pida con link y agenda en tu correo.</span></li>
             </ul>
-            <div class="p-4 rounded-xl bg-white/10 border border-white/20 text-blue-50">
-                <p class="font-semibold">Zona horaria de referencia</p>
-                <p class="text-sm">GMT-5 (Bogot&aacute; / Lima). Indica tu zona si es diferente y ajustamos el horario.</p>
-            </div>
         </div>
 
         <div class="lg:col-span-7 order-2 lg:order-1">
@@ -176,10 +172,6 @@ $selectedService = trim((string) ($_GET['servicio'] ?? ''));
                     <div>
                         <label class="block text-gray-800 mb-2 font-semibold">Hora preferida *</label>
                         <input type="time" name="hora_llamada" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-gray-800 mb-2 font-semibold">Zona horaria</label>
-                        <input type="text" name="zona_horaria" maxlength="60" placeholder="Ej: GMT-5 (Bogot&aacute;) o tu zona local" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-gray-800 mb-2 font-semibold">Objetivo de la llamada *</label>
