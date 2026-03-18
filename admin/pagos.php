@@ -1,803 +1,447 @@
 <?php
-// admin/pagos.php
 require_once '../includes/config.php';
+require_once '../includes/project-helpers.php';
+require_once '../includes/testimonial-helpers.php';
 require_once '../includes/admin-helpers.php';
+require_once '../includes/payment-helpers.php';
 
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: index.php');
     exit;
 }
 
-function valid_date_param($value)
-{
-    return is_string($value) && preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $value);
-}
+ensureTestimonialsSchema($conn);
+ensureProjectPaymentsSchema($conn);
 
-// Crea tablas financieras si no existen (evita errores 500 si faltan migraciones).
-function ensureFinanceSchema(mysqli $conn): void
-{
-    $conn->query("
-        CREATE TABLE IF NOT EXISTS pagos (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            cliente VARCHAR(150) NOT NULL,
-            proyecto VARCHAR(150),
-            monto DECIMAL(12,2) NOT NULL,
-            moneda VARCHAR(10) DEFAULT 'USD',
-            metodo VARCHAR(50) DEFAULT 'transferencia',
-            estado ENUM('pendiente','en_revision','confirmado','fallido','reembolsado') DEFAULT 'pendiente',
-            fee_pasarela DECIMAL(12,2) DEFAULT 0,
-            fecha_pago DATE NOT NULL,
-            fecha_confirmacion DATETIME NULL,
-            comprobante VARCHAR(255),
-            notas TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        ) ENGINE=InnoDB;
-    ");
-
-    $conn->query("
-        CREATE TABLE IF NOT EXISTS ventas (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            proyecto VARCHAR(150) NOT NULL,
-            cliente VARCHAR(150),
-            precio DECIMAL(12,2) NOT NULL,
-            descuento DECIMAL(12,2) DEFAULT 0,
-            estado_entrega ENUM('pendiente','entregado','soporte') DEFAULT 'pendiente',
-            fecha_venta DATE NOT NULL,
-            pago_id INT NULL,
-            notas TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            CONSTRAINT fk_ventas_pago FOREIGN KEY (pago_id) REFERENCES pagos(id) ON DELETE SET NULL
-        ) ENGINE=InnoDB;
-    ");
-
-    $conn->query("
-        CREATE TABLE IF NOT EXISTS gastos (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            categoria VARCHAR(100) NOT NULL,
-            descripcion VARCHAR(255),
-            proveedor VARCHAR(150),
-            proyecto VARCHAR(150),
-            monto DECIMAL(12,2) NOT NULL,
-            moneda VARCHAR(10) DEFAULT 'USD',
-            impuesto DECIMAL(12,2) DEFAULT 0,
-            fecha_gasto DATE NOT NULL,
-            metodo VARCHAR(50) DEFAULT 'transferencia',
-            comprobante VARCHAR(255),
-            notas TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        ) ENGINE=InnoDB;
-    ");
-}
-
-$hoy   = date('Y-m-d');
-$desde = (isset($_GET['desde']) && valid_date_param($_GET['desde'])) ? $_GET['desde'] : date('Y-m-01');
-$hasta = (isset($_GET['hasta']) && valid_date_param($_GET['hasta'])) ? $_GET['hasta'] : $hoy;
-
-// Asegura tablas antes de cualquier consulta.
-ensureFinanceSchema($conn);
-
+$pendingTestimonials = getPendingTestimonialsCount($conn);
 $csrfToken = admin_get_csrf_token();
 
-// Crear / actualizar registros
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+$searchTerm = trim((string) ($_GET['q'] ?? ''));
+$projectId = (int) ($_GET['proyecto_id'] ?? 0);
+$statusFilter = trim((string) ($_GET['estado'] ?? ''));
+$methodFilter = trim((string) ($_GET['metodo'] ?? ''));
+$currencyFilter = strtoupper(trim((string) ($_GET['moneda'] ?? '')));
+$fromDate = trim((string) ($_GET['desde'] ?? ''));
+$toDate = trim((string) ($_GET['hasta'] ?? ''));
+$page = max(1, (int) ($_GET['page'] ?? 1));
+$perPage = 12;
+
+$toast = admin_build_toast($_GET['msg'] ?? '', [
+    'saved' => ['message' => 'Pago guardado correctamente.'],
+    'deleted' => ['message' => 'Pago eliminado correctamente.'],
+    'csrf' => ['type' => 'error', 'title' => 'Sesion no valida', 'message' => 'Recarga la pagina e intenta de nuevo.'],
+]);
+
+$filterParams = [
+    'q' => $searchTerm,
+    'proyecto_id' => $projectId,
+    'estado' => $statusFilter,
+    'metodo' => $methodFilter,
+    'moneda' => $currencyFilter,
+    'desde' => $fromDate,
+    'hasta' => $toDate,
+    'page' => $page,
+];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!admin_validate_csrf($_POST['csrf_token'] ?? null)) {
-        header("Location: pagos.php?msg=csrf&desde=$desde&hasta=$hasta");
+        header('Location: ' . admin_build_url('pagos.php', array_merge($filterParams, ['msg' => 'csrf'])));
         exit;
     }
 
-    $action = $_POST['action'];
+    $action = $_POST['action'] ?? '';
+    $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
 
-    if ($action === 'crear_pago') {
-        $cliente   = sanitize($_POST['cliente'] ?? '');
-        $proyecto  = sanitize($_POST['proyecto'] ?? '');
-        $monto     = (float) ($_POST['monto'] ?? 0);
-        $moneda    = sanitize($_POST['moneda'] ?? 'USD');
-        $metodo    = sanitize($_POST['metodo'] ?? 'transferencia');
-        $estado    = sanitize($_POST['estado'] ?? 'pendiente');
-        $fee       = (float) ($_POST['fee_pasarela'] ?? 0);
-        $fechaPago = valid_date_param($_POST['fecha_pago'] ?? '') ? $_POST['fecha_pago'] : $hoy;
-        $comprobante = sanitize($_POST['comprobante'] ?? '');
-        $notas       = sanitize($_POST['notas'] ?? '');
-        $fechaConfirm = $estado === 'confirmado' ? date('Y-m-d H:i:s') : null;
-
-        $stmt = $conn->prepare("INSERT INTO pagos (cliente, proyecto, monto, moneda, metodo, estado, fee_pasarela, fecha_pago, fecha_confirmacion, comprobante, notas) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param(
-            "ssdsssdssss",
-            $cliente,
-            $proyecto,
-            $monto,
-            $moneda,
-            $metodo,
-            $estado,
-            $fee,
-            $fechaPago,
-            $fechaConfirm,
-            $comprobante,
-            $notas
-        );
-        $stmt->execute();
-        $stmt->close();
-
-        header("Location: pagos.php?msg=pago_creado&desde=$desde&hasta=$hasta");
-        exit;
-    }
-
-    if ($action === 'crear_gasto') {
-        $categoria   = sanitize($_POST['categoria'] ?? 'Operativo');
-        $descripcion = sanitize($_POST['descripcion'] ?? '');
-        $proveedor   = sanitize($_POST['proveedor'] ?? '');
-        $proyecto    = sanitize($_POST['proyecto'] ?? '');
-        $monto       = (float) ($_POST['monto'] ?? 0);
-        $moneda      = sanitize($_POST['moneda'] ?? 'USD');
-        $impuesto    = (float) ($_POST['impuesto'] ?? 0);
-        $fechaGasto  = valid_date_param($_POST['fecha_gasto'] ?? '') ? $_POST['fecha_gasto'] : $hoy;
-        $metodo      = sanitize($_POST['metodo'] ?? 'transferencia');
-        $comprobante = sanitize($_POST['comprobante'] ?? '');
-        $notas       = sanitize($_POST['notas'] ?? '');
-
-        $stmt = $conn->prepare("INSERT INTO gastos (categoria, descripcion, proveedor, proyecto, monto, moneda, impuesto, fecha_gasto, metodo, comprobante, notas) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param(
-            "ssssdsdssss",
-            $categoria,
-            $descripcion,
-            $proveedor,
-            $proyecto,
-            $monto,
-            $moneda,
-            $impuesto,
-            $fechaGasto,
-            $metodo,
-            $comprobante,
-            $notas
-        );
-        $stmt->execute();
-        $stmt->close();
-
-        header("Location: pagos.php?msg=gasto_creado&desde=$desde&hasta=$hasta");
-        exit;
-    }
-
-    if ($action === 'crear_venta') {
-        $proyecto    = sanitize($_POST['proyecto'] ?? '');
-        $cliente     = sanitize($_POST['cliente'] ?? '');
-        $precio      = (float) ($_POST['precio'] ?? 0);
-        $descuento   = (float) ($_POST['descuento'] ?? 0);
-        $estadoEnt   = sanitize($_POST['estado_entrega'] ?? 'pendiente');
-        $fechaVenta  = valid_date_param($_POST['fecha_venta'] ?? '') ? $_POST['fecha_venta'] : $hoy;
-        $pagoId      = isset($_POST['pago_id']) && $_POST['pago_id'] !== '' ? (int) $_POST['pago_id'] : null;
-        $notas       = sanitize($_POST['notas'] ?? '');
-
-        $stmt = $conn->prepare("INSERT INTO ventas (proyecto, cliente, precio, descuento, estado_entrega, fecha_venta, pago_id, notas) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param(
-            "ssddssis",
-            $proyecto,
-            $cliente,
-            $precio,
-            $descuento,
-            $estadoEnt,
-            $fechaVenta,
-            $pagoId,
-            $notas
-        );
-        $stmt->execute();
-        $stmt->close();
-
-        header("Location: pagos.php?msg=venta_creada&desde=$desde&hasta=$hasta");
-        exit;
-    }
-
-    if ($action === 'accion_pago') {
-        $pagoId = (int) ($_POST['pago_id'] ?? 0);
-        $accion = sanitize($_POST['accion'] ?? '');
-
-        if ($pagoId > 0) {
-            if ($accion === 'eliminar') {
-                if ($stmt = $conn->prepare("DELETE FROM pagos WHERE id = ?")) {
-                    $stmt->bind_param("i", $pagoId);
-                    $stmt->execute();
-                    $stmt->close();
-                }
-                header("Location: pagos.php?msg=pago_eliminado&desde=$desde&hasta=$hasta");
-                exit;
-            }
-
-            $estadoMap = [
-                'confirmar'   => 'confirmado',
-                'en_revision' => 'en_revision',
-                'reembolsar'  => 'reembolsado',
-                'pendiente'   => 'pendiente',
-            ];
-
-            if (isset($estadoMap[$accion])) {
-                $nuevoEstado = $estadoMap[$accion];
-                $fechaConfirm = $nuevoEstado === 'confirmado' ? date('Y-m-d H:i:s') : null;
-
-                if ($stmt = $conn->prepare("UPDATE pagos SET estado = ?, fecha_confirmacion = ? WHERE id = ?")) {
-                    $stmt->bind_param("ssi", $nuevoEstado, $fechaConfirm, $pagoId);
-                    $stmt->execute();
-                    $stmt->close();
-                }
-                header("Location: pagos.php?msg=pago_actualizado&desde=$desde&hasta=$hasta");
-                exit;
-            }
-        }
-    }
-
-    if ($action === 'eliminar_gasto') {
-        $id = (int) ($_POST['gasto_id'] ?? 0);
-        if ($id > 0 && $stmt = $conn->prepare("DELETE FROM gastos WHERE id = ?")) {
-            $stmt->bind_param("i", $id);
+    if ($action === 'delete' && $id > 0) {
+        if ($stmt = $conn->prepare('DELETE FROM proyecto_pagos WHERE id = ?')) {
+            $stmt->bind_param('i', $id);
             $stmt->execute();
             $stmt->close();
         }
-        header("Location: pagos.php?msg=gasto_eliminado&desde=$desde&hasta=$hasta");
-        exit;
-    }
 
-    if ($action === 'eliminar_venta') {
-        $id = (int) ($_POST['venta_id'] ?? 0);
-        if ($id > 0 && $stmt = $conn->prepare("DELETE FROM ventas WHERE id = ?")) {
-            $stmt->bind_param("i", $id);
-            $stmt->execute();
-            $stmt->close();
-        }
-        header("Location: pagos.php?msg=venta_eliminada&desde=$desde&hasta=$hasta");
+        admin_log_action($conn, 'delete', 'payment', $id, 'Pago eliminado desde el listado');
+        header('Location: ' . admin_build_url('pagos.php', array_merge($filterParams, ['msg' => 'deleted'])));
         exit;
     }
 }
 
-// Estadísticas
-$statsPagos = $conn->prepare("
-    SELECT 
-        SUM(CASE WHEN estado = 'confirmado' THEN monto ELSE 0 END) AS total_confirmado,
-        SUM(CASE WHEN estado = 'confirmado' THEN fee_pasarela ELSE 0 END) AS total_fees,
-        SUM(CASE WHEN estado = 'pendiente' THEN monto ELSE 0 END) AS total_pendiente,
-        SUM(CASE WHEN estado = 'reembolsado' THEN monto ELSE 0 END) AS total_reembolsado,
-        COUNT(*) AS total_registros
-    FROM pagos
-    WHERE fecha_pago BETWEEN ? AND ?
-");
-$statsPagos->bind_param("ss", $desde, $hasta);
-$statsPagos->execute();
-$statsPagosRes = $statsPagos->get_result()->fetch_assoc();
-$statsPagos->close();
+$whereClauses = [];
 
-$statsGastos = $conn->prepare("
-    SELECT SUM(monto + impuesto) AS total_gastos
-    FROM gastos
-    WHERE fecha_gasto BETWEEN ? AND ?
-");
-$statsGastos->bind_param("ss", $desde, $hasta);
-$statsGastos->execute();
-$statsGastosRes = $statsGastos->get_result()->fetch_assoc();
-$statsGastos->close();
+if ($projectId > 0) {
+    $whereClauses[] = 'pp.proyecto_id = ' . $projectId;
+}
 
-$totalIngresosBrutos = (float) ($statsPagosRes['total_confirmado'] ?? 0);
-$totalFees           = (float) ($statsPagosRes['total_fees'] ?? 0);
-$totalIngresosNetos  = $totalIngresosBrutos - $totalFees;
-$totalGastos         = (float) ($statsGastosRes['total_gastos'] ?? 0);
-$gananciaNeta        = $totalIngresosNetos - $totalGastos;
-$margen              = $totalIngresosBrutos > 0 ? round(($gananciaNeta / $totalIngresosBrutos) * 100, 1) : 0;
+$statusOptions = paymentStatusOptions();
+if ($statusFilter !== '' && isset($statusOptions[$statusFilter])) {
+    $safeStatus = $conn->real_escape_string($statusFilter);
+    $whereClauses[] = \"pp.estado = '{$safeStatus}'\";
+}
 
-// Listados (limit para no saturar)
-$pagos   = $conn->query("SELECT * FROM pagos ORDER BY fecha_pago DESC LIMIT 200");
-$gastos  = $conn->query("SELECT * FROM gastos ORDER BY fecha_gasto DESC LIMIT 200");
-$ventas  = $conn->query("SELECT v.*, p.estado AS estado_pago FROM ventas v LEFT JOIN pagos p ON p.id = v.pago_id ORDER BY fecha_venta DESC LIMIT 200");
-$pagosConfirmados = $conn->query("SELECT id, cliente, proyecto, monto, moneda FROM pagos WHERE estado = 'confirmado' ORDER BY fecha_pago DESC");
+$methodOptions = paymentMethodOptions();
+if ($methodFilter !== '' && isset($methodOptions[$methodFilter])) {
+    $safeMethod = $conn->real_escape_string($methodFilter);
+    $whereClauses[] = \"pp.metodo = '{$safeMethod}'\";
+}
+
+$currencyOptions = paymentCurrencyOptions();
+if ($currencyFilter !== '' && isset($currencyOptions[$currencyFilter])) {
+    $safeCurrency = $conn->real_escape_string($currencyFilter);
+    $whereClauses[] = \"pp.moneda = '{$safeCurrency}'\";
+}
+
+if ($fromDate !== '' && DateTime::createFromFormat('Y-m-d', $fromDate) !== false) {
+    $safeFrom = $conn->real_escape_string($fromDate);
+    $whereClauses[] = \"pp.fecha_pago >= '{$safeFrom}'\";
+}
+
+if ($toDate !== '' && DateTime::createFromFormat('Y-m-d', $toDate) !== false) {
+    $safeTo = $conn->real_escape_string($toDate);
+    $whereClauses[] = \"pp.fecha_pago <= '{$safeTo}'\";
+}
+
+if ($searchTerm !== '') {
+    $safeSearch = $conn->real_escape_string($searchTerm);
+    $whereClauses[] = \"(pp.concepto LIKE '%{$safeSearch}%' OR pp.referencia LIKE '%{$safeSearch}%' OR pp.notas LIKE '%{$safeSearch}%' OR pr.titulo LIKE '%{$safeSearch}%' OR pr.cliente LIKE '%{$safeSearch}%')\";
+}
+
+$whereSql = count($whereClauses) > 0 ? 'WHERE ' . implode(' AND ', $whereClauses) : '';
+
+$exporting = isset($_GET['export']) && $_GET['export'] === 'csv';
+if ($exporting) {
+    $exportSql = "SELECT pp.id, pp.concepto, pp.monto, pp.moneda, pp.estado, pp.metodo, pp.referencia, pp.fecha_pago, pr.titulo AS proyecto, pr.cliente AS cliente FROM proyecto_pagos pp LEFT JOIN proyectos pr ON pr.id = pp.proyecto_id {$whereSql} ORDER BY pp.fecha_pago DESC, pp.id DESC";
+    $exportRows = [];
+    $exportResult = $conn->query($exportSql);
+    if ($exportResult instanceof mysqli_result) {
+        while ($row = $exportResult->fetch_assoc()) {
+            $exportRows[] = [
+                $row['id'],
+                $row['concepto'],
+                $row['proyecto'] ?? '',
+                $row['cliente'] ?? '',
+                $row['monto'],
+                $row['moneda'],
+                $row['estado'],
+                $row['metodo'],
+                $row['referencia'],
+                $row['fecha_pago'],
+            ];
+        }
+        $exportResult->free();
+    }
+
+    admin_send_csv('pagos.csv', ['ID', 'Concepto', 'Proyecto', 'Cliente', 'Monto', 'Moneda', 'Estado', 'Metodo', 'Referencia', 'Fecha'], $exportRows);
+}
+
+$totalItems = 0;
+$totalResult = $conn->query(\"SELECT COUNT(*) AS total FROM proyecto_pagos pp {$whereSql}\");
+if ($totalResult instanceof mysqli_result) {
+    $totalItems = (int) ($totalResult->fetch_assoc()['total'] ?? 0);
+    $totalResult->free();
+}
+
+$totalesMoneda = [];
+$totalsByCurrency = $conn->query(\"SELECT pp.moneda, COUNT(*) AS total_items, COALESCE(SUM(pp.monto), 0) AS monto_total FROM proyecto_pagos pp {$whereSql} GROUP BY pp.moneda\");
+if ($totalsByCurrency instanceof mysqli_result) {
+    while ($row = $totalsByCurrency->fetch_assoc()) {
+        $currencyKey = strtoupper(trim((string) ($row['moneda'] ?? 'COP')));
+        $totalesMoneda[$currencyKey] = [
+            'items' => (int) ($row['total_items'] ?? 0),
+            'monto' => (float) ($row['monto_total'] ?? 0),
+        ];
+    }
+    $totalsByCurrency->free();
+}
+
+$pagination = admin_paginate($totalItems, $perPage, $page);
+$paymentsSql = \"SELECT pp.*, pr.titulo AS proyecto_titulo, pr.cliente AS proyecto_cliente FROM proyecto_pagos pp LEFT JOIN proyectos pr ON pr.id = pp.proyecto_id {$whereSql} ORDER BY pp.fecha_pago DESC, pp.id DESC LIMIT {$pagination['offset']}, {$pagination['per_page']}\";
+$payments = $conn->query($paymentsSql);
+$projectsOptions = fetchProjectDropdownOptions($conn);
+
+function payment_status_badge_class(string $status): string
+{
+    $map = [
+        'recibido' => 'bg-emerald-100 text-emerald-700',
+        'pendiente' => 'bg-amber-100 text-amber-700',
+        'parcial' => 'bg-blue-100 text-blue-700',
+        'reembolsado' => 'bg-red-100 text-red-700',
+    ];
+
+    return $map[$status] ?? 'bg-slate-100 text-slate-700';
+}
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang=\"es\">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagos y Finanzas - Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<style>.logo-ring{position:absolute;inset:0;border:2px solid transparent;border-radius:8px;background:conic-gradient(from 0deg,#2563eb,#38bdf8,#2563eb);background-origin:border-box;animation:logo-spin 4s linear infinite;}@keyframes logo-spin{to{transform:rotate(360deg);}}</style>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>Pagos - Admin</title>
+    <script src=\"https://cdn.tailwindcss.com\"></script>
+    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css\">
 </head>
-<body class="bg-gray-100">
-    <!-- Barra móvil -->
-    <header class="md:hidden sticky top-0 z-30 flex items-center justify-between bg-white px-4 py-3 shadow">
-        <div class="flex items-center gap-2">
-            <div class="relative h-10 w-10 shrink-0">
-    <span class="logo-ring"></span>
-    <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain">
-</div>
-            <button id="toggleSidebar" class="p-2 rounded border border-blue-500/60 bg-gradient-to-br from-blue-500 via-blue-400 to-cyan-300 text-white shadow-[0_0_12px_rgba(59,130,246,0.65)] hover:shadow-[0_0_16px_rgba(56,189,248,0.75)] active:scale-95 transition">
-                <i class="fas fa-bars text-white"></i>
-            </button>
-        </div>
-        <a href="logout.php" onclick="return confirm('¿Cerrar sesión?' );" class="text-red-600 text-sm flex items-center gap-1"><i class="fas fa-sign-out-alt"></i>Salir</a>
-    </header>
-
-    <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        <div id="sidebar" class="fixed md:static inset-y-0 left-0 w-64 bg-white shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-200 z-40">
-            <div class="p-4 border-b">
-                <div class="relative h-10 w-10 shrink-0">
-    <span class="logo-ring"></span>
-    <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain">
-</div>
+<body class=\"bg-gray-100\">
+    <div class=\"flex min-h-screen\">
+        <div class=\"w-64 bg-white shadow-lg\">
+            <div class=\"p-4 border-b\">
+                <h2 class=\"text-xl font-bold text-blue-600\">MCE Admin</h2>
             </div>
-            <nav class="p-4">
-                <ul class="space-y-2">
-                    <li><a href="dashboard.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
-                    <li><a href="proyectos.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-folder"></i><span>Proyectos</span></a></li>
-                    <li><a href="servicios.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-cog"></i><span>Servicios</span></a></li>
-                    <li><a href="pagos.php" class="flex items-center space-x-2 p-2 bg-blue-50 text-blue-600 rounded"><i class="fas fa-credit-card"></i><span>Pagos</span></a></li>
-                    <li><a href="mensajes.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-envelope"></i><span>Mensajes</span></a></li>
-                    <li><a href="logout.php" onclick="return confirm('¿Cerrar sesión?');" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded text-red-600"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a></li>
+            <nav class=\"p-4\">
+                <ul class=\"space-y-2\">
+                    <li><a href=\"dashboard.php\" class=\"flex items-center space-x-2 p-2 hover:bg-gray-100 rounded\"><i class=\"fas fa-home\"></i><span>Dashboard</span></a></li>
+                    <li><a href=\"proyectos.php\" class=\"flex items-center space-x-2 p-2 hover:bg-gray-100 rounded\"><i class=\"fas fa-folder\"></i><span>Proyectos</span></a></li>
+                    <li><a href=\"servicios.php\" class=\"flex items-center space-x-2 p-2 hover:bg-gray-100 rounded\"><i class=\"fas fa-cog\"></i><span>Servicios</span></a></li>
+                    <li>
+                        <a href=\"pagos.php\" class=\"flex items-center space-x-2 rounded bg-blue-50 p-2 text-blue-600\">
+                            <i class=\"fas fa-receipt\"></i>
+                            <span>Pagos</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href=\"testimonios.php\" class=\"flex items-center space-x-2 p-2 hover:bg-gray-100 rounded\">
+                            <i class=\"fas fa-comment\"></i>
+                            <span>Testimonios</span>
+                            <?php if ($pendingTestimonials > 0): ?>
+                                <span class=\"ml-auto inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700\">
+                                    <span class=\"relative flex h-2 w-2\">
+                                        <span class=\"absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500 opacity-75\"></span>
+                                        <span class=\"relative inline-flex h-2 w-2 rounded-full bg-amber-600\"></span>
+                                    </span>
+                                    <?php echo $pendingTestimonials; ?>
+                                </span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+                    <li><a href=\"mensajes.php\" class=\"flex items-center space-x-2 p-2 hover:bg-gray-100 rounded\"><i class=\"fas fa-envelope\"></i><span>Mensajes</span></a></li>
+                    <li><a href=\"auditoria.php\" class=\"flex items-center space-x-2 p-2 hover:bg-gray-100 rounded\"><i class=\"fas fa-clock-rotate-left\"></i><span>Actividad</span></a></li>
+                    <li><a href=\"cambiar-password.php\" class=\"flex items-center space-x-2 p-2 hover:bg-gray-100 rounded\"><i class=\"fas fa-lock\"></i><span>Cambiar clave</span></a></li>
+                    <li><a href=\"logout.php\" class=\"flex items-center space-x-2 p-2 hover:bg-gray-100 rounded text-red-600\"><i class=\"fas fa-sign-out-alt\"></i><span>Salir</span></a></li>
                 </ul>
             </nav>
         </div>
-        <div id="sidebarOverlay" class="fixed inset-0 bg-black/30 z-30 hidden md:hidden"></div>
-        
-        <!-- Contenido principal -->
-        <div class="flex-1 overflow-y-auto">
-            <div class="p-8 space-y-6">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+        <div class=\"flex-1 overflow-y-auto\">
+            <div class=\"p-8\">
+                <?php admin_render_toast($toast); ?>
+                <div class=\"mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between\">
                     <div>
-                        <h1 class="text-3xl font-bold">Pagos, Gastos y Ganancias</h1>
-                        <p class="text-gray-500">Resumen de ingresos confirmados, costos y margen.</p>
+                        <h1 class=\"text-3xl font-bold\">Pagos</h1>
+                        <p class=\"mt-2 text-sm text-gray-600\">Registra y controla los pagos recibidos por cada proyecto.</p>
                     </div>
-                    <form class="flex flex-wrap gap-2 items-center" method="get">
-                        <label class="text-sm text-gray-600">Desde</label>
-                        <input type="date" name="desde" value="<?php echo $desde; ?>" class="border rounded px-3 py-2">
-                        <label class="text-sm text-gray-600">Hasta</label>
-                        <input type="date" name="hasta" value="<?php echo $hasta; ?>" class="border rounded px-3 py-2">
-                        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" type="submit">
-                            <i class="fas fa-filter mr-2"></i>Filtrar
-                        </button>
-                    </form>
+                    <div class=\"flex flex-wrap gap-3\">
+                        <a href=\"<?php echo admin_build_url('pagos.php', array_merge($filterParams, ['export' => 'csv'])); ?>\" class=\"inline-flex items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50\">
+                            <i class=\"fas fa-file-export mr-2\"></i>Exportar CSV
+                        </a>
+                        <a href=\"pago-editar.php\" class=\"inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700\">
+                            <i class=\"fas fa-plus mr-2\"></i>Registrar pago
+                        </a>
+                    </div>
                 </div>
 
-                <?php if (isset($_GET['msg'])): ?>
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                        <?php
-                        $msgs = [
-                            'pago_creado' => 'Pago registrado.',
-                            'gasto_creado' => 'Gasto registrado.',
-                            'venta_creada' => 'Proyecto vendido registrado.',
-                            'pago_eliminado' => 'Pago eliminado.',
-                            'gasto_eliminado' => 'Gasto eliminado.',
-                            'venta_eliminada' => 'Venta eliminada.',
-                            'pago_actualizado' => 'Estado de pago actualizado.',
-                            'csrf' => 'La sesión de seguridad expiró. Vuelve a intentar.'
-                        ];
-                        $key = $_GET['msg'];
-                        echo $msgs[$key] ?? 'Acción realizada.';
-                        ?>
+                <?php if (count($totalesMoneda) > 0): ?>
+                    <div class=\"mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3\">
+                        <?php foreach ($totalesMoneda as $currency => $summary): ?>
+                            <div class=\"rounded-2xl border border-gray-100 bg-white p-5 shadow-sm\">
+                                <p class=\"text-sm font-semibold text-gray-500\">Total en <?php echo admin_escape($currency); ?></p>
+                                <p class=\"mt-2 text-2xl font-bold text-slate-900\"><?php echo payment_format_amount((float) $summary['monto'], $currency); ?></p>
+                                <p class=\"text-sm text-gray-500 mt-1\"><?php echo (int) $summary['items']; ?> pago<?php echo ((int) $summary['items'] === 1) ? '' : 's'; ?></p>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
 
-                <!-- KPIs -->
-                <div class="grid md:grid-cols-4 gap-4">
-                    <div class="bg-white rounded-lg shadow p-4">
-                        <p class="text-gray-500 text-sm">Ingresos brutos confirmados</p>
-                        <p class="text-2xl font-bold">$<?php echo number_format($totalIngresosBrutos, 2); ?></p>
-                        <span class="text-xs text-gray-400">Periodo: <?php echo $desde; ?> a <?php echo $hasta; ?></span>
-                    </div>
-                    <div class="bg-white rounded-lg shadow p-4">
-                        <p class="text-gray-500 text-sm">Gastos totales</p>
-                        <p class="text-2xl font-bold text-red-600">$<?php echo number_format($totalGastos, 2); ?></p>
-                        <span class="text-xs text-gray-400">Incluye impuestos</span>
-                    </div>
-                    <div class="bg-white rounded-lg shadow p-4">
-                        <p class="text-gray-500 text-sm">Ganancia neta</p>
-                        <p class="text-2xl font-bold text-green-600">$<?php echo number_format($gananciaNeta, 2); ?></p>
-                        <span class="text-xs text-gray-400">Ingresos netos - gastos</span>
-                    </div>
-                    <div class="bg-white rounded-lg shadow p-4">
-                        <p class="text-gray-500 text-sm">Margen</p>
-                        <p class="text-2xl font-bold"><?php echo $margen; ?>%</p>
-                        <div class="text-xs text-gray-400">Pendiente: $<?php echo number_format($statsPagosRes['total_pendiente'] ?? 0, 2); ?> | Reembolsado: $<?php echo number_format($statsPagosRes['total_reembolsado'] ?? 0, 2); ?></div>
+                <div class=\"mb-6 flex flex-col gap-4 rounded-2xl bg-white p-5 shadow\">
+                    <form method=\"GET\" class=\"grid gap-4 md:grid-cols-2 xl:grid-cols-4\">
+                        <div class=\"col-span-2\">
+                            <label class=\"block text-sm font-semibold text-gray-700 mb-2\">Buscar</label>
+                            <div class=\"relative\">
+                                <i class=\"fas fa-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400\"></i>
+                                <input
+                                    type=\"text\"
+                                    name=\"q\"
+                                    value=\"<?php echo admin_escape($searchTerm); ?>\"
+                                    placeholder=\"Concepto, cliente, referencia...\"
+                                    class=\"w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-10 pr-4 focus:border-blue-600 focus:bg-white focus:outline-none\"
+                                >
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class=\"block text-sm font-semibold text-gray-700 mb-2\">Proyecto</label>
+                            <select name=\"proyecto_id\" class=\"w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 focus:border-blue-600 focus:bg-white focus:outline-none\">
+                                <option value=\"0\">Todos</option>
+                                <?php foreach ($projectsOptions as $project): ?>
+                                    <option value=\"<?php echo (int) $project['id']; ?>\" <?php echo $projectId === (int) $project['id'] ? 'selected' : ''; ?>>
+                                        <?php echo admin_escape($project['titulo']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class=\"block text-sm font-semibold text-gray-700 mb-2\">Estado</label>
+                            <select name=\"estado\" class=\"w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 focus:border-blue-600 focus:bg-white focus:outline-none\">
+                                <option value=\"\">Todos</option>
+                                <?php foreach ($statusOptions as $key => $label): ?>
+                                    <option value=\"<?php echo admin_escape($key); ?>\" <?php echo $statusFilter === $key ? 'selected' : ''; ?>><?php echo admin_escape($label); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class=\"block text-sm font-semibold text-gray-700 mb-2\">Metodo</label>
+                            <select name=\"metodo\" class=\"w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 focus:border-blue-600 focus:bg-white focus:outline-none\">
+                                <option value=\"\">Todos</option>
+                                <?php foreach ($methodOptions as $key => $label): ?>
+                                    <option value=\"<?php echo admin_escape($key); ?>\" <?php echo $methodFilter === $key ? 'selected' : ''; ?>><?php echo admin_escape($label); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class=\"block text-sm font-semibold text-gray-700 mb-2\">Moneda</label>
+                            <select name=\"moneda\" class=\"w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 focus:border-blue-600 focus:bg-white focus:outline-none\">
+                                <option value=\"\">Todas</option>
+                                <?php foreach ($currencyOptions as $key => $label): ?>
+                                    <option value=\"<?php echo admin_escape($key); ?>\" <?php echo $currencyFilter === $key ? 'selected' : ''; ?>><?php echo admin_escape($label); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class=\"block text-sm font-semibold text-gray-700 mb-2\">Desde</label>
+                            <input type=\"date\" name=\"desde\" value=\"<?php echo admin_escape($fromDate); ?>\" class=\"w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 focus:border-blue-600 focus:bg-white focus:outline-none\">
+                        </div>
+
+                        <div>
+                            <label class=\"block text-sm font-semibold text-gray-700 mb-2\">Hasta</label>
+                            <input type=\"date\" name=\"hasta\" value=\"<?php echo admin_escape($toDate); ?>\" class=\"w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 focus:border-blue-600 focus:bg-white focus:outline-none\">
+                        </div>
+
+                        <div class=\"flex items-end gap-3\">
+                            <button type=\"submit\" class=\"rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800\">Filtrar</button>
+                            <a href=\"pagos.php\" class=\"rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50\">Limpiar</a>
+                        </div>
+                    </form>
+                    <div class=\"text-sm text-gray-500\">
+                        <?php echo $totalItems; ?> pago<?php echo $totalItems === 1 ? '' : 's'; ?> encontrado<?php echo $totalItems === 1 ? '' : 's'; ?>
                     </div>
                 </div>
 
-                <!-- Formularios -->
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="bg-white rounded-lg shadow p-5">
-                        <h3 class="text-lg font-semibold mb-3 flex items-center gap-2"><i class="fas fa-plus-circle text-blue-600"></i>Nuevo pago/cobro</h3>
-                        <form method="post" class="space-y-3">
-                            <input type="hidden" name="action" value="crear_pago">
-                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
-                            <div>
-                                <label class="text-sm text-gray-600">Cliente *</label>
-                                <input type="text" name="cliente" required class="w-full border rounded px-3 py-2">
-                            </div>
-                            <div>
-                                <label class="text-sm text-gray-600">Proyecto</label>
-                                <input type="text" name="proyecto" class="w-full border rounded px-3 py-2">
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-sm text-gray-600">Monto *</label>
-                                    <input type="number" step="0.01" name="monto" required class="w-full border rounded px-3 py-2">
-                                </div>
-                                <div>
-                                    <label class="text-sm text-gray-600">Moneda</label>
-                                    <select name="moneda" class="w-full border rounded px-3 py-2">
-                                        <option value="USD">USD</option>
-                                        <option value="COP">COP</option>
-                                        <option value="EUR">EUR</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-sm text-gray-600">Método</label>
-                                    <select name="metodo" class="w-full border rounded px-3 py-2">
-                                        <option value="transferencia">Transferencia</option>
-                                        <option value="tarjeta">Tarjeta</option>
-                                        <option value="efectivo">Efectivo</option>
-                                        <option value="otro">Otro</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="text-sm text-gray-600">Estado</label>
-                                    <select name="estado" class="w-full border rounded px-3 py-2">
-                                        <option value="pendiente">Pendiente</option>
-                                        <option value="en_revision">En revisión</option>
-                                        <option value="confirmado">Confirmado</option>
-                                        <option value="fallido">Fallido</option>
-                                        <option value="reembolsado">Reembolsado</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-sm text-gray-600">Fee pasarela</label>
-                                    <input type="number" step="0.01" name="fee_pasarela" class="w-full border rounded px-3 py-2" value="0">
-                                </div>
-                                <div>
-                                    <label class="text-sm text-gray-600">Fecha cobro</label>
-                                    <input type="date" name="fecha_pago" value="<?php echo $hoy; ?>" class="w-full border rounded px-3 py-2">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-sm text-gray-600">Comprobante (URL)</label>
-                                <input type="text" name="comprobante" class="w-full border rounded px-3 py-2" placeholder="https://...">
-                            </div>
-                            <div>
-                                <label class="text-sm text-gray-600">Notas</label>
-                                <textarea name="notas" class="w-full border rounded px-3 py-2" rows="2"></textarea>
-                            </div>
-                            <button class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700" type="submit">Guardar pago</button>
-                        </form>
-                    </div>
-
-                    <div class="bg-white rounded-lg shadow p-5">
-                        <h3 class="text-lg font-semibold mb-3 flex items-center gap-2"><i class="fas fa-receipt text-amber-600"></i>Registrar gasto</h3>
-                        <form method="post" class="space-y-3">
-                            <input type="hidden" name="action" value="crear_gasto">
-                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
-                            <div>
-                                <label class="text-sm text-gray-600">Categoría</label>
-                                <select name="categoria" class="w-full border rounded px-3 py-2">
-                                    <option value="Operativo">Operativo</option>
-                                    <option value="Marketing">Marketing</option>
-                                    <option value="Licencias">Licencias</option>
-                                    <option value="Hosting">Hosting</option>
-                                    <option value="Pago a terceros">Pago a terceros</option>
-                                    <option value="Nómina">Nómina</option>
-                                    <option value="Otro">Otro</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-sm text-gray-600">Descripción</label>
-                                <input type="text" name="descripcion" class="w-full border rounded px-3 py-2">
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-sm text-gray-600">Proveedor</label>
-                                    <input type="text" name="proveedor" class="w-full border rounded px-3 py-2">
-                                </div>
-                                <div>
-                                    <label class="text-sm text-gray-600">Proyecto (opcional)</label>
-                                    <input type="text" name="proyecto" class="w-full border rounded px-3 py-2">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-sm text-gray-600">Monto *</label>
-                                    <input type="number" step="0.01" name="monto" required class="w-full border rounded px-3 py-2">
-                                </div>
-                                <div>
-                                    <label class="text-sm text-gray-600">Moneda</label>
-                                    <select name="moneda" class="w-full border rounded px-3 py-2">
-                                        <option value="USD">USD</option>
-                                        <option value="COP">COP</option>
-                                        <option value="EUR">EUR</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-sm text-gray-600">Impuesto</label>
-                                    <input type="number" step="0.01" name="impuesto" value="0" class="w-full border rounded px-3 py-2">
-                                </div>
-                                <div>
-                                    <label class="text-sm text-gray-600">Fecha gasto</label>
-                                    <input type="date" name="fecha_gasto" value="<?php echo $hoy; ?>" class="w-full border rounded px-3 py-2">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-sm text-gray-600">Método</label>
-                                    <select name="metodo" class="w-full border rounded px-3 py-2">
-                                        <option value="transferencia">Transferencia</option>
-                                        <option value="tarjeta">Tarjeta</option>
-                                        <option value="efectivo">Efectivo</option>
-                                        <option value="otro">Otro</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="text-sm text-gray-600">Comprobante (URL)</label>
-                                    <input type="text" name="comprobante" class="w-full border rounded px-3 py-2" placeholder="https://...">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-sm text-gray-600">Notas</label>
-                                <textarea name="notas" class="w-full border rounded px-3 py-2" rows="2"></textarea>
-                            </div>
-                            <button class="w-full bg-amber-600 text-white py-2 rounded hover:bg-amber-700" type="submit">Guardar gasto</button>
-                        </form>
-                    </div>
-
-                    <div class="bg-white rounded-lg shadow p-5">
-                        <h3 class="text-lg font-semibold mb-3 flex items-center gap-2"><i class="fas fa-box-open text-green-600"></i>Registrar proyecto vendido</h3>
-                        <form method="post" class="space-y-3">
-                            <input type="hidden" name="action" value="crear_venta">
-                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
-                            <div>
-                                <label class="text-sm text-gray-600">Proyecto *</label>
-                                <input type="text" name="proyecto" required class="w-full border rounded px-3 py-2">
-                            </div>
-                            <div>
-                                <label class="text-sm text-gray-600">Cliente</label>
-                                <input type="text" name="cliente" class="w-full border rounded px-3 py-2">
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-sm text-gray-600">Precio *</label>
-                                    <input type="number" step="0.01" name="precio" required class="w-full border rounded px-3 py-2">
-                                </div>
-                                <div>
-                                    <label class="text-sm text-gray-600">Descuento</label>
-                                    <input type="number" step="0.01" name="descuento" value="0" class="w-full border rounded px-3 py-2">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-sm text-gray-600">Estado entrega</label>
-                                    <select name="estado_entrega" class="w-full border rounded px-3 py-2">
-                                        <option value="pendiente">Pendiente</option>
-                                        <option value="entregado">Entregado</option>
-                                        <option value="soporte">En soporte</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="text-sm text-gray-600">Fecha venta</label>
-                                    <input type="date" name="fecha_venta" value="<?php echo $hoy; ?>" class="w-full border rounded px-3 py-2">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-sm text-gray-600">Asociar pago (confirmado)</label>
-                                <select name="pago_id" class="w-full border rounded px-3 py-2">
-                                    <option value="">Sin asociar</option>
-                                    <?php while ($pc = $pagosConfirmados->fetch_assoc()): ?>
-                                        <option value="<?php echo $pc['id']; ?>">
-                                            #<?php echo $pc['id']; ?> - <?php echo $pc['cliente']; ?> (<?php echo $pc['moneda']; ?> <?php echo number_format($pc['monto'], 2); ?>)
-                                        </option>
-                                    <?php endwhile; ?>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-sm text-gray-600">Notas</label>
-                                <textarea name="notas" class="w-full border rounded px-3 py-2" rows="2"></textarea>
-                            </div>
-                            <button class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700" type="submit">Guardar venta</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Listas -->
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-lg shadow p-5">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-lg font-semibold flex items-center gap-2"><i class="fas fa-credit-card text-blue-600"></i>Pagos</h3>
-                            <span class="text-xs text-gray-500">Últimos 200</span>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead>
-                                    <tr class="border-b bg-gray-50">
-                                        <th class="px-3 py-2 text-left">Cliente</th>
-                                        <th class="px-3 py-2 text-left">Proyecto</th>
-                                        <th class="px-3 py-2 text-left">Monto</th>
-                                        <th class="px-3 py-2 text-left">Estado</th>
-                                        <th class="px-3 py-2 text-left">Fecha</th>
-                                        <th class="px-3 py-2 text-left">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php while ($p = $pagos->fetch_assoc()): ?>
-                                        <tr class="border-b hover:bg-gray-50">
-                                            <td class="px-3 py-2"><?php echo $p['cliente']; ?></td>
-                                            <td class="px-3 py-2"><?php echo $p['proyecto'] ?: '-'; ?></td>
-                                            <td class="px-3 py-2 font-semibold"><?php echo $p['moneda']; ?> <?php echo number_format($p['monto'], 2); ?></td>
-                                            <td class="px-3 py-2">
-                                                <?php
-                                                $estadoClass = [
-                                                    'confirmado' => 'bg-green-100 text-green-800',
-                                                    'pendiente' => 'bg-yellow-100 text-yellow-800',
-                                                    'en_revision' => 'bg-blue-100 text-blue-800',
-                                                    'reembolsado' => 'bg-red-100 text-red-800',
-                                                    'fallido' => 'bg-gray-200 text-gray-800'
-                                                ][$p['estado']] ?? 'bg-gray-100 text-gray-800';
-                                                ?>
-                                                <span class="<?php echo $estadoClass; ?> px-2 py-1 rounded text-xs capitalize"><?php echo str_replace('_', ' ', $p['estado']); ?></span>
-                                            </td>
-                                            <td class="px-3 py-2"><?php echo date('d/m/Y', strtotime($p['fecha_pago'])); ?></td>
-                                            <td class="px-3 py-2 space-x-2">
-                                                <form method="post" style="display:inline">
-                                                    <input type="hidden" name="action" value="accion_pago">
-                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
-                                                    <input type="hidden" name="pago_id" value="<?php echo $p['id']; ?>">
-                                                    <input type="hidden" name="accion" value="confirmar">
-                                                    <button class="text-green-600" title="Confirmar" type="submit"><i class="fas fa-check"></i></button>
-                                                </form>
-                                                <form method="post" style="display:inline">
-                                                    <input type="hidden" name="action" value="accion_pago">
-                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
-                                                    <input type="hidden" name="pago_id" value="<?php echo $p['id']; ?>">
-                                                    <input type="hidden" name="accion" value="en_revision">
-                                                    <button class="text-yellow-600" title="En revisión" type="submit"><i class="fas fa-eye"></i></button>
-                                                </form>
-                                                <form method="post" style="display:inline">
-                                                    <input type="hidden" name="action" value="accion_pago">
-                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
-                                                    <input type="hidden" name="pago_id" value="<?php echo $p['id']; ?>">
-                                                    <input type="hidden" name="accion" value="reembolsar">
-                                                    <button class="text-red-600" title="Reembolsar" type="submit"><i class="fas fa-undo"></i></button>
-                                                </form>
-                                                <form method="post" style="display:inline" onsubmit="return confirm('¿Eliminar este pago?');">
-                                                    <input type="hidden" name="action" value="accion_pago">
-                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
-                                                    <input type="hidden" name="pago_id" value="<?php echo $p['id']; ?>">
-                                                    <input type="hidden" name="accion" value="eliminar">
-                                                    <button class="text-gray-500" title="Eliminar" type="submit"><i class="fas fa-trash"></i></button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    <?php endwhile; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-lg shadow p-5">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-lg font-semibold flex items-center gap-2"><i class="fas fa-file-invoice-dollar text-amber-600"></i>Gastos</h3>
-                            <span class="text-xs text-gray-500">Últimos 200</span>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead>
-                                    <tr class="border-b bg-gray-50">
-                                        <th class="px-3 py-2 text-left">Categoría</th>
-                                        <th class="px-3 py-2 text-left">Descripción</th>
-                                        <th class="px-3 py-2 text-left">Monto</th>
-                                        <th class="px-3 py-2 text-left">Fecha</th>
-                                        <th class="px-3 py-2 text-left">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php while ($g = $gastos->fetch_assoc()): ?>
-                                        <tr class="border-b hover:bg-gray-50">
-                                            <td class="px-3 py-2"><?php echo $g['categoria']; ?></td>
-                                            <td class="px-3 py-2"><?php echo $g['descripcion'] ?: '-'; ?></td>
-                                            <td class="px-3 py-2 font-semibold"><?php echo $g['moneda']; ?> <?php echo number_format($g['monto'] + $g['impuesto'], 2); ?></td>
-                                            <td class="px-3 py-2"><?php echo date('d/m/Y', strtotime($g['fecha_gasto'])); ?></td>
-                                            <td class="px-3 py-2 space-x-2">
-                                                <?php if (!empty($g['comprobante'])): ?>
-                                                    <a class="text-blue-600" href="<?php echo $g['comprobante']; ?>" target="_blank" title="Ver comprobante"><i class="fas fa-link"></i></a>
-                                                <?php endif; ?>
-                                                <form method="post" style="display:inline" onsubmit="return confirm('¿Eliminar este gasto?');">
-                                                    <input type="hidden" name="action" value="eliminar_gasto">
-                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
-                                                    <input type="hidden" name="gasto_id" value="<?php echo $g['id']; ?>">
-                                                    <button class="text-gray-500" title="Eliminar" type="submit"><i class="fas fa-trash"></i></button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    <?php endwhile; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow p-5">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-lg font-semibold flex items-center gap-2"><i class="fas fa-box text-green-600"></i>Inventario de proyectos vendidos</h3>
-                        <span class="text-xs text-gray-500">Últimos 200</span>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead>
-                                <tr class="border-b bg-gray-50">
-                                    <th class="px-3 py-2 text-left">Proyecto</th>
-                                    <th class="px-3 py-2 text-left">Cliente</th>
-                                    <th class="px-3 py-2 text-left">Precio</th>
-                                    <th class="px-3 py-2 text-left">Estado entrega</th>
-                                    <th class="px-3 py-2 text-left">Pago</th>
-                                    <th class="px-3 py-2 text-left">Fecha</th>
-                                    <th class="px-3 py-2 text-left">Acciones</th>
+                <div class=\"overflow-hidden rounded-lg bg-white shadow\">
+                    <div class=\"overflow-x-auto\">
+                        <table class=\"w-full min-w-[960px]\">
+                            <thead class=\"bg-gray-50\">
+                                <tr>
+                                    <th class=\"px-6 py-3 text-left text-sm font-semibold text-gray-700\">Concepto</th>
+                                    <th class=\"px-6 py-3 text-left text-sm font-semibold text-gray-700\">Proyecto</th>
+                                    <th class=\"px-6 py-3 text-left text-sm font-semibold text-gray-700\">Monto</th>
+                                    <th class=\"px-6 py-3 text-left text-sm font-semibold text-gray-700\">Estado</th>
+                                    <th class=\"px-6 py-3 text-left text-sm font-semibold text-gray-700\">Metodo</th>
+                                    <th class=\"px-6 py-3 text-left text-sm font-semibold text-gray-700\">Fecha</th>
+                                    <th class=\"px-6 py-3 text-left text-sm font-semibold text-gray-700\">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while ($v = $ventas->fetch_assoc()): ?>
-                                    <tr class="border-b hover:bg-gray-50">
-                                        <td class="px-3 py-2"><?php echo $v['proyecto']; ?></td>
-                                        <td class="px-3 py-2"><?php echo $v['cliente'] ?: '-'; ?></td>
-                                        <td class="px-3 py-2 font-semibold">$<?php echo number_format($v['precio'] - $v['descuento'], 2); ?></td>
-                                        <td class="px-3 py-2">
-                                            <?php
-                                            $entregaClass = [
-                                                'pendiente' => 'bg-yellow-100 text-yellow-800',
-                                                'entregado' => 'bg-green-100 text-green-800',
-                                                'soporte'   => 'bg-blue-100 text-blue-800'
-                                            ][$v['estado_entrega']] ?? 'bg-gray-100 text-gray-800';
-                                            ?>
-                                            <span class="<?php echo $entregaClass; ?> px-2 py-1 rounded text-xs capitalize"><?php echo $v['estado_entrega']; ?></span>
-                                        </td>
-                                        <td class="px-3 py-2">
-                                            <?php if (!empty($v['pago_id'])): ?>
-                                                <span class="text-sm">#<?php echo $v['pago_id']; ?> (<?php echo $v['estado_pago'] ?: 'n/a'; ?>)</span>
-                                            <?php else: ?>
-                                                <span class="text-xs text-gray-500">Sin asociar</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td class="px-3 py-2"><?php echo date('d/m/Y', strtotime($v['fecha_venta'])); ?></td>
-                                        <td class="px-3 py-2 space-x-2">
-                                            <form method="post" style="display:inline" onsubmit="return confirm('¿Eliminar esta venta?');">
-                                                <input type="hidden" name="action" value="eliminar_venta">
-                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
-                                                <input type="hidden" name="venta_id" value="<?php echo $v['id']; ?>">
-                                                <button class="text-gray-500" title="Eliminar" type="submit"><i class="fas fa-trash"></i></button>
-                                            </form>
+                                <?php if ($payments instanceof mysqli_result && $payments->num_rows > 0): ?>
+                                    <?php while ($pago = $payments->fetch_assoc()): ?>
+                                        <?php
+                                            $estadoKey = trim((string) ($pago['estado'] ?? ''));
+                                            $estadoLabel = $statusOptions[$estadoKey] ?? ucfirst($estadoKey);
+                                            $estadoClass = payment_status_badge_class($estadoKey);
+                                            $metodoLabel = $methodOptions[$pago['metodo'] ?? ''] ?? ($pago['metodo'] ?? '-');
+                                        ?>
+                                        <tr class=\"border-t hover:bg-gray-50\">
+                                            <td class=\"px-6 py-4 font-medium text-slate-900\">
+                                                <div class=\"flex flex-col gap-1\">
+                                                    <a href=\"pago-editar.php?id=<?php echo (int) $pago['id']; ?>\" class=\"text-slate-900 hover:text-blue-600 hover:underline\">
+                                                        <?php echo admin_escape($pago['concepto']); ?>
+                                                    </a>
+                                                    <?php if (!empty($pago['referencia'])): ?>
+                                                        <p class=\"text-xs text-gray-500\">Ref: <?php echo admin_escape($pago['referencia']); ?></p>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </td>
+                                            <td class=\"px-6 py-4 text-sm\">
+                                                <?php if (!empty($pago['proyecto_id'])): ?>
+                                                    <a href=\"proyecto-editar.php?id=<?php echo (int) $pago['proyecto_id']; ?>\" class=\"text-blue-700 hover:underline\">
+                                                        <?php echo admin_escape($pago['proyecto_titulo'] ?? 'Proyecto'); ?>
+                                                    </a>
+                                                    <?php if (!empty($pago['proyecto_cliente'])): ?>
+                                                        <p class=\"text-xs text-gray-500\">Cliente: <?php echo admin_escape($pago['proyecto_cliente']); ?></p>
+                                                    <?php endif; ?>
+                                                <?php else: ?>
+                                                    <span class=\"text-gray-500\">Sin proyecto</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class=\"px-6 py-4 text-sm font-semibold text-slate-900\">
+                                                <?php echo payment_format_amount((float) $pago['monto'], (string) $pago['moneda']); ?>
+                                            </td>
+                                            <td class=\"px-6 py-4\">
+                                                <span class=\"rounded-full px-3 py-1 text-xs font-semibold <?php echo $estadoClass; ?>\"><?php echo admin_escape($estadoLabel); ?></span>
+                                            </td>
+                                            <td class=\"px-6 py-4 text-sm text-gray-700\"><?php echo admin_escape($metodoLabel ?: '-'); ?></td>
+                                            <td class=\"px-6 py-4 text-sm text-gray-600\"><?php echo date('d/m/Y', strtotime($pago['fecha_pago'])); ?></td>
+                                            <td class=\"px-6 py-4\">
+                                                <div class=\"flex items-center gap-3\">
+                                                    <a href=\"pago-editar.php?id=<?php echo (int) $pago['id']; ?>\" class=\"inline-flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100\">
+                                                        <i class=\"fas fa-edit\"></i>
+                                                        <span>Editar</span>
+                                                    </a>
+                                                    <form method=\"POST\" class=\"inline\" onsubmit=\"return confirm('Eliminar este pago?');\">
+                                                        <input type=\"hidden\" name=\"csrf_token\" value=\"<?php echo admin_escape($csrfToken); ?>\">
+                                                        <input type=\"hidden\" name=\"action\" value=\"delete\">
+                                                        <input type=\"hidden\" name=\"id\" value=\"<?php echo (int) $pago['id']; ?>\">
+                                                        <input type=\"hidden\" name=\"q\" value=\"<?php echo admin_escape($searchTerm); ?>\">
+                                                        <input type=\"hidden\" name=\"proyecto_id\" value=\"<?php echo (int) $projectId; ?>\">
+                                                        <input type=\"hidden\" name=\"estado\" value=\"<?php echo admin_escape($statusFilter); ?>\">
+                                                        <input type=\"hidden\" name=\"metodo\" value=\"<?php echo admin_escape($methodFilter); ?>\">
+                                                        <input type=\"hidden\" name=\"moneda\" value=\"<?php echo admin_escape($currencyFilter); ?>\">
+                                                        <input type=\"hidden\" name=\"desde\" value=\"<?php echo admin_escape($fromDate); ?>\">
+                                                        <input type=\"hidden\" name=\"hasta\" value=\"<?php echo admin_escape($toDate); ?>\">
+                                                        <input type=\"hidden\" name=\"page\" value=\"<?php echo (int) $pagination['page']; ?>\">
+                                                        <button type=\"submit\" class=\"inline-flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-100\">
+                                                            <i class=\"fas fa-trash\"></i>
+                                                            <span>Eliminar</span>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                <?php else: ?>
+                                    <tr class=\"border-t\">
+                                        <td colspan=\"7\" class=\"px-6 py-8 text-center text-gray-500\">
+                                            <?php echo $searchTerm !== '' ? 'No encontramos pagos con ese criterio de busqueda.' : 'Todavia no hay pagos registrados.'; ?>
                                         </td>
                                     </tr>
-                                <?php endwhile; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
+
+                <?php if ($pagination['total_pages'] > 1): ?>
+                    <div class=\"mt-6 flex flex-wrap items-center justify-between gap-4\">
+                        <p class=\"text-sm text-gray-600\">
+                            Pagina <?php echo $pagination['page']; ?> de <?php echo $pagination['total_pages']; ?>
+                        </p>
+                        <div class=\"flex flex-wrap gap-2\">
+                            <?php if ($pagination['has_prev']): ?>
+                                <a href=\"<?php echo admin_build_url('pagos.php', array_merge($filterParams, ['page' => $pagination['page'] - 1])); ?>\" class=\"rounded-lg border px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50\">Anterior</a>
+                            <?php endif; ?>
+                            <?php for ($pageNumber = 1; $pageNumber <= $pagination['total_pages']; $pageNumber++): ?>
+                                <?php if (abs($pageNumber - $pagination['page']) > 2 && $pageNumber !== 1 && $pageNumber !== $pagination['total_pages']) continue; ?>
+                                <a href=\"<?php echo admin_build_url('pagos.php', array_merge($filterParams, ['page' => $pageNumber])); ?>\" class=\"rounded-lg px-4 py-2 text-sm font-medium <?php echo $pageNumber === $pagination['page'] ? 'bg-blue-600 text-white' : 'border text-gray-700 hover:bg-gray-50'; ?>\">
+                                    <?php echo $pageNumber; ?>
+                                </a>
+                            <?php endfor; ?>
+                            <?php if ($pagination['has_next']): ?>
+                                <a href=\"<?php echo admin_build_url('pagos.php', array_merge($filterParams, ['page' => $pagination['page'] + 1])); ?>\" class=\"rounded-lg border px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50\">Siguiente</a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
-</div>
-
-<?php include 'logout-modal.php'; ?>
-<script>
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('sidebarOverlay');
-const toggleBtn = document.getElementById('toggleSidebar');
-function closeSidebar(){ sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
-function openSidebar(){ sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); }
-if (toggleBtn){ toggleBtn.addEventListener('click', ()=> sidebar.classList.contains('-translate-x-full') ? openSidebar() : closeSidebar()); }
-if (overlay){ overlay.addEventListener('click', closeSidebar); }
-</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-

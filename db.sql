@@ -50,53 +50,21 @@ CREATE TABLE IF NOT EXISTS usuarios (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- Tabla de pagos (cobros de clientes)
-CREATE TABLE IF NOT EXISTS pagos (
+-- Tabla de pagos de proyectos
+CREATE TABLE IF NOT EXISTS proyecto_pagos (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    cliente VARCHAR(150) NOT NULL,
-    proyecto VARCHAR(150),
+    proyecto_id INT NULL,
+    concepto VARCHAR(200) NOT NULL,
     monto DECIMAL(12,2) NOT NULL,
-    moneda VARCHAR(10) DEFAULT 'USD',
-    metodo VARCHAR(50) DEFAULT 'transferencia',
-    estado ENUM('pendiente','en_revision','confirmado','fallido','reembolsado') DEFAULT 'pendiente',
-    fee_pasarela DECIMAL(12,2) DEFAULT 0,
+    moneda VARCHAR(10) NOT NULL DEFAULT 'COP',
+    estado VARCHAR(30) NOT NULL DEFAULT 'recibido',
+    metodo VARCHAR(50),
+    referencia VARCHAR(100),
+    notas TEXT,
     fecha_pago DATE NOT NULL,
-    fecha_confirmacion DATETIME NULL,
-    comprobante VARCHAR(255),
-    notas TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
-
--- Tabla de ventas (inventario de proyectos vendidos)
-CREATE TABLE IF NOT EXISTS ventas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    proyecto VARCHAR(150) NOT NULL,
-    cliente VARCHAR(150),
-    precio DECIMAL(12,2) NOT NULL,
-    descuento DECIMAL(12,2) DEFAULT 0,
-    estado_entrega ENUM('pendiente','entregado','soporte') DEFAULT 'pendiente',
-    fecha_venta DATE NOT NULL,
-    pago_id INT NULL,
-    notas TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_ventas_pago FOREIGN KEY (pago_id) REFERENCES pagos(id) ON DELETE SET NULL
-) ENGINE=InnoDB;
-
--- Tabla de gastos
-CREATE TABLE IF NOT EXISTS gastos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    categoria VARCHAR(100) NOT NULL,
-    descripcion VARCHAR(255),
-    proveedor VARCHAR(150),
-    proyecto VARCHAR(150),
-    monto DECIMAL(12,2) NOT NULL,
-    moneda VARCHAR(10) DEFAULT 'USD',
-    impuesto DECIMAL(12,2) DEFAULT 0,
-    fecha_gasto DATE NOT NULL,
-    metodo VARCHAR(50) DEFAULT 'transferencia',
-    comprobante VARCHAR(255),
-    notas TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (proyecto_id) REFERENCES proyectos(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- Insertar usuario admin por defecto (contraseña: admin123)

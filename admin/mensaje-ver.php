@@ -95,22 +95,24 @@ $replyTemplates = admin_get_message_reply_templates($mensaje['nombre'] ?? '');
     <title>Mensaje - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<style>.logo-ring{position:absolute;inset:0;border:2px solid transparent;border-radius:8px;background:conic-gradient(from 0deg,#2563eb,#38bdf8,#2563eb);background-origin:border-box;animation:logo-spin 4s linear infinite;}@keyframes logo-spin{to{transform:rotate(360deg);}}</style>
 </head>
 <body class="bg-gray-100">
     <div class="flex min-h-screen">
         <div class="w-64 bg-white shadow-lg">
             <div class="p-4 border-b">
-                <div class="relative h-10 w-10 shrink-0">
-    <span class="logo-ring"></span>
-    <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain">
-</div>
+                <h2 class="text-xl font-bold text-blue-600">MCE Admin</h2>
             </div>
             <nav class="p-4">
                 <ul class="space-y-2">
                     <li><a href="dashboard.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
                     <li><a href="proyectos.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-folder"></i><span>Proyectos</span></a></li>
                     <li><a href="servicios.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-cog"></i><span>Servicios</span></a></li>
+                    <li>
+                        <a href="pagos.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
+                            <i class="fas fa-receipt"></i>
+                            <span>Pagos</span>
+                        </a>
+                    </li>
                     <li>
                         <a href="testimonios.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
                             <i class="fas fa-comment"></i>
@@ -139,7 +141,7 @@ $replyTemplates = admin_get_message_reply_templates($mensaje['nombre'] ?? '');
                     </li>
                     <li><a href="auditoria.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-clock-rotate-left"></i><span>Actividad</span></a></li>
                     <li><a href="cambiar-password.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"><i class="fas fa-lock"></i><span>Cambiar clave</span></a></li>
-                    <li><a href="logout.php" onclick="return confirm('¿Cerrar sesión?');" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded text-red-600"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a></li>
+                    <li><a href="logout.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded text-red-600"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a></li>
                 </ul>
             </nav>
         </div>
@@ -346,16 +348,5 @@ $replyTemplates = admin_get_message_reply_templates($mensaje['nombre'] ?? '');
             });
         });
     </script>
-<?php include 'logout-modal.php'; ?>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-

@@ -1,7 +1,8 @@
-<?php
+﻿<?php
 // admin/dashboard.php
 require_once '../includes/config.php';
 require_once '../includes/testimonial-helpers.php';
+require_once '../includes/payment-helpers.php';
 require_once '../includes/admin-helpers.php';
 
 // Verificar si está logueado
@@ -13,12 +14,31 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 // Obtener estadísticas
 ensureTestimonialsSchema($conn);
 ensureAdminActivityLogSchema($conn);
+ensureProjectPaymentsSchema($conn);
 
 $total_proyectos = $conn->query("SELECT COUNT(*) as total FROM proyectos")->fetch_assoc()['total'];
 $total_servicios = $conn->query("SELECT COUNT(*) as total FROM servicios")->fetch_assoc()['total'];
 $mensajes_no_leidos = $conn->query("SELECT COUNT(*) as total FROM mensajes WHERE leido = 0")->fetch_assoc()['total'];
 $total_mensajes = $conn->query("SELECT COUNT(*) as total FROM mensajes")->fetch_assoc()['total'];
 $testimonios_pendientes = getPendingTestimonialsCount($conn);
+$pagosMesActual = [];
+$pagosMesTotalCount = 0;
+$pagosMesResult = $conn->query("SELECT moneda, COUNT(*) AS total, COALESCE(SUM(monto), 0) AS monto FROM proyecto_pagos WHERE DATE_FORMAT(fecha_pago, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') GROUP BY moneda");
+if ($pagosMesResult instanceof mysqli_result) {
+    while ($row = $pagosMesResult->fetch_assoc()) {
+        $currency = strtoupper(trim((string) ($row['moneda'] ?? 'COP')));
+        $pagosMesActual[$currency] = [
+            'total' => (int) ($row['total'] ?? 0),
+            'monto' => (float) ($row['monto'] ?? 0),
+        ];
+        $pagosMesTotalCount += (int) ($row['total'] ?? 0);
+    }
+    $pagosMesResult->free();
+}
+$pagosMesLabel = [];
+foreach ($pagosMesActual as $currency => $data) {
+    $pagosMesLabel[] = payment_format_amount((float) $data['monto'], $currency);
+}
 
 // Datos para gráficos
 $categorias_result = $conn->query("SELECT categoria, COUNT(*) AS total FROM proyectos GROUP BY categoria");
@@ -49,6 +69,13 @@ $pendingPreview = $conn->query("
     LIMIT 5
 ");
 $activityPreview = $conn->query("SELECT admin_username, action, entity_type, created_at FROM admin_activity_log ORDER BY created_at DESC LIMIT 5");
+$lastPayments = $conn->query("
+    SELECT pp.id, pp.concepto, pp.monto, pp.moneda, pp.fecha_pago, pr.titulo AS proyecto
+    FROM proyecto_pagos pp
+    LEFT JOIN proyectos pr ON pr.id = pp.proyecto_id
+    ORDER BY pp.fecha_pago DESC, pp.id DESC
+    LIMIT 5
+");
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -58,32 +85,14 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
     <title>Dashboard - Proyectos MCE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<style>.logo-ring{position:absolute;inset:0;border:2px solid transparent;border-radius:8px;background:conic-gradient(from 0deg,#2563eb,#38bdf8,#2563eb);background-origin:border-box;animation:logo-spin 4s linear infinite;}@keyframes logo-spin{to{transform:rotate(360deg);}}</style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-100">
-    <!-- Barra superior móvil -->
-    <header class="md:hidden sticky top-0 z-30 flex items-center justify-between bg-white px-4 py-3 shadow">
-        <div class="flex items-center gap-2">
-            <div class="relative h-10 w-10 shrink-0">
-    <span class="logo-ring"></span>
-    <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain">
-</div>
-            <button id="toggleSidebar" class="p-2 rounded border border-blue-500/60 bg-gradient-to-br from-blue-500 via-blue-400 to-cyan-300 text-white shadow-[0_0_12px_rgba(59,130,246,0.65)] hover:shadow-[0_0_16px_rgba(56,189,248,0.75)] active:scale-95 transition">
-                <i class="fas fa-bars text-white"></i>
-            </button>
-        </div>
-        <a href="logout.php" onclick="return confirm('¿Cerrar sesión?' );" class="text-red-600 text-sm flex items-center gap-1"><i class="fas fa-sign-out-alt"></i>Salir</a>
-    </header>
-
-    <div class="flex min-h-screen">
+    <div class="flex h-screen">
         <!-- Sidebar -->
-        <div id="sidebar" class="fixed md:static inset-y-0 left-0 w-64 bg-white shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-200 z-40">
+        <div class="w-64 bg-white shadow-lg">
             <div class="p-4 border-b">
-                <div class="relative h-10 w-10 shrink-0">
-    <span class="logo-ring"></span>
-    <img src="../imag/MCE.jpg" alt="MCE Admin" class="absolute inset-1 h-8 w-8 object-contain">
-</div>
+                <h2 class="text-xl font-bold text-blue-600">MCE Admin</h2>
             </div>
             <nav class="p-4">
                 <ul class="space-y-2">
@@ -107,7 +116,7 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
                     </li>
                     <li>
                         <a href="pagos.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
-                            <i class="fas fa-credit-card"></i>
+                            <i class="fas fa-receipt"></i>
                             <span>Pagos</span>
                         </a>
                     </li>
@@ -148,7 +157,7 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
                         </a>
                     </li>
                     <li>
-                        <a href="logout.php" onclick="return confirm('¿Cerrar sesión?');" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded text-red-600">
+                        <a href="logout.php" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded text-red-600">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Salir</span>
                         </a>
@@ -157,10 +166,6 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
             </nav>
         </div>
         
-        <!-- Contenido principal -->
-        <!-- Overlay móvil -->
-        <div id="sidebarOverlay" class="fixed inset-0 bg-black/30 z-30 hidden md:hidden"></div>
-
         <!-- Contenido principal -->
         <div class="flex-1 overflow-y-auto">
             <div class="p-8">
@@ -186,7 +191,7 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
                 
                 <!-- Tarjetas de estadísticas -->
                 <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-5">
-                    <a href="proyectos.php" class="block rounded-lg bg-white p-6 shadow transition transform hover:-translate-y-1 hover:shadow-lg active:scale-95">
+                    <a href="proyectos.php" class="block rounded-lg bg-white p-6 shadow transition hover:-translate-y-1 hover:shadow-lg">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-gray-500">Proyectos</p>
@@ -196,7 +201,7 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
                         </div>
                     </a>
                     
-                    <a href="servicios.php" class="block rounded-lg bg-white p-6 shadow transition transform hover:-translate-y-1 hover:shadow-lg active:scale-95">
+                    <a href="servicios.php" class="block rounded-lg bg-white p-6 shadow transition hover:-translate-y-1 hover:shadow-lg">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-gray-500">Servicios</p>
@@ -206,7 +211,7 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
                         </div>
                     </a>
                     
-                    <a href="mensajes.php" class="block rounded-lg bg-white p-6 shadow transition transform hover:-translate-y-1 hover:shadow-lg active:scale-95">
+                    <a href="mensajes.php" class="block rounded-lg bg-white p-6 shadow transition hover:-translate-y-1 hover:shadow-lg">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-gray-500">Mensajes</p>
@@ -216,7 +221,7 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
                         </div>
                     </a>
                     
-                    <a href="mensajes.php?estado=nuevo" class="block rounded-lg bg-white p-6 shadow transition transform hover:-translate-y-1 hover:shadow-lg active:scale-95">
+                    <a href="mensajes.php?estado=nuevo" class="block rounded-lg bg-white p-6 shadow transition hover:-translate-y-1 hover:shadow-lg">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-gray-500">No leidos</p>
@@ -226,7 +231,28 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
                         </div>
                     </a>
 
-                    <a href="testimonios.php" class="relative block overflow-hidden rounded-lg border border-amber-100 bg-white p-6 shadow transition transform hover:-translate-y-1 hover:shadow-lg active:scale-95">
+                    <a href="pagos.php" class="block rounded-lg bg-white p-6 shadow transition hover:-translate-y-1 hover:shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500">Pagos (mes)</p>
+                                <p class="text-xl font-bold text-slate-900">
+                                    <?php echo count($pagosMesLabel) > 0 ? $pagosMesLabel[0] : 'COP 0,00'; ?>
+                                </p>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    <?php if (count($pagosMesLabel) > 1): ?>
+                                        Otros: <?php echo implode(' | ', array_slice($pagosMesLabel, 1)); ?>
+                                    <?php elseif ($pagosMesTotalCount === 0): ?>
+                                        Sin pagos registrados este mes
+                                    <?php else: ?>
+                                        <?php echo $pagosMesTotalCount; ?> pago<?php echo $pagosMesTotalCount === 1 ? '' : 's'; ?>
+                                    <?php endif; ?>
+                                </p>
+                            </div>
+                            <i class="fas fa-receipt text-4xl text-purple-600"></i>
+                        </div>
+                    </a>
+
+                    <a href="testimonios.php" class="relative block overflow-hidden rounded-lg border border-amber-100 bg-white p-6 shadow transition hover:-translate-y-1 hover:shadow-lg">
                         <div class="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-amber-50 to-transparent"></div>
                         <div class="relative flex items-center justify-between">
                             <div>
@@ -261,19 +287,19 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
                             <a href="auditoria.php" class="text-sm font-medium text-blue-600 hover:underline">Ver actividad</a>
                         </div>
                         <div class="grid gap-4 md:grid-cols-2">
-                            <a href="proyecto-editar.php" class="rounded-2xl border border-blue-100 bg-blue-50 p-5 transition transform hover:-translate-y-1 hover:shadow-md active:scale-95">
+                            <a href="proyecto-editar.php" class="rounded-2xl border border-blue-100 bg-blue-50 p-5 transition hover:-translate-y-1 hover:shadow-md">
                                 <p class="text-lg font-bold text-blue-900">Nuevo proyecto</p>
                                 <p class="mt-2 text-sm text-blue-700">Carga un caso nuevo al portafolio.</p>
                             </a>
-                            <a href="servicio-editar.php" class="rounded-2xl border border-emerald-100 bg-emerald-50 p-5 transition transform hover:-translate-y-1 hover:shadow-md active:scale-95">
+                            <a href="servicio-editar.php" class="rounded-2xl border border-emerald-100 bg-emerald-50 p-5 transition hover:-translate-y-1 hover:shadow-md">
                                 <p class="text-lg font-bold text-emerald-900">Nuevo servicio</p>
                                 <p class="mt-2 text-sm text-emerald-700">Agrega o ajusta tu oferta comercial.</p>
                             </a>
-                            <a href="mensajes.php?estado=nuevo" class="rounded-2xl border border-sky-100 bg-sky-50 p-5 transition transform hover:-translate-y-1 hover:shadow-md active:scale-95">
+                            <a href="mensajes.php?estado=nuevo" class="rounded-2xl border border-sky-100 bg-sky-50 p-5 transition hover:-translate-y-1 hover:shadow-md">
                                 <p class="text-lg font-bold text-sky-900">Responder mensajes</p>
                                 <p class="mt-2 text-sm text-sky-700">Abre solo la cola de no leidos.</p>
                             </a>
-                            <a href="testimonios.php?estado=pendientes" class="rounded-2xl border border-amber-100 bg-amber-50 p-5 transition transform hover:-translate-y-1 hover:shadow-md active:scale-95">
+                            <a href="testimonios.php?estado=pendientes" class="rounded-2xl border border-amber-100 bg-amber-50 p-5 transition hover:-translate-y-1 hover:shadow-md">
                                 <p class="text-lg font-bold text-amber-900">Confirmar testimonios</p>
                                 <p class="mt-2 text-sm text-amber-700">Revisa primero lo pendiente.</p>
                             </a>
@@ -314,6 +340,54 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
                     <div class="bg-white p-6 rounded-lg shadow">
                         <h3 class="text-lg font-semibold mb-4">Mensajes por Mes</h3>
                         <canvas id="mensajesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Últimos pagos -->
+                <div class="bg-white p-6 rounded-lg shadow mb-8">
+                    <div class="mb-4 flex items-center justify-between gap-4">
+                        <h2 class="text-xl font-bold">Ultimos pagos</h2>
+                        <a href="pagos.php" class="text-sm font-medium text-blue-600 hover:underline">Ver todos</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full min-w-[720px]">
+                            <thead>
+                                <tr class="border-b">
+                                    <th class="text-left py-2">Concepto</th>
+                                    <th class="text-left py-2">Proyecto</th>
+                                    <th class="text-left py-2">Monto</th>
+                                    <th class="text-left py-2">Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if ($lastPayments instanceof mysqli_result && $lastPayments->num_rows > 0): ?>
+                                    <?php while ($pago = $lastPayments->fetch_assoc()): ?>
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="py-2 font-medium text-slate-900">
+                                                <a href="pago-editar.php?id=<?php echo (int) $pago['id']; ?>" class="hover:text-blue-600 hover:underline">
+                                                    <?php echo admin_escape($pago['concepto']); ?>
+                                                </a>
+                                            </td>
+                                            <td class="py-2 text-sm text-gray-700">
+                                                <?php if (!empty($pago['proyecto'])): ?>
+                                                    <?php echo admin_escape($pago['proyecto']); ?>
+                                                <?php else: ?>
+                                                    <span class="text-gray-500">Sin proyecto</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="py-2 text-sm font-semibold text-slate-900">
+                                                <?php echo payment_format_amount((float) $pago['monto'], (string) $pago['moneda']); ?>
+                                            </td>
+                                            <td class="py-2 text-sm text-gray-600"><?php echo date('d/m/Y', strtotime($pago['fecha_pago'])); ?></td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                <?php else: ?>
+                                    <tr class="border-b">
+                                        <td colspan="4" class="py-4 text-center text-gray-500">Todavia no hay pagos registrados.</td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 
@@ -463,43 +537,6 @@ $activityPreview = $conn->query("SELECT admin_username, action, entity_type, cre
             }
         });
     }
-
-    // Toggle sidebar en móvil
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    const toggleBtn = document.getElementById('toggleSidebar');
-    function closeSidebar() {
-        sidebar.classList.add('-translate-x-full');
-        overlay.classList.add('hidden');
-    }
-    function openSidebar() {
-        sidebar.classList.remove('-translate-x-full');
-        overlay.classList.remove('hidden');
-    }
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-            if (sidebar.classList.contains('-translate-x-full')) {
-                openSidebar();
-            } else {
-                closeSidebar();
-            }
-        });
-    }
-    if (overlay) {
-        overlay.addEventListener('click', closeSidebar);
-    }
     </script>
-<?php include 'logout-modal.php'; ?>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
- 

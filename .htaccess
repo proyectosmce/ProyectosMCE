@@ -16,17 +16,6 @@
     Deny from all
 </FilesMatch>
 
-# Bloquea descargas de respaldos y dumps (BD, llaves, scripts)
-<FilesMatch "\.(env|sql|bak|config|ini|log|sh|pfx|pem|key|p12|pfx|crt|zip|tar|gz|tgz)$">
-    <IfModule !mod_authz_core.c>
-        Order allow,deny
-        Deny from all
-    </IfModule>
-    <IfModule mod_authz_core.c>
-        Require all denied
-    </IfModule>
-</FilesMatch>
-
 # Compresión GZIP
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json

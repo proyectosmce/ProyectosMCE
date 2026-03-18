@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarjetas Proyectos MCE - Icono WhatsApp Real</title>
+    <!-- Font Awesome para el icono de WhatsApp -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+        
+        body {
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding: 40px 20px;
+        }
+        
+        .business-card {
+            width: 340px;
+            height: 200px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: white;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        /* TARJETA DELANTERA - FONDO BLANCO */
+        .front-card {
+            /* Gradiente translúcido + imagen; se dibujan de arriba hacia abajo */
+            background-image:
+                linear-gradient(125deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.85) 60%, rgba(255,255,255,0.78) 100%),
+                url("mce.jpg"),
+                url("mce.png"),
+                url("mce.jpeg"),
+                url("fondo.jpeg"); /* fallback si no está el archivo mce */
+            border: 2px solid #ffd700;
+        }
+        
+        /* TARJETA TRASERA - FONDO AZUL */
+        .back-card {
+            background-image:
+                linear-gradient(155deg, rgba(10,22,48,0.9) 0%, rgba(18,46,104,0.82) 55%, rgba(30,60,130,0.78) 100%),
+                url("mce.jpg"),
+                url("mce.png"),
+                url("mce.jpeg"),
+                url("fondo.jpeg"); /* fallback */
+            border: 2px solid #ffd700;
+            color: white;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 4px;
+        }
+        
+        .logo h2 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #1e3c72;
+            line-height: 1;
+        }
+        
+        .back-card .logo h2 {
+            color: white;
+        }
+        
+        .logo p {
+            font-size: 0.6rem;
+            color: #666;
+            letter-spacing: 1px;
+        }
+        
+        .back-card .logo p {
+            color: #ffd700;
+        }
+        
+        .slogan-tag {
+            background: #1e3c72;
+            color: #ffd700;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.55rem;
+            font-weight: bold;
+        }
+        
+        .back-card .slogan-tag {
+            background: #ffd700;
+            color: #1e3c72;
+        }
+        
+        .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            margin-top: 3px;
+        }
+        
+        .main-title {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #1e3c72;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        
+        .back-card .main-title {
+            color: #ffd700;
+        }
+        
+        .description-text {
+            font-size: 0.52rem;
+            color: #444;
+            line-height: 1.2;
+            text-align: justify;
+        }
+        
+        .back-card .description-text {
+            color: #ffd700;
+            opacity: 0.9;
+        }
+        
+        .sub-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #1e3c72;
+            text-transform: uppercase;
+        }
+        
+        .back-card .sub-title {
+            color: #ffd700;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3px;
+        }
+        
+        .service-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.6rem;
+        }
+        
+        .service-icon {
+            font-size: 0.85rem;
+            width: 18px;
+            text-align: center;
+        }
+        
+        .contact-section {
+            border-top: 1px dashed #ffd700;
+            padding-top: 4px;
+        }
+        
+        .contact-data {
+            font-weight: 600;
+            color: #1e3c72;
+            font-size: 0.6rem;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .back-card .contact-data {
+            color: #ffd700;
+        }
+        
+        .whatsapp-icon {
+            color: #25D366;
+            font-size: 0.8rem;
+            margin-right: 2px;
+        }
+        
+        .email-icon {
+            font-size: 0.8rem;
+            margin-right: 2px;
+        }
+        
+        .back-card .whatsapp-icon,
+        .back-card .email-icon {
+            color: #ffd700;
+        }
+        
+        .process-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.6rem;
+        }
+        
+        .step-number {
+            background: #ffd700;
+            color: #1e3c72;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.55rem;
+            flex-shrink: 0;
+        }
+        
+        .slogan-final {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 2px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- TARJETA DELANTERA - FONDO BLANCO -->
+    <div class="business-card front-card">
+        <div class="card-header">
+            <div class="logo">
+                <h2>🚀 MCE</h2>
+                <p>PROYECTOS MCE</p>
+            </div>
+            <div class="slogan-tag">SOFTWARE A MEDIDA</div>
+        </div>
+        
+        <div class="card-body">
+            <div class="main-title">DESARROLLO WEB & MUCHO MÁS</div>
+            
+            <div class="description-text">
+                Planificamos, diseñamos y desarrollamos plataformas web que soportan ventas, inventarios y atención al cliente con control total y visibilidad.
+            </div>
+            
+            <div class="sub-title">SERVICIOS</div>
+            
+            <div class="services-grid">
+                <div class="service-item">
+                    <span class="service-icon">💻</span>
+                    <span>Desarrollo a Medida</span>
+                </div>
+                <div class="service-item">
+                    <span class="service-icon">🛒</span>
+                    <span>Tiendas Online</span>
+                </div>
+                <div class="service-item">
+                    <span class="service-icon">📦</span>
+                    <span>Sistemas de Inventario</span>
+                </div>
+                <div class="service-item">
+                    <span class="service-icon">🎨</span>
+                    <span>Diseño UX/UI</span>
+                </div>
+                <div class="service-item">
+                    <span class="service-icon">🔌</span>
+                    <span>Conexiones API</span>
+                </div>
+                <div class="service-item">
+                    <span class="service-icon">🛡️</span>
+                    <span>Soporte 24/7</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CONTACTO CON WHATSAPP Y SOBRE -->
+        <div class="contact-section">
+            <div class="contact-data">
+                <i class="fab fa-whatsapp whatsapp-icon"></i> +57 311 412 5971  |  <i class="far fa-envelope email-icon"></i> proyectosmceaa@gmail.com
+            </div>
+        </div>
+    </div>
+    
+    <!-- TARJETA TRASERA - FONDO AZUL -->
+    <div class="business-card back-card">
+        <div class="card-header">
+            <div class="logo">
+                <h2>🚀 MCE</h2>
+                <p>PROYECTOS MCE</p>
+            </div>
+            <div class="slogan-tag">SOFTWARE A MEDIDA</div>
+        </div>
+        
+        <div class="card-body">
+            <div class="process-steps">
+                <div class="step-item">
+                    <span class="step-number">1</span>
+                    <span><strong>Kickoff:</strong> Entendemos tu negocio</span>
+                </div>
+                <div class="step-item">
+                    <span class="step-number">2</span>
+                    <span><strong>Diseño:</strong> Prototipos y maquetas</span>
+                </div>
+                <div class="step-item">
+                    <span class="step-number">3</span>
+                    <span><strong>Desarrollo:</strong> Ciclos cortos con pruebas</span>
+                </div>
+                <div class="step-item">
+                    <span class="step-number">4</span>
+                    <span><strong>Soporte:</strong> Monitoreo continuo</span>
+                </div>
+            </div>
+            
+            <div class="slogan-final">
+                ⚡ TU OPERACIÓN NO SE DETIENE ⚡
+            </div>
+            
+            <div style="background: rgba(255,215,0,0.15); padding: 3px; border-radius: 8px; font-size: 0.55rem; text-align: center;">
+                📲 AGENDA DISCOVERY SIN COSTO
+            </div>
+        </div>
+        
+        <!-- CONTACTO CON WHATSAPP Y SOBRE -->
+        <div class="contact-section">
+            <div class="contact-data">
+                <i class="fab fa-whatsapp whatsapp-icon"></i> +57 311 412 5971  |  <i class="far fa-envelope email-icon"></i> proyectosmceaa@gmail.com
+            </div>
+        </div>
+    </div>
+</body>
+</html>
