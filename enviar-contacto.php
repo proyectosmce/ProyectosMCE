@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once 'includes/config.php';
 require_once 'includes/form-guard.php';
 require_once __DIR__ . '/includes/PHPMailer/Exception.php';
