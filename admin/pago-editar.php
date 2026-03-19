@@ -113,47 +113,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($error)) {
         if ($id > 0) {
             $stmt = $conn->prepare('UPDATE proyecto_pagos SET proyecto_id = NULLIF(?, 0), cliente = NULLIF(?, \'\'), forma_pago = ?, proxima_cuota = NULLIF(?, \'\'), cuotas_totales = ?, cuotas_pendientes = ?, concepto = ?, monto = ?, moneda = ?, estado = ?, metodo = ?, referencia = ?, notas = ?, fecha_pago = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
-            $stmt->bind_param(
-                'isssiisdssssssi',
-                $proyectoId,
-                $clienteLibre,
-                $formaPago,
-                $proximaCuota,
-                $cuotasTotales,
-                $cuotasPendientes,
-                $concepto,
-                $monto,
-                $moneda,
-                $estado,
-                $metodo,
-                $referencia,
-                $notas,
-                $fecha_pago,
-                $id
-            );
+            if ($stmt) {
+                $stmt->bind_param(
+                    'isssiisdssssssi',
+                    $proyectoId,
+                    $clienteLibre,
+                    $formaPago,
+                    $proximaCuota,
+                    $cuotasTotales,
+                    $cuotasPendientes,
+                    $concepto,
+                    $monto,
+                    $moneda,
+                    $estado,
+                    $metodo,
+                    $referencia,
+                    $notas,
+                    $fecha_pago,
+                    $id
+                );
+            } else {
+                $error = 'No se pudo preparar la consulta (update): ' . $conn->error;
+            }
         } else {
             $stmt = $conn->prepare('INSERT INTO proyecto_pagos (proyecto_id, cliente, forma_pago, proxima_cuota, cuotas_totales, cuotas_pendientes, concepto, monto, moneda, estado, metodo, referencia, notas, fecha_pago) VALUES (NULLIF(?, 0), NULLIF(?, \'\'), ?, NULLIF(?, \'\'), ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $stmt->bind_param(
-                'isssiisdssssss',
-                $proyectoId,
-                $clienteLibre,
-                $formaPago,
-                $proximaCuota,
-                $cuotasTotales,
-                $cuotasPendientes,
-                $concepto,
-                $monto,
-                $moneda,
-                $estado,
-                $metodo,
-                $referencia,
-                $notas,
-                $fecha_pago
-            );
+            if ($stmt) {
+                $stmt->bind_param(
+                    'isssiisdssssss',
+                    $proyectoId,
+                    $clienteLibre,
+                    $formaPago,
+                    $proximaCuota,
+                    $cuotasTotales,
+                    $cuotasPendientes,
+                    $concepto,
+                    $monto,
+                    $moneda,
+                    $estado,
+                    $metodo,
+                    $referencia,
+                    $notas,
+                    $fecha_pago
+                );
+            } else {
+                $error = 'No se pudo preparar la consulta (insert): ' . $conn->error;
+            }
         }
     }
 
-    if (!isset($error) && isset($stmt) && $stmt->execute()) {
+    if (!isset($error) && isset($stmt) && $stmt && $stmt->execute()) {
         $savedId = $id > 0 ? $id : $stmt->insert_id;
         admin_log_action($conn, $id > 0 ? 'update' : 'create', 'payment', (int) $savedId, 'Pago guardado desde el formulario');
         header('Location: pagos.php?msg=saved');
@@ -161,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!isset($error)) {
-        $error = 'Error al guardar: ' . $conn->error;
+        $error = 'Error al guardar: ' . ($stmt ? $stmt->error : $conn->error);
     }
 
     $payment = [
