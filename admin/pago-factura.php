@@ -183,6 +183,7 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
         return false;
     }
 
+    $invoice = invoice_number($payment);
     $mail = new PHPMailer(true);
     try {
         $mail->SMTPDebug = 0;
@@ -208,20 +209,51 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
         $monto = payment_format_amount((float) $payment['monto'], (string) $payment['moneda']);
         $fecha = date('d/m/Y', strtotime($payment['fecha_pago']));
 
-        $mail->Subject = "Factura - Proyectos MCE";
+        $mail->Subject = "Factura {$invoice} · Proyectos MCE";
         $mail->isHTML(true);
         $mail->Body = "
-            <p>Hola {$cliente},</p>
-            <p>Te compartimos el resumen del pago correspondiente a:</p>
-            <ul>
-                <li><strong>Concepto:</strong> {$concepto}</li>
-                <li><strong>Monto:</strong> {$monto}</li>
-                <li><strong>Fecha de pago:</strong> {$fecha}</li>
-            </ul>
-            <p>Gracias por tu confianza.</p>
-            <p>Proyectos MCE</p>
-        ";
-        $mail->AltBody = "Factura - Concepto: {$concepto} - Monto: {$monto} - Fecha: {$fecha}";
+        <div style=\"font-family:'Segoe UI',Arial,sans-serif;background:#0f172a;padding:32px 0; margin:0;\">
+          <table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"margin:0 auto;max-width:620px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(15,23,42,0.12);\">
+            <tr>
+              <td style=\"background:linear-gradient(135deg,#0f172a,#111827);padding:20px 24px;color:#e2e8f0;\">
+                <div style=\"font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;\">Proyectos MCE</div>
+                <div style=\"font-size:20px;font-weight:700;color:#f8fafc;\">Factura {$invoice}</div>
+                <div style=\"margin-top:4px;font-size:13px;color:#cbd5e1;\">Software a medida · proyectosmceaa@gmail.com · +57 311 412 59 71</div>
+              </td>
+            </tr>
+            <tr>
+              <td style=\"padding:24px 24px 8px;color:#0f172a;\">
+                <p style=\"margin:0 0 8px;font-size:15px;\">Hola <strong>{$cliente}</strong>,</p>
+                <p style=\"margin:0 0 16px;font-size:14px;color:#475569;\">Te compartimos el resumen elegante de tu pago:</p>
+                <table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;\">
+                  <tr style=\"background:#f8fafc;\">
+                    <td style=\"padding:12px 14px;font-size:13px;color:#475569;\">Concepto</td>
+                    <td style=\"padding:12px 14px;font-size:14px;font-weight:600;color:#0f172a;\">{$concepto}</td>
+                  </tr>
+                  <tr>
+                    <td style=\"padding:12px 14px;font-size:13px;color:#475569;\">Monto</td>
+                    <td style=\"padding:12px 14px;font-size:15px;font-weight:700;color:#0f172a;\">{$monto}</td>
+                  </tr>
+                  <tr style=\"background:#f8fafc;\">
+                    <td style=\"padding:12px 14px;font-size:13px;color:#475569;\">Fecha de pago</td>
+                    <td style=\"padding:12px 14px;font-size:14px;font-weight:600;color:#0f172a;\">{$fecha}</td>
+                  </tr>
+                  <tr>
+                    <td style=\"padding:12px 14px;font-size:13px;color:#475569;\">Factura</td>
+                    <td style=\"padding:12px 14px;font-size:14px;font-weight:600;color:#0f172a;\">{$invoice}</td>
+                  </tr>
+                </table>
+                <div style=\"margin-top:18px;padding:14px 16px;border-radius:12px;background:linear-gradient(135deg,#f59e0b1a,#fbbf24);color:#92400e;font-size:13px;border:1px solid #fcd34d;\">Esta confirmaci&oacute;n es v&aacute;lida como comprobante. Si necesitas algo m&aacute;s, responde a este correo y te ayudamos.</div>
+                <p style=\"margin:18px 0 0;font-size:13px;color:#475569;\">Gracias por tu confianza.</p>
+                <p style=\"margin:6px 0 0;font-size:14px;font-weight:700;color:#0f172a;\">Equipo Proyectos MCE</p>
+              </td>
+            </tr>
+            <tr>
+              <td style=\"padding:16px 24px 20px;color:#94a3b8;font-size:11px;text-align:center;border-top:1px solid #e2e8f0;\">Este mensaje se gener&oacute; autom&aacute;ticamente. Si no solicitaste esta factura, cont&aacute;ctanos.</td>
+            </tr>
+          </table>
+        </div>";
+        $mail->AltBody = "Factura {$invoice}\nConcepto: {$concepto}\nMonto: {$monto}\nFecha de pago: {$fecha}\nGracias por tu confianza.\nProyectos MCE";
         $mail->send();
         return true;
     } catch (Exception $e) {
