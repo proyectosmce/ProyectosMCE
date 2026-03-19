@@ -98,8 +98,9 @@ function build_pdf(array $payment): string
     $pdf->Cell(0, 6, pdf_text('Proyecto: ' . ($payment['proyecto_titulo'] ?: 'Proyecto sin titulo')), 0, 1);
     $pdf->Cell(0, 6, pdf_text('Factura: ' . invoice_number($payment)), 0, 1);
     $pdf->Cell(0, 6, pdf_text('Fecha de pago: ' . date('d/m/Y', strtotime($payment['fecha_pago']))), 0, 1);
-    $recargo = recargo_cuotas((float)$payment['monto']);
-    $totalConRecargo = ((float)$payment['monto']) + $recargo;
+    $montoBase = (float)$payment['monto'];
+    $recargo = recargo_cuotas($montoBase);
+    $totalConRecargo = $montoBase + $recargo;
     $totalCuotas = (int)($payment['cuotas_totales'] ?? 0);
     $valorCuota = $totalCuotas > 0 ? $totalConRecargo / $totalCuotas : 0;
 
@@ -110,7 +111,7 @@ function build_pdf(array $payment): string
 
     $pdf->Cell($colConcepto, 8, pdf_text('Concepto'), 1, 0, 'L', true);
     $pdf->Cell($colMetodo, 8, pdf_text('Método'), 1, 0, 'C', true);
-    $pdf->Cell($colMonto, 8, pdf_text('Monto'), 1, 1, 'R', true);
+    $pdf->Cell($colMonto, 8, pdf_text('Monto base'), 1, 1, 'R', true);
 
     $pdf->SetFont('Helvetica', '', 11);
     // Concepto puede ser largo: usar MultiCell manualmente manteniendo alineación
@@ -120,7 +121,7 @@ function build_pdf(array $payment): string
     $yAfterConcept = $pdf->GetY();
     $pdf->SetXY($xStart + $colConcepto, $yStart);
     $pdf->Cell($colMetodo, $yAfterConcept - $yStart, pdf_text($payment['metodo'] ?: '-'), 1, 0, 'C');
-    $pdf->Cell($colMonto, $yAfterConcept - $yStart, pdf_text(payment_format_amount((float) $payment['monto'], (string) $payment['moneda'])), 1, 1, 'R');
+    $pdf->Cell($colMonto, $yAfterConcept - $yStart, pdf_text(payment_format_amount($montoBase, (string) $payment['moneda'])), 1, 1, 'R');
 
     $pdf->Cell($colConcepto, 8, pdf_text('Recargo cuotas (18%)'), 1, 0, 'L');
     $pdf->Cell($colMetodo + $colMonto, 8, pdf_text(payment_format_amount($recargo, (string)$payment['moneda'])), 1, 1, 'L');
@@ -131,6 +132,8 @@ function build_pdf(array $payment): string
     if ($totalCuotas > 0) {
         $pdf->Cell($colConcepto, 8, pdf_text('Diferido a cuotas'), 1, 0, 'L');
         $pdf->Cell($colMetodo + $colMonto, 8, pdf_text($totalCuotas . ' cuotas de ' . payment_format_amount($valorCuota, (string)$payment['moneda'])), 1, 1, 'L');
+        $pdf->Cell($colConcepto, 8, pdf_text('Primera cuota (estimada)'), 1, 0, 'L');
+        $pdf->Cell($colMetodo + $colMonto, 8, pdf_text(payment_format_amount($valorCuota, (string)$payment['moneda'])), 1, 1, 'L');
     }
 
     $pdf->Cell($colConcepto, 8, pdf_text('Referencia'), 1, 0, 'L');
@@ -252,8 +255,9 @@ function render_html(array $payment): void
     $forma = forma_pago_label($payment['forma_pago'] ?? 'contado');
     $proxima = !empty($payment['proxima_cuota']) ? date('d/m/Y', strtotime($payment['proxima_cuota'])) : '—';
     $cuotasResumen = cuotas_resumen($payment['cuotas_totales'] ?? null, $payment['cuotas_pendientes'] ?? null);
-    $recargo = recargo_cuotas((float) $payment['monto']);
-    $totalConRecargo = ((float) $payment['monto']) + $recargo;
+    $montoBase = (float) $payment['monto'];
+    $recargo = recargo_cuotas($montoBase);
+    $totalConRecargo = $montoBase + $recargo;
     $totalCuotas = (int) ($payment['cuotas_totales'] ?? 0);
     $valorCuota = $totalCuotas > 0 ? $totalConRecargo / $totalCuotas : 0;
     $recargoFmt = payment_format_amount($recargo, (string) $payment['moneda']);

@@ -473,10 +473,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 const recargo = valorBase * 0.18;
                 const totalConRecargo = valorBase + recargo;
                 const valorCuota = totalConRecargo / totalCuotas;
-                resumen.innerHTML = `Valor base: <strong>$${valorBase.toLocaleString('es-CO', {minimumFractionDigits:2})}</strong><br>
+                resumen.innerHTML = `Valor general (sin recargo): <strong>$${valorBase.toLocaleString('es-CO', {minimumFractionDigits:2})}</strong><br>
                     Recargo cuotas (18%): <strong>$${recargo.toLocaleString('es-CO', {minimumFractionDigits:2})}</strong><br>
-                    Total con recargo: <strong>$${totalConRecargo.toLocaleString('es-CO', {minimumFractionDigits:2})}</strong><br>
-                    Diferido a <strong>${totalCuotas}</strong> cuotas de <strong>$${valorCuota.toLocaleString('es-CO', {minimumFractionDigits:2})}</strong> cada una.`;
+                    Valor total (con recargo): <strong>$${totalConRecargo.toLocaleString('es-CO', {minimumFractionDigits:2})}</strong><br>
+                    Diferido a <strong>${totalCuotas}</strong> cuotas de <strong>$${valorCuota.toLocaleString('es-CO', {minimumFractionDigits:2})}</strong> cada una (primera cuota).`;
             }
             forma.addEventListener('change', toggle);
             if (monto) monto.addEventListener('input', calcularResumen);
