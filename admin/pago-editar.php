@@ -389,6 +389,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <p class="mt-1 text-xs text-gray-500">Usa 0 cuando ya no quedan cuotas pendientes.</p>
                                 </div>
                             </div>
+                            <div id="cuotas_resumen" class="hidden rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-800"></div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Notas internas</label>
@@ -446,6 +447,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const cuotasTot = document.getElementById('cuotas_totales');
             const cuotasPend = document.getElementById('cuotas_pendientes');
             const wrapper = document.getElementById('cuotas_wrapper');
+            const monto = document.querySelector('input[name="monto"]');
+            const resumen = document.getElementById('cuotas_resumen');
             if (!forma || !proxima) return;
             function toggle() {
                 const cuotas = forma.value === 'cuotas';
@@ -454,8 +457,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (wrapper) { wrapper.classList.toggle('hidden', !cuotas); }
                 if (cuotasTot) { cuotasTot.disabled = !cuotas; cuotasTot.classList.toggle('bg-gray-100', !cuotas); if (!cuotas) cuotasTot.value = ''; }
                 if (cuotasPend) { cuotasPend.disabled = !cuotas; cuotasPend.classList.toggle('bg-gray-100', !cuotas); if (!cuotas) cuotasPend.value = ''; }
+                if (resumen) resumen.classList.toggle('hidden', !cuotas);
+                calcularResumen();
+            }
+            function calcularResumen() {
+                if (!resumen) return;
+                const cuotas = forma.value === 'cuotas';
+                if (!cuotas) { resumen.textContent = ''; return; }
+                const totalCuotas = parseInt(cuotasTot?.value || '0', 10);
+                const valorBase = parseFloat(monto?.value || '0');
+                if (!totalCuotas || totalCuotas <= 0 || !valorBase || valorBase <= 0) {
+                    resumen.textContent = 'Ingresa monto y número de cuotas para ver el detalle.';
+                    return;
+                }
+                const recargo = valorBase * 0.18;
+                const totalConRecargo = valorBase + recargo;
+                const valorCuota = totalConRecargo / totalCuotas;
+                resumen.innerHTML = `Valor base: <strong>$${valorBase.toLocaleString('es-CO', {minimumFractionDigits:2})}</strong><br>
+                    Recargo cuotas (18%): <strong>$${recargo.toLocaleString('es-CO', {minimumFractionDigits:2})}</strong><br>
+                    Total con recargo: <strong>$${totalConRecargo.toLocaleString('es-CO', {minimumFractionDigits:2})}</strong><br>
+                    Diferido a <strong>${totalCuotas}</strong> cuotas de <strong>$${valorCuota.toLocaleString('es-CO', {minimumFractionDigits:2})}</strong> cada una.`;
             }
             forma.addEventListener('change', toggle);
+            if (monto) monto.addEventListener('input', calcularResumen);
+            if (cuotasTot) cuotasTot.addEventListener('input', calcularResumen);
             toggle();
         }());
     </script>

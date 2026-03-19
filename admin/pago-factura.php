@@ -98,6 +98,10 @@ function build_pdf(array $payment): string
     $pdf->Cell(0, 6, pdf_text('Proyecto: ' . ($payment['proyecto_titulo'] ?: 'Proyecto sin titulo')), 0, 1);
     $pdf->Cell(0, 6, pdf_text('Factura: ' . invoice_number($payment)), 0, 1);
     $pdf->Cell(0, 6, pdf_text('Fecha de pago: ' . date('d/m/Y', strtotime($payment['fecha_pago']))), 0, 1);
+    $recargo = recargo_cuotas((float)$payment['monto']);
+    $totalConRecargo = ((float)$payment['monto']) + $recargo;
+    $totalCuotas = (int)($payment['cuotas_totales'] ?? 0);
+    $valorCuota = $totalCuotas > 0 ? $totalConRecargo / $totalCuotas : 0;
 
     $pdf->Ln(6);
     $pdf->SetFont('Helvetica', 'B', 12);
@@ -117,6 +121,17 @@ function build_pdf(array $payment): string
     $pdf->SetXY($xStart + $colConcepto, $yStart);
     $pdf->Cell($colMetodo, $yAfterConcept - $yStart, pdf_text($payment['metodo'] ?: '-'), 1, 0, 'C');
     $pdf->Cell($colMonto, $yAfterConcept - $yStart, pdf_text(payment_format_amount((float) $payment['monto'], (string) $payment['moneda'])), 1, 1, 'R');
+
+    $pdf->Cell($colConcepto, 8, pdf_text('Recargo cuotas (18%)'), 1, 0, 'L');
+    $pdf->Cell($colMetodo + $colMonto, 8, pdf_text(payment_format_amount($recargo, (string)$payment['moneda'])), 1, 1, 'L');
+
+    $pdf->Cell($colConcepto, 8, pdf_text('Total con recargo'), 1, 0, 'L');
+    $pdf->Cell($colMetodo + $colMonto, 8, pdf_text(payment_format_amount($totalConRecargo, (string)$payment['moneda'])), 1, 1, 'L');
+
+    if ($totalCuotas > 0) {
+        $pdf->Cell($colConcepto, 8, pdf_text('Diferido a cuotas'), 1, 0, 'L');
+        $pdf->Cell($colMetodo + $colMonto, 8, pdf_text($totalCuotas . ' cuotas de ' . payment_format_amount($valorCuota, (string)$payment['moneda'])), 1, 1, 'L');
+    }
 
     $pdf->Cell($colConcepto, 8, pdf_text('Referencia'), 1, 0, 'L');
     $pdf->Cell($colMetodo + $colMonto, 8, pdf_text($payment['referencia'] ?: '-'), 1, 1, 'L');
@@ -222,6 +237,9 @@ function cuotas_resumen(?int $total, ?int $pend): string {
     $pagadas = max(0, $total - $pend);
     return "{$pagadas} de {$total} pagadas (faltan {$pend})";
 }
+function recargo_cuotas(float $monto): float {
+    return round($monto * 0.18, 2);
+}
 
 function render_html(array $payment): void
 {
@@ -234,6 +252,13 @@ function render_html(array $payment): void
     $forma = forma_pago_label($payment['forma_pago'] ?? 'contado');
     $proxima = !empty($payment['proxima_cuota']) ? date('d/m/Y', strtotime($payment['proxima_cuota'])) : '—';
     $cuotasResumen = cuotas_resumen($payment['cuotas_totales'] ?? null, $payment['cuotas_pendientes'] ?? null);
+    $recargo = recargo_cuotas((float) $payment['monto']);
+    $totalConRecargo = ((float) $payment['monto']) + $recargo;
+    $totalCuotas = (int) ($payment['cuotas_totales'] ?? 0);
+    $valorCuota = $totalCuotas > 0 ? $totalConRecargo / $totalCuotas : 0;
+    $recargoFmt = payment_format_amount($recargo, (string) $payment['moneda']);
+    $totalRecargoFmt = payment_format_amount($totalConRecargo, (string) $payment['moneda']);
+    $valorCuotaFmt = $totalCuotas > 0 ? payment_format_amount($valorCuota, (string) $payment['moneda']) : 'N/A';
     $notas = nl2br(htmlspecialchars(trim((string) ($payment['notas'] ?? '')), ENT_QUOTES, 'UTF-8'));
     ?>
 <!DOCTYPE html>
@@ -380,6 +405,12 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
         $forma = htmlspecialchars(forma_pago_label($payment['forma_pago'] ?? 'contado'), ENT_QUOTES, 'UTF-8');
         $proxima = !empty($payment['proxima_cuota']) ? date('d/m/Y', strtotime($payment['proxima_cuota'])) : '—';
         $cuotasResumen = cuotas_resumen($payment['cuotas_totales'] ?? null, $payment['cuotas_pendientes'] ?? null);
+        $recargoVal = recargo_cuotas((float) $payment['monto']);
+        $recargoFmt = payment_format_amount($recargoVal, (string)$payment['moneda']);
+        $totalRecargoVal = $recargoVal + (float)$payment['monto'];
+        $totalRecargoFmt = payment_format_amount($totalRecargoVal, (string)$payment['moneda']);
+        $totalCuotas = (int) ($payment['cuotas_totales'] ?? 0);
+        $valorCuotaFmt = $totalCuotas > 0 ? payment_format_amount($totalRecargoVal / $totalCuotas, (string)$payment['moneda']) : 'N/A';
 
         $mail->Subject = "Factura {$invoice} · Proyectos MCE";
         $mail->isHTML(true);
@@ -436,6 +467,18 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
                     <td style="padding:14px;font-size:13px;color:#475569;">Monto</td>
                     <td style="padding:14px;font-size:17px;font-weight:800;color:#0f172a;">{$monto}</td>
                   </tr>
+                  <tr>
+                    <td style="padding:14px;font-size:13px;color:#475569;">Recargo cuotas (18%)</td>
+                    <td style="padding:14px;font-size:14px;font-weight:700;color:#0f172a;">{$recargoFmt}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:14px;font-size:13px;color:#475569;">Total con recargo</td>
+                    <td style="padding:14px;font-size:16px;font-weight:800;color:#0f172a;">{$totalRecargoFmt}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:14px;font-size:13px;color:#475569;">Diferido</td>
+                    <td style="padding:14px;font-size:14px;font-weight:700;color:#0f172a;">{$totalCuotas} cuotas de {$valorCuotaFmt}</td>
+                  </tr>
                   <tr style="background:#f8fafc;">
                     <td style="padding:14px;font-size:13px;color:#475569;">Estado de cuotas</td>
                     <td style="padding:14px;font-size:14px;font-weight:700;color:#0f172a;">{$cuotasResumen}</td>
@@ -480,7 +523,7 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
 </body>
 </html>
 HTML;
-        $mail->AltBody = "Factura {$invoice}\nConcepto: {$concepto}\nForma de pago: {$forma}\nCuotas: {$cuotasResumen}\nMonto: {$monto}\nMétodo: {$metodo}\nPróxima cuota: {$proxima}\nReferencia: {$ref}\nFecha de pago: {$fecha}\nNotas: {$notasRaw}\nSi necesitas algo más, contáctanos en proyectosmceaa@gmail.com o +57 311 412 59 71.\nProyectos MCE";
+        $mail->AltBody = "Factura {$invoice}\nConcepto: {$concepto}\nForma de pago: {$forma}\nCuotas: {$cuotasResumen}\nMonto base: {$monto}\nRecargo 18%: {$recargoFmt}\nTotal con recargo: {$totalRecargoFmt}\nDiferido: {$totalCuotas} cuotas de {$valorCuotaFmt}\nMétodo: {$metodo}\nPróxima cuota: {$proxima}\nReferencia: {$ref}\nFecha de pago: {$fecha}\nNotas: {$notasRaw}\nSi necesitas algo más, contáctanos en proyectosmceaa@gmail.com o +57 311 412 59 71.\nProyectos MCE";
         if (!empty($pdfBinary)) {
             $mail->addStringAttachment($pdfBinary, "{$invoice}.pdf", 'base64', 'application/pdf');
         }
