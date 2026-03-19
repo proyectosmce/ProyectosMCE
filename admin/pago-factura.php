@@ -218,7 +218,6 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
               <td style=\"background:linear-gradient(135deg,#0f172a,#111827);padding:20px 24px;color:#e2e8f0;\">
                 <div style=\"font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;\">Proyectos MCE</div>
                 <div style=\"font-size:20px;font-weight:700;color:#f8fafc;\">Factura {$invoice}</div>
-                <div style=\"margin-top:4px;font-size:13px;color:#cbd5e1;\">Software a medida · proyectosmceaa@gmail.com · +57 311 412 59 71</div>
               </td>
             </tr>
             <tr>
@@ -243,7 +242,7 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
                     <td style=\"padding:12px 14px;font-size:14px;font-weight:600;color:#0f172a;\">{$invoice}</td>
                   </tr>
                 </table>
-                <div style=\"margin-top:18px;padding:14px 16px;border-radius:12px;background:linear-gradient(135deg,#f59e0b1a,#fbbf24);color:#92400e;font-size:13px;border:1px solid #fcd34d;\">Esta confirmaci&oacute;n es v&aacute;lida como comprobante. Si necesitas algo m&aacute;s, responde a este correo y te ayudamos.</div>
+                <div style=\"margin-top:18px;padding:14px 16px;border-radius:12px;background:linear-gradient(135deg,#f59e0b1a,#fbbf24);color:#92400e;font-size:13px;border:1px solid #fcd34d;\">Esta confirmaci&oacute;n es v&aacute;lida como comprobante. Si necesitas algo m&aacute;s, resp&oacute;ndenos a <strong>proyectosmceaa@gmail.com</strong> o escr&iacute;benos al <strong>+57 311 412 59 71</strong> y te ayudamos.</div>
                 <p style=\"margin:18px 0 0;font-size:13px;color:#475569;\">Gracias por tu confianza.</p>
                 <p style=\"margin:6px 0 0;font-size:14px;font-weight:700;color:#0f172a;\">Equipo Proyectos MCE</p>
               </td>
@@ -253,7 +252,7 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
             </tr>
           </table>
         </div>";
-        $mail->AltBody = "Factura {$invoice}\nConcepto: {$concepto}\nMonto: {$monto}\nFecha de pago: {$fecha}\nGracias por tu confianza.\nProyectos MCE";
+        $mail->AltBody = "Factura {$invoice}\nConcepto: {$concepto}\nMonto: {$monto}\nFecha de pago: {$fecha}\nSi necesitas algo m\u00e1s, cont\u00e1ctanos en proyectosmceaa@gmail.com o +57 311 412 59 71.\nGracias por tu confianza.\nProyectos MCE";
         $mail->send();
         return true;
     } catch (Exception $e) {
