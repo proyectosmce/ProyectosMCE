@@ -64,32 +64,32 @@ function build_pdf(array $payment): string
     $pdf->Rect(0, 0, 210, 36, 'F');
     $pdf->SetY(10);
     $pdf->SetTextColor(255, 255, 255);
-    $pdf->SetFont('Arial', 'B', 16);
+    $pdf->SetFont('Helvetica', 'B', 16);
     $pdf->Cell(0, 8, pdf_text('Proyectos MCE'), 0, 1, 'L');
-    $pdf->SetFont('Arial', '', 11);
+    $pdf->SetFont('Helvetica', '', 11);
     $pdf->Cell(0, 6, pdf_text('Factura ' . invoice_number($payment)), 0, 1, 'L');
 
     $pdf->SetY(42);
     $pdf->SetTextColor(20, 23, 31);
-    $pdf->SetFont('Arial', 'B', 13);
+    $pdf->SetFont('Helvetica', 'B', 13);
     $pdf->Cell(0, 8, pdf_text('Resumen de pago'), 0, 1, 'L');
 
-    $pdf->SetFont('Arial', '', 11);
+    $pdf->SetFont('Helvetica', '', 11);
     $pdf->Cell(0, 6, pdf_text('Cliente: ' . ($payment['proyecto_cliente'] ?: 'Cliente sin nombre')), 0, 1);
     $pdf->Cell(0, 6, pdf_text('Proyecto: ' . ($payment['proyecto_titulo'] ?: 'Proyecto sin tÃ­tulo')), 0, 1);
     $pdf->Cell(0, 6, pdf_text('Factura: ' . invoice_number($payment)), 0, 1);
     $pdf->Cell(0, 6, pdf_text('Fecha de pago: ' . date('d/m/Y', strtotime($payment['fecha_pago']))), 0, 1);
 
     $pdf->Ln(6);
-    $pdf->SetFont('Arial', 'B', 12);
+    $pdf->SetFont('Helvetica', 'B', 12);
     $pdf->SetFillColor(247, 249, 252);
     $pdf->SetTextColor(60, 64, 72);
 
     $pdf->Cell(100, 8, pdf_text('Concepto'), 1, 0, 'L', true);
-    $pdf->Cell(40, 8, pdf_text('MÃ©todo'), 1, 0, 'C', true);
+    $pdf->Cell(40, 8, pdf_text('Método'), 1, 0, 'C', true);
     $pdf->Cell(50, 8, pdf_text('Monto'), 1, 1, 'R', true);
 
-    $pdf->SetFont('Arial', '', 11);
+    $pdf->SetFont('Helvetica', '', 11);
     $pdf->Cell(100, 8, pdf_text($payment['concepto']), 1, 0, 'L');
     $pdf->Cell(40, 8, pdf_text($payment['metodo'] ?: '-'), 1, 0, 'C');
     $pdf->Cell(50, 8, pdf_text(payment_format_amount((float) $payment['monto'], (string) $payment['moneda'])), 1, 1, 'R');
@@ -99,16 +99,16 @@ function build_pdf(array $payment): string
 
     if (!empty($payment['notas'])) {
         $pdf->Ln(6);
-        $pdf->SetFont('Arial', 'B', 11);
+        $pdf->SetFont('Helvetica', 'B', 11);
         $pdf->SetTextColor($pr, $pg, $pb);
         $pdf->Cell(0, 7, pdf_text('Notas'), 0, 1);
-        $pdf->SetFont('Arial', '', 10);
+        $pdf->SetFont('Helvetica', '', 10);
         $pdf->SetTextColor(40, 40, 40);
         $pdf->MultiCell(0, 6, pdf_text($payment['notas']));
     }
 
     $pdf->Ln(8);
-    $pdf->SetFont('Arial', '', 9);
+    $pdf->SetFont('Helvetica', '', 9);
     $pdf->SetTextColor(120, 120, 120);
     $pdf->MultiCell(0, 5, pdf_text('Gracias por confiar en Proyectos MCE. Contacto: proyectosmceaa@gmail.com | +57 311 412 59 71'));
 
@@ -523,4 +523,3 @@ if ($modo === 'html') {
     </div>
 </body>
 </html>
-
