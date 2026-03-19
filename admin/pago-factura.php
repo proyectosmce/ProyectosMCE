@@ -62,7 +62,7 @@ function build_pdf(array $payment): string
 
     [$pr, $pg, $pb] = brand_primary();
 
-    $contentWidth = $pdf->GetPageWidth() - $pdf->lMargin - $pdf->rMargin;
+    $contentWidth = $pdf->GetPageWidth() - $pdf->GetX() - $pdf->rMargin;
     // Anchos proporcionales para que se ajusten a distintos tamaños
     $colConcepto = $contentWidth * 0.55;
     $colMetodo   = $contentWidth * 0.20;
