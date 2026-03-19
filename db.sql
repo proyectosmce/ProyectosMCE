@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
 CREATE TABLE IF NOT EXISTS proyecto_pagos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     invoice_number INT NULL UNIQUE,
+    cliente VARCHAR(200) NULL,
     proyecto_id INT NULL,
     concepto VARCHAR(200) NOT NULL,
     monto DECIMAL(12,2) NOT NULL,
@@ -84,6 +85,7 @@ CREATE TABLE IF NOT EXISTS proyecto_pagos (
 
 -- Si ya tienes la tabla creada y te falta el consecutivo de factura, ejecuta:
 -- ALTER TABLE proyecto_pagos ADD COLUMN invoice_number INT NULL UNIQUE;
+-- ALTER TABLE proyecto_pagos ADD COLUMN cliente VARCHAR(200) NULL;
 
 -- Insertar usuario admin por defecto (contraseña: admin123)
 -- IMPORTANTE: Cambiá esta contraseña después

@@ -45,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $proyectoId = isset($_POST['proyecto_id']) ? (int) $_POST['proyecto_id'] : 0;
+    $clienteLibre = sanitize($_POST['cliente'] ?? '');
     $concepto = sanitize($_POST['concepto'] ?? '');
     $montoInput = str_replace(',', '.', trim((string) ($_POST['monto'] ?? '0')));
     $monto = is_numeric($montoInput) ? (float) $montoInput : 0;
@@ -75,10 +76,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!isset($error)) {
         if ($id > 0) {
-            $stmt = $conn->prepare('UPDATE proyecto_pagos SET proyecto_id = NULLIF(?, 0), concepto = ?, monto = ?, moneda = ?, estado = ?, metodo = ?, referencia = ?, notas = ?, fecha_pago = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
+            $stmt = $conn->prepare('UPDATE proyecto_pagos SET proyecto_id = NULLIF(?, 0), cliente = ?, concepto = ?, monto = ?, moneda = ?, estado = ?, metodo = ?, referencia = ?, notas = ?, fecha_pago = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
             $stmt->bind_param(
-                'isdssssssi',
+                'issdssssssi',
                 $proyectoId,
+                $clienteLibre,
                 $concepto,
                 $monto,
                 $moneda,
@@ -90,10 +92,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $id
             );
         } else {
-            $stmt = $conn->prepare('INSERT INTO proyecto_pagos (proyecto_id, concepto, monto, moneda, estado, metodo, referencia, notas, fecha_pago) VALUES (NULLIF(?, 0), ?, ?, ?, ?, ?, ?, ?, ?)');
+            $stmt = $conn->prepare('INSERT INTO proyecto_pagos (proyecto_id, cliente, concepto, monto, moneda, estado, metodo, referencia, notas, fecha_pago) VALUES (NULLIF(?, 0), ?, ?, ?, ?, ?, ?, ?, ?, ?)');
             $stmt->bind_param(
-                'isdssssss',
+                'issdssssss',
                 $proyectoId,
+                $clienteLibre,
                 $concepto,
                 $monto,
                 $moneda,
@@ -119,6 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $payment = [
         'proyecto_id' => $proyectoId,
+        'cliente' => $clienteLibre,
         'concepto' => $concepto,
         'monto' => $monto,
         'moneda' => $moneda,
@@ -198,6 +202,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 focus:border-blue-600 focus:bg-white focus:outline-none"
                                     >
                                 </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Cliente (si no hay proyecto)</label>
+                                <input
+                                    type="text"
+                                    name="cliente"
+                                    value="<?php echo admin_escape($payment['cliente'] ?? ''); ?>"
+                                    placeholder="Nombre del cliente"
+                                    class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 focus:border-blue-600 focus:bg-white focus:outline-none"
+                                >
                             </div>
 
                             <div>

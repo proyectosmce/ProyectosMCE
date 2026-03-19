@@ -93,8 +93,9 @@ function build_pdf(array $payment): string
     $pdf->Cell(0, 8, pdf_text('Resumen de pago'), 0, 1, 'L');
 
     $pdf->SetFont('Helvetica', '', 11);
-    $pdf->Cell(0, 6, pdf_text('Cliente: ' . ($payment['proyecto_cliente'] ?: 'Cliente sin nombre')), 0, 1);
-    $pdf->Cell(0, 6, pdf_text('Proyecto: ' . ($payment['proyecto_titulo'] ?: 'Proyecto sin tÃ­tulo')), 0, 1);
+    $clienteFinal = $payment['cliente'] ?: ($payment['proyecto_cliente'] ?? 'Cliente sin nombre');
+    $pdf->Cell(0, 6, pdf_text('Cliente: ' . $clienteFinal), 0, 1);
+    $pdf->Cell(0, 6, pdf_text('Proyecto: ' . ($payment['proyecto_titulo'] ?: 'Proyecto sin titulo')), 0, 1);
     $pdf->Cell(0, 6, pdf_text('Factura: ' . invoice_number($payment)), 0, 1);
     $pdf->Cell(0, 6, pdf_text('Fecha de pago: ' . date('d/m/Y', strtotime($payment['fecha_pago']))), 0, 1);
 
