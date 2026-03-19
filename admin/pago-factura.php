@@ -264,8 +264,19 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn): bool
     $smtpSecure = strtolower((string) ($SMTP_SECURE ?? getenv('SMTP_SECURE') ?? 'tls'));
     $smtpFromEmail = $SMTP_FROM_EMAIL ?? getenv('SMTP_FROM_EMAIL') ?? $smtpUser;
     $smtpFromName = $SMTP_FROM_NAME ?? getenv('SMTP_FROM_NAME') ?? 'Proyectos MCE';
+    $smtpToAdmin = $SMTP_TO_EMAIL ?? getenv('SMTP_TO_EMAIL') ?? $smtpUser;
+
+    // Ajuste Gmail: quitar espacios en app password
+    if (stripos($smtpHost, 'gmail.com') !== false) {
+        $smtpPass = str_replace(' ', '', $smtpPass);
+    }
 
     if (!class_exists('FPDF')) {
+        return false;
+    }
+
+    if (empty($smtpUser) || empty($smtpPass)) {
+        error_log('Factura: faltan credenciales SMTP (SMTP_USER o SMTP_PASS).');
         return false;
     }
 
@@ -285,6 +296,9 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn): bool
 
         $mail->setFrom($smtpFromEmail, $smtpFromName);
         $mail->addAddress($toEmail);
+        if (!empty($smtpToAdmin) && strtolower($smtpToAdmin) !== strtolower($toEmail)) {
+            $mail->addBcc($smtpToAdmin);
+        }
         $mail->addReplyTo($smtpFromEmail, $smtpFromName);
 
         $cliente = htmlspecialchars($payment['proyecto_cliente'] ?: 'cliente', ENT_QUOTES, 'UTF-8');
@@ -310,7 +324,7 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn): bool
         $mail->send();
         return true;
     } catch (Exception $e) {
-        error_log('No se pudo enviar la factura: ' . $e->getMessage());
+        error_log('No se pudo enviar la factura: ' . $e->getMessage() . ' | ' . $mail->ErrorInfo);
         return false;
     }
 }
@@ -329,7 +343,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $modo === 'send') {
     if ($ok) {
         header('Location: pagos.php?msg=factura_enviada');
     } else {
-        header('Location: pago-factura.php?id=' . $id . '&modo=sendform&msg=sendfail');
+        $fallbackMsg = empty($smtpUser) || empty($smtpPass) ? 'smtp' : 'sendfail';
+        header('Location: pago-factura.php?id=' . $id . '&modo=sendform&msg=' . $fallbackMsg);
     }
     exit;
 }
@@ -387,6 +402,8 @@ if ($modo === 'html') {
             <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 text-sm">Correo inválido, intenta nuevamente.</div>
         <?php elseif ($flash === 'sendfail'): ?>
             <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 text-sm">No pudimos enviar la factura. Revisa SMTP.</div>
+        <?php elseif ($flash === 'smtp'): ?>
+            <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 text-sm">Faltan SMTP_USER / SMTP_PASS. Configúralos en <code>includes/secrets.php</code> o variables de entorno.</div>
         <?php endif; ?>
 
         <form method="POST" class="space-y-4">
