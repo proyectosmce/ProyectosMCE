@@ -263,6 +263,7 @@ function render_html(array $payment): void
     $recargoFmt = payment_format_amount($recargo, (string) $payment['moneda']);
     $totalRecargoFmt = payment_format_amount($totalConRecargo, (string) $payment['moneda']);
     $valorCuotaFmt = $totalCuotas > 0 ? payment_format_amount($valorCuota, (string) $payment['moneda']) : 'N/A';
+    $montoBaseFmt = payment_format_amount($montoBase, (string) $payment['moneda']);
     $notas = nl2br(htmlspecialchars(trim((string) ($payment['notas'] ?? '')), ENT_QUOTES, 'UTF-8'));
     ?>
 <!DOCTYPE html>
@@ -334,6 +335,37 @@ function render_html(array $payment): void
                 </tr>
             </tbody>
         </table>
+
+        <div style="margin-top:16px; border:1px solid #e2e8f0; border-radius:14px; overflow:hidden;">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                <tr style="background:#f8fafc;">
+                    <td style="padding:12px 14px; font-size:13px; color:#475569;">Valor general (sin recargo)</td>
+                    <td style="padding:12px 14px; font-size:15px; font-weight:700; color:#0f172a;"><?php echo htmlspecialchars($montoBaseFmt, ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
+                <tr>
+                    <td style="padding:12px 14px; font-size:13px; color:#475569;">Recargo cuotas (18%)</td>
+                    <td style="padding:12px 14px; font-size:15px; font-weight:700; color:#0f172a;"><?php echo htmlspecialchars($recargoFmt, ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
+                <tr style="background:#f8fafc;">
+                    <td style="padding:12px 14px; font-size:13px; color:#475569;">Valor total (con recargo)</td>
+                    <td style="padding:12px 14px; font-size:16px; font-weight:800; color:#0f172a;"><?php echo htmlspecialchars($totalRecargoFmt, ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
+                <?php if ($totalCuotas > 0): ?>
+                <tr>
+                    <td style="padding:12px 14px; font-size:13px; color:#475569;">Diferido</td>
+                    <td style="padding:12px 14px; font-size:15px; font-weight:700; color:#0f172a;"><?php echo (int)$totalCuotas; ?> cuotas de <?php echo htmlspecialchars($valorCuotaFmt, ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
+                <?php endif; ?>
+                <tr style="background:#f8fafc;">
+                    <td style="padding:12px 14px; font-size:13px; color:#475569;">Estado de cuotas</td>
+                    <td style="padding:12px 14px; font-size:14px; font-weight:700; color:#0f172a;"><?php echo htmlspecialchars($cuotasResumen, ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
+                <tr>
+                    <td style="padding:12px 14px; font-size:13px; color:#475569;">Próxima cuota</td>
+                    <td style="padding:12px 14px; font-size:14px; font-weight:700; color:#0f172a;"><?php echo htmlspecialchars($proxima, ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
+            </table>
+        </div>
 
         <?php if (!empty(trim((string) $payment['notas']))): ?>
             <div style="margin-top:12px;">
@@ -415,6 +447,7 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
         $totalRecargoFmt = payment_format_amount($totalRecargoVal, (string)$payment['moneda']);
         $totalCuotas = (int) ($payment['cuotas_totales'] ?? 0);
         $valorCuotaFmt = $totalCuotas > 0 ? payment_format_amount($totalRecargoVal / $totalCuotas, (string)$payment['moneda']) : 'N/A';
+        $montoBaseFmt = payment_format_amount((float)$payment['monto'], (string)$payment['moneda']);
 
         $mail->Subject = "Factura {$invoice} · Proyectos MCE";
         $mail->isHTML(true);
