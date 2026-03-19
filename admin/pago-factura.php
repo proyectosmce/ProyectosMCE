@@ -35,7 +35,14 @@ $mailError = '';
 
 function pdf_text(string $txt): string
 {
-    // Convierte UTF-8 a ISO-8859-1 para FPDF evitando caracteres raros
+    // Normaliza a UTF-8 y convierte a ISO-8859-1 (lo que usa FPDF) sin caracteres raros
+    $txt = html_entity_decode($txt, ENT_QUOTES, 'UTF-8');
+    if (function_exists('iconv')) {
+        $converted = @iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $txt);
+        if ($converted !== false) {
+            return $converted;
+        }
+    }
     if (function_exists('mb_convert_encoding')) {
         return mb_convert_encoding($txt, 'ISO-8859-1', 'UTF-8');
     }
@@ -516,5 +523,4 @@ if ($modo === 'html') {
     </div>
 </body>
 </html>
-
 
