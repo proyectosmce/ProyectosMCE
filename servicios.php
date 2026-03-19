@@ -48,6 +48,9 @@
                     <a href="<?php echo app_url('portafolio.php'); ?>" class="inline-flex items-center justify-center border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-slate-900 transition">
                         <i class="fas fa-eye mr-2"></i> Ver proyectos
                     </a>
+                    <a href="<?php echo app_url('index.php#casos-exito'); ?>" class="inline-flex items-center justify-center border-2 border-amber-300 text-amber-200 px-8 py-4 rounded-xl font-semibold hover:bg-amber-200 hover:text-slate-900 transition">
+                        <i class="fas fa-trophy mr-2"></i> Casos de éxito
+                    </a>
                 </div>
             </div>
 
