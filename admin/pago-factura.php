@@ -428,6 +428,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $modo === 'send') {
     $modo = 'sendform';
 }
 
+// Generar PDF directo
+if ($modo === 'pdf') {
+    if (!class_exists('FPDF') || !empty($fpdfMissing)) {
+        exit('No se pudo generar el PDF (falta includes/lib/fpdf.php).');
+    }
+    $pdfBinary = build_pdf($payment);
+    if ($pdfBinary === '') {
+        http_response_code(500);
+        exit('Error al crear el PDF.');
+    }
+    $invoice = invoice_number($payment);
+    while (ob_get_level()) { ob_end_clean(); }
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: inline; filename="' . $invoice . '.pdf"');
+    header('Cache-Control: private, max-age=0, must-revalidate');
+    header('Pragma: public');
+    echo $pdfBinary;
+    exit;
+}
+
 // Render segÃºn modo
 if ($modo === 'html') {
     render_html($payment);
