@@ -340,6 +340,10 @@ if ($modo === 'pdf') {
         exit('Falta la librería FPDF en includes/lib/fpdf.php');
     }
     $pdf = build_pdf($payment);
+    if ($pdf === '') {
+        http_response_code(500);
+        exit('No se pudo generar el PDF. Verifica que includes/lib/fpdf.php esté en el servidor.');
+    }
     $invoice = invoice_number($payment);
     header('Content-Type: application/pdf');
     header('Content-Disposition: inline; filename="' . $invoice . '.pdf"');
