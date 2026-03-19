@@ -164,11 +164,35 @@ $payment = fetch_payment($conn, $id);
 if (!$payment) {
     http_response_code(404);
     exit('Pago no encontrado.');
-}   
+}
+
+// Garantizar columna y consecutivo de factura
+$hasInvoiceColumn = $conn->query("SHOW COLUMNS FROM proyecto_pagos LIKE 'invoice_number'");
+if ($hasInvoiceColumn && $hasInvoiceColumn->num_rows === 0) {
+    $conn->query("ALTER TABLE proyecto_pagos ADD COLUMN invoice_number INT NULL UNIQUE");
+}
+if (!isset($payment['invoice_number']) || (int)($payment['invoice_number'] ?? 0) <= 0) {
+    $next = 1;
+    $res = $conn->query("SELECT COALESCE(MAX(invoice_number),0) AS maxnum FROM proyecto_pagos");
+    if ($res instanceof mysqli_result) {
+        $next = ((int) $res->fetch_assoc()['maxnum']) + 1;
+        $res->free();
+    }
+    if ($stmt = $conn->prepare("UPDATE proyecto_pagos SET invoice_number = ? WHERE id = ?")) {
+        $stmt->bind_param('ii', $next, $id);
+        $stmt->execute();
+        $stmt->close();
+    }
+    $payment['invoice_number'] = $next;
+}
 
 function invoice_number(array $payment): string
 {
-    return 'FAC-' . str_pad((string) $payment['id'], 6, '0', STR_PAD_LEFT);
+    $num = $payment['invoice_number'] ?? null;
+    if ($num === null || $num === '' || (int)$num <= 0) {
+        $num = $payment['id'] ?? 0;
+    }
+    return 'FAC-' . str_pad((string) $num, 6, '0', STR_PAD_LEFT);
 }
 
 function brand_primary(): array { return [15, 23, 42]; }    // slate-900

@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
 -- Tabla de pagos de proyectos
 CREATE TABLE IF NOT EXISTS proyecto_pagos (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    invoice_number INT NULL UNIQUE,
     proyecto_id INT NULL,
     concepto VARCHAR(200) NOT NULL,
     monto DECIMAL(12,2) NOT NULL,
@@ -80,6 +81,9 @@ CREATE TABLE IF NOT EXISTS proyecto_pagos (
     updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (proyecto_id) REFERENCES proyectos(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
+
+-- Si ya tienes la tabla creada y te falta el consecutivo de factura, ejecuta:
+-- ALTER TABLE proyecto_pagos ADD COLUMN invoice_number INT NULL UNIQUE;
 
 -- Insertar usuario admin por defecto (contraseña: admin123)
 -- IMPORTANTE: Cambiá esta contraseña después
