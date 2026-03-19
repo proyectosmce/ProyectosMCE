@@ -447,7 +447,7 @@ if ($modo === 'pdf') {
     @file_put_contents($logDir . '/facturas.log', date('c') . " | PDF | pago_id={$payment['id']} | bytes=" . strlen($pdfBinary) . "\n", FILE_APPEND);
     while (ob_get_level()) { ob_end_clean(); }
     header('Content-Type: application/pdf');
-    header('Content-Disposition: inline; filename="' . $invoice . '.pdf"');
+    header('Content-Disposition: attachment; filename="' . $invoice . '.pdf"');
     header('Cache-Control: private, max-age=0, must-revalidate');
     header('Pragma: public');
     echo $pdfBinary;
