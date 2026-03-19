@@ -120,7 +120,7 @@ $whereSql = count($whereClauses) > 0 ? 'WHERE ' . implode(' AND ', $whereClauses
 
 $exporting = isset($_GET['export']) && $_GET['export'] === 'csv';
 if ($exporting) {
-    $exportSql = "SELECT pp.id, pp.concepto, pp.monto, pp.moneda, pp.estado, pp.metodo, pp.forma_pago, pp.proxima_cuota, pp.referencia, pp.fecha_pago, pr.titulo AS proyecto, COALESCE(pp.cliente, pr.cliente) AS cliente FROM proyecto_pagos pp LEFT JOIN proyectos pr ON pr.id = pp.proyecto_id {$whereSql} ORDER BY pp.fecha_pago DESC, pp.id DESC";
+    $exportSql = "SELECT pp.id, pp.concepto, pp.monto, pp.moneda, pp.estado, pp.metodo, pp.forma_pago, pp.cuotas_totales, pp.cuotas_pendientes, pp.proxima_cuota, pp.referencia, pp.fecha_pago, pr.titulo AS proyecto, COALESCE(pp.cliente, pr.cliente) AS cliente FROM proyecto_pagos pp LEFT JOIN proyectos pr ON pr.id = pp.proyecto_id {$whereSql} ORDER BY pp.fecha_pago DESC, pp.id DESC";
     $exportRows = [];
     $exportResult = $conn->query($exportSql);
     if ($exportResult instanceof mysqli_result) {
@@ -135,6 +135,8 @@ if ($exporting) {
                 $row['estado'],
                 $row['metodo'],
                 $row['forma_pago'],
+                $row['cuotas_totales'],
+                $row['cuotas_pendientes'],
                 $row['proxima_cuota'],
                 $row['referencia'],
                 $row['fecha_pago'],
@@ -143,7 +145,7 @@ if ($exporting) {
         $exportResult->free();
     }
 
-    admin_send_csv('pagos.csv', ['ID', 'Concepto', 'Proyecto', 'Cliente', 'Monto', 'Moneda', 'Estado', 'Metodo', 'Forma', 'Proxima cuota', 'Referencia', 'Fecha'], $exportRows);
+    admin_send_csv('pagos.csv', ['ID', 'Concepto', 'Proyecto', 'Cliente', 'Monto', 'Moneda', 'Estado', 'Metodo', 'Forma', 'Cuotas totales', 'Cuotas pendientes', 'Proxima cuota', 'Referencia', 'Fecha'], $exportRows);
 }
 
 $totalItems = 0;
@@ -334,6 +336,7 @@ function payment_status_badge_class(string $status): string
                                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Estado</th>
                                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Forma</th>
                                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Método</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Cuotas</th>
                                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Próxima cuota</th>
                                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Fecha</th>
                                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Acciones</th>
@@ -389,6 +392,15 @@ function payment_status_badge_class(string $status): string
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 text-sm text-gray-700"><?php echo admin_escape($metodoLabel ?: '-'); ?></td>
+                                            <td class="px-6 py-4 text-sm text-gray-700">
+                                                <?php
+                                                    $totalC = (int) ($pago['cuotas_totales'] ?? 0);
+                                                    $pendC = ($pago['cuotas_pendientes'] !== null) ? (int) $pago['cuotas_pendientes'] : $totalC;
+                                                    $pendC = max(0, $pendC);
+                                                    $pagadas = max(0, $totalC - $pendC);
+                                                    echo $totalC > 0 ? admin_escape($pagadas . ' / ' . $totalC . ' pagadas') : '—';
+                                                ?>
+                                            </td>
                                             <td class="px-6 py-4 text-sm text-gray-700"><?php echo admin_escape($proximaCuota); ?></td>
                                             <td class="px-6 py-4 text-sm text-gray-600"><?php echo date('d/m/Y', strtotime($pago['fecha_pago'])); ?></td>
                                             <td class="px-6 py-4">

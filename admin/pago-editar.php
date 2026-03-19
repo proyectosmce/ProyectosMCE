@@ -55,6 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $monto = is_numeric($montoInput) ? (float) $montoInput : 0;
     $formaPago = trim((string) ($_POST['forma_pago'] ?? 'contado'));
     $proximaCuota = trim((string) ($_POST['proxima_cuota'] ?? ''));
+    $cuotasTotales = isset($_POST['cuotas_totales']) ? (int) $_POST['cuotas_totales'] : null;
+    $cuotasPendientes = isset($_POST['cuotas_pendientes']) ? (int) $_POST['cuotas_pendientes'] : null;
     $moneda = strtoupper(trim((string) ($_POST['moneda'] ?? 'COP')));
     $estado = trim((string) ($_POST['estado'] ?? 'recibido'));
     $metodo = trim((string) ($_POST['metodo'] ?? ''));
@@ -84,6 +86,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($formaPago === 'cuotas' && $proximaCuota === '') {
         $error = 'Indica la fecha de la próxima cuota para pagos en cuotas.';
     }
+    if ($formaPago === 'cuotas') {
+        if ($cuotasTotales === null || $cuotasTotales < 1) {
+            $error = 'Define cuántas cuotas tendrá el pago.';
+        }
+        if (!isset($error) && ($cuotasPendientes === null || $cuotasPendientes < 0 || $cuotasPendientes > $cuotasTotales)) {
+            $error = 'Cuotas pendientes debe estar entre 0 y el total de cuotas.';
+        }
+        if (!isset($error) && $cuotasPendientes === null) {
+            $cuotasPendientes = $cuotasTotales;
+        }
+    } else {
+        $cuotasTotales = null;
+        $cuotasPendientes = null;
+        $proximaCuota = '';
+    }
 
     if (!isset($error) && !$proximaValida) {
         $error = 'La fecha de próxima cuota no es válida.';
@@ -95,13 +112,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!isset($error)) {
         if ($id > 0) {
-            $stmt = $conn->prepare('UPDATE proyecto_pagos SET proyecto_id = NULLIF(?, 0), cliente = NULLIF(?, \'\'), forma_pago = ?, proxima_cuota = NULLIF(?, \'\'), concepto = ?, monto = ?, moneda = ?, estado = ?, metodo = ?, referencia = ?, notas = ?, fecha_pago = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
+            $stmt = $conn->prepare('UPDATE proyecto_pagos SET proyecto_id = NULLIF(?, 0), cliente = NULLIF(?, \'\'), forma_pago = ?, proxima_cuota = NULLIF(?, \'\'), cuotas_totales = ?, cuotas_pendientes = ?, concepto = ?, monto = ?, moneda = ?, estado = ?, metodo = ?, referencia = ?, notas = ?, fecha_pago = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
             $stmt->bind_param(
-                'issssdssssssi',
+                'issssiisssssssi',
                 $proyectoId,
                 $clienteLibre,
                 $formaPago,
                 $proximaCuota,
+                $cuotasTotales,
+                $cuotasPendientes,
                 $concepto,
                 $monto,
                 $moneda,
@@ -113,13 +132,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $id
             );
         } else {
-            $stmt = $conn->prepare('INSERT INTO proyecto_pagos (proyecto_id, cliente, forma_pago, proxima_cuota, concepto, monto, moneda, estado, metodo, referencia, notas, fecha_pago) VALUES (NULLIF(?, 0), NULLIF(?, \'\'), ?, NULLIF(?, \'\'), ?, ?, ?, ?, ?, ?, ?, ?)');
+            $stmt = $conn->prepare('INSERT INTO proyecto_pagos (proyecto_id, cliente, forma_pago, proxima_cuota, cuotas_totales, cuotas_pendientes, concepto, monto, moneda, estado, metodo, referencia, notas, fecha_pago) VALUES (NULLIF(?, 0), NULLIF(?, \'\'), ?, NULLIF(?, \'\'), ?, ?, ?, ?, ?, ?, ?, ?, ?)');
             $stmt->bind_param(
-                'issssdssssss',
+                'issssiiissssss',
                 $proyectoId,
                 $clienteLibre,
                 $formaPago,
                 $proximaCuota,
+                $cuotasTotales,
+                $cuotasPendientes,
                 $concepto,
                 $monto,
                 $moneda,
@@ -156,6 +177,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'referencia' => $referencia,
         'notas' => $notas,
         'fecha_pago' => $fecha_pago,
+        'cuotas_totales' => $cuotasTotales,
+        'cuotas_pendientes' => $cuotasPendientes,
     ];
 }
 
@@ -333,6 +356,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                             </div>
 
+                            <div class="grid gap-4 md:grid-cols-2" id="cuotas_wrapper">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Total de cuotas</label>
+                                    <input
+                                        type="number"
+        min="1"
+        name="cuotas_totales"
+        id="cuotas_totales"
+        value="<?php echo admin_escape($payment['cuotas_totales'] ?? ''); ?>"
+        class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 focus:border-blue-600 focus:bg-white focus:outline-none"
+                                    >
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Cuotas pendientes</label>
+                                    <input
+                                        type="number"
+        min="0"
+        name="cuotas_pendientes"
+        id="cuotas_pendientes"
+        value="<?php echo admin_escape($payment['cuotas_pendientes'] ?? ''); ?>"
+        class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 focus:border-blue-600 focus:bg-white focus:outline-none"
+                                    >
+                                    <p class="mt-1 text-xs text-gray-500">Usa 0 cuando ya no quedan cuotas pendientes.</p>
+                                </div>
+                            </div>
+
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Notas internas</label>
                                 <textarea
@@ -386,11 +435,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         (function() {
             const forma = document.getElementById('forma_pago');
             const proxima = document.getElementById('proxima_cuota');
+            const cuotasTot = document.getElementById('cuotas_totales');
+            const cuotasPend = document.getElementById('cuotas_pendientes');
+            const wrapper = document.getElementById('cuotas_wrapper');
             if (!forma || !proxima) return;
             function toggle() {
                 const cuotas = forma.value === 'cuotas';
                 proxima.disabled = !cuotas;
                 proxima.classList.toggle('bg-gray-100', !cuotas);
+                if (wrapper) { wrapper.classList.toggle('hidden', !cuotas); }
+                if (cuotasTot) { cuotasTot.disabled = !cuotas; cuotasTot.classList.toggle('bg-gray-100', !cuotas); if (!cuotas) cuotasTot.value = ''; }
+                if (cuotasPend) { cuotasPend.disabled = !cuotas; cuotasPend.classList.toggle('bg-gray-100', !cuotas); if (!cuotas) cuotasPend.value = ''; }
             }
             forma.addEventListener('change', toggle);
             toggle();

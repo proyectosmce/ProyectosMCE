@@ -129,6 +129,11 @@ function build_pdf(array $payment): string
         $pdf->Cell($colMetodo + $colMonto, 8, pdf_text(date('d/m/Y', strtotime($payment['proxima_cuota']))), 1, 1, 'L');
     }
 
+    if (!empty($payment['cuotas_totales'])) {
+        $pdf->Cell($colConcepto, 8, pdf_text('Estado de cuotas'), 1, 0, 'L');
+        $pdf->Cell($colMetodo + $colMonto, 8, pdf_text(cuotas_resumen((int)$payment['cuotas_totales'], $payment['cuotas_pendientes'] !== null ? (int)$payment['cuotas_pendientes'] : null)), 1, 1, 'L');
+    }
+
     if (!empty($payment['notas'])) {
         $pdf->Ln(6);
         $pdf->SetFont('Helvetica', 'B', 11);
@@ -211,6 +216,12 @@ function forma_pago_label(?string $value): string {
     $key = trim((string) $value);
     return $map[$key] ?? ($key !== '' ? ucfirst($key) : '-');
 }
+function cuotas_resumen(?int $total, ?int $pend): string {
+    if ($total === null || $total <= 0) return 'N/A';
+    $pend = $pend ?? $total;
+    $pagadas = max(0, $total - $pend);
+    return "{$pagadas} de {$total} pagadas (faltan {$pend})";
+}
 
 function render_html(array $payment): void
 {
@@ -222,6 +233,7 @@ function render_html(array $payment): void
     $ref = $payment['referencia'] ?: '-';
     $forma = forma_pago_label($payment['forma_pago'] ?? 'contado');
     $proxima = !empty($payment['proxima_cuota']) ? date('d/m/Y', strtotime($payment['proxima_cuota'])) : '—';
+    $cuotasResumen = cuotas_resumen($payment['cuotas_totales'] ?? null, $payment['cuotas_pendientes'] ?? null);
     $notas = nl2br(htmlspecialchars(trim((string) ($payment['notas'] ?? '')), ENT_QUOTES, 'UTF-8'));
     ?>
 <!DOCTYPE html>
@@ -367,6 +379,7 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
         $fecha = date('d/m/Y', strtotime($payment['fecha_pago']));
         $forma = htmlspecialchars(forma_pago_label($payment['forma_pago'] ?? 'contado'), ENT_QUOTES, 'UTF-8');
         $proxima = !empty($payment['proxima_cuota']) ? date('d/m/Y', strtotime($payment['proxima_cuota'])) : '—';
+        $cuotasResumen = cuotas_resumen($payment['cuotas_totales'] ?? null, $payment['cuotas_pendientes'] ?? null);
 
         $mail->Subject = "Factura {$invoice} · Proyectos MCE";
         $mail->isHTML(true);
@@ -424,6 +437,10 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
                     <td style="padding:14px;font-size:17px;font-weight:800;color:#0f172a;">{$monto}</td>
                   </tr>
                   <tr style="background:#f8fafc;">
+                    <td style="padding:14px;font-size:13px;color:#475569;">Estado de cuotas</td>
+                    <td style="padding:14px;font-size:14px;font-weight:700;color:#0f172a;">{$cuotasResumen}</td>
+                  </tr>
+                  <tr style="background:#f8fafc;">
                     <td style="padding:14px;font-size:13px;color:#475569;">Método</td>
                     <td style="padding:14px;font-size:14px;font-weight:700;color:#0f172a;">{$metodo}</td>
                   </tr>
@@ -463,7 +480,7 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
 </body>
 </html>
 HTML;
-        $mail->AltBody = "Factura {$invoice}\nConcepto: {$concepto}\nForma de pago: {$forma}\nMonto: {$monto}\nMétodo: {$metodo}\nPróxima cuota: {$proxima}\nReferencia: {$ref}\nFecha de pago: {$fecha}\nNotas: {$notasRaw}\nSi necesitas algo más, contáctanos en proyectosmceaa@gmail.com o +57 311 412 59 71.\nProyectos MCE";
+        $mail->AltBody = "Factura {$invoice}\nConcepto: {$concepto}\nForma de pago: {$forma}\nCuotas: {$cuotasResumen}\nMonto: {$monto}\nMétodo: {$metodo}\nPróxima cuota: {$proxima}\nReferencia: {$ref}\nFecha de pago: {$fecha}\nNotas: {$notasRaw}\nSi necesitas algo más, contáctanos en proyectosmceaa@gmail.com o +57 311 412 59 71.\nProyectos MCE";
         if (!empty($pdfBinary)) {
             $mail->addStringAttachment($pdfBinary, "{$invoice}.pdf", 'base64', 'application/pdf');
         }
