@@ -98,13 +98,14 @@ if (stripos($smtpHost, 'gmail.com') !== false) {
 
 function admin_send_cita_email(array $cita, string $estadoNuevo, array $smtp): void
 {
-    $destino = filter_var(trim((string) ($cita['email'] ?? '')), FILTER_VALIDATE_EMAIL);
-    if (!$destino) {
+    $destino = trim((string) ($cita['email'] ?? ''));
+    if ($destino === '') {
         $_SESSION['agenda_flash'] = [
             'ok' => false,
             'estado' => $estadoNuevo,
-            'email' => $cita['email'] ?? '',
-            'error' => 'Email del cliente vacío o inválido.',
+            'email' => '',
+            'id' => $cita['id'] ?? null,
+            'error' => 'Email del cliente vacío.',
         ];
         return;
     }
@@ -135,7 +136,6 @@ function admin_send_cita_email(array $cita, string $estadoNuevo, array $smtp): v
         $mail->CharSet = 'UTF-8';
         $mail->setFrom($smtp['from_email'], $smtp['from_name']);
         $mail->addAddress($destino, $cita['nombre'] ?? '');
-        // Copia interna para confirmar envío
         if (!empty($smtp['from_email'])) {
             $mail->addBCC($smtp['from_email']);
         }
@@ -156,32 +156,73 @@ function admin_send_cita_email(array $cita, string $estadoNuevo, array $smtp): v
             $ctaText = 'Agregar al calendario';
             $ctaUrl = '#';
             $statusColor = '#16a34a';
-        } else { // cancelada
+        } else {
             $subject = 'Tu cita fue cancelada · Proyectos MCE';
             $hero = 'Hemos cancelado la cita';
-            $lead = 'Podemos reprogramar cuando te convenga. Responde a este correo para coordinar otro horario.';
-            $ctaText = 'Reagendar';
-            $ctaUrl = 'mailto:' . $smtp['from_email'];
+            $lead = 'Podemos reprogramar cuando te convenga. Reagenda en el enlace siguiente.';
+            $ctaText = 'Reagendar ahora';
+            $ctaUrl = app_absolute_url('contacto.php#agenda-llamada');
             $statusColor = '#dc2626';
         }
 
-        $mail->Subject = $subject;
-        $mail->Body = '
-            <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;">
-                <h2 style="margin-top:0;color:#0f172a;">' . htmlspecialchars($hero, ENT_QUOTES, 'UTF-8') . '</h2>
-                <p style="color:#334155;">Hola ' . htmlspecialchars($nombre, ENT_QUOTES, 'UTF-8') . ',</p>
-                <p style="color:#334155;">' . htmlspecialchars($lead, ENT_QUOTES, 'UTF-8') . '</p>
-                <div style="margin:16px 0;padding:14px;border:1px solid #e2e8f0;border-radius:10px;background:#fff;">
-                    <p style="margin:0 0 8px 0;font-weight:bold;color:' . $statusColor . ';text-transform:uppercase;font-size:12px;letter-spacing:0.08em;">' . strtoupper($estadoNuevo) . '</p>
-                    <p style="margin:4px 0;color:#0f172a;"><strong>Fecha:</strong> ' . htmlspecialchars($fechaLabel, ENT_QUOTES, 'UTF-8') . '</p>
-                    <p style="margin:4px 0;color:#0f172a;"><strong>Hora:</strong> ' . htmlspecialchars($horaLabel, ENT_QUOTES, 'UTF-8') . '</p>
-                    <p style="margin:4px 0;color:#0f172a;"><strong>Servicio:</strong> ' . htmlspecialchars($servicio, ENT_QUOTES, 'UTF-8') . '</p>
-                </div>
-                <p><a href="' . htmlspecialchars($ctaUrl, ENT_QUOTES, 'UTF-8') . '" style="display:inline-block;padding:10px 16px;border-radius:8px;background:' . $statusColor . ';color:white;text-decoration:none;font-weight:600;">' . htmlspecialchars($ctaText, ENT_QUOTES, 'UTF-8') . '</a></p>
-                <p style="color:#64748b;font-size:12px;margin-top:20px;">Si no solicitaste esta actualización, responde este correo.</p>
-            </div>';
+        $logoText = 'Proyectos MCE';
+        $estadoUpper = strtoupper($estadoNuevo);
+        $heroEsc = htmlspecialchars($hero, ENT_QUOTES, 'UTF-8');
+        $leadEsc = htmlspecialchars($lead, ENT_QUOTES, 'UTF-8');
+        $nombreEsc = htmlspecialchars($nombre, ENT_QUOTES, 'UTF-8');
+        $fechaEsc = htmlspecialchars($fechaLabel, ENT_QUOTES, 'UTF-8');
+        $horaEsc = htmlspecialchars($horaLabel, ENT_QUOTES, 'UTF-8');
+        $servicioEsc = htmlspecialchars($servicio, ENT_QUOTES, 'UTF-8');
+        $ctaEsc = htmlspecialchars($ctaUrl, ENT_QUOTES, 'UTF-8');
+        $ctaTextEsc = htmlspecialchars($ctaText, ENT_QUOTES, 'UTF-8');
+        $statusColorEsc = htmlspecialchars($statusColor, ENT_QUOTES, 'UTF-8');
+        $logoTextEsc = htmlspecialchars($logoText, ENT_QUOTES, 'UTF-8');
 
-        $mail->AltBody = "Estado de tu cita: {$estadoNuevo}\nFecha: {$fechaLabel}\nHora: {$horaLabel}\nServicio: {$servicio}\n\nSi no solicitaste esta actualización, responde este correo.";
+        $mail->Subject = $subject;
+        $mail->Body = <<<HTML
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{$logoTextEsc}</title>
+</head>
+<body style="margin:0;padding:0;background:#eef2ff;font-family:Arial,Helvetica,sans-serif;color:#0f172a;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:linear-gradient(180deg,#eef2ff 0%,#f8fafc 100%);padding:28px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 18px 40px rgba(37,99,235,0.12);">
+          <tr>
+            <td style="background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 48%,#06b6d4 100%);padding:34px;">
+              <div style="font-size:12px;letter-spacing:0.24em;text-transform:uppercase;color:#bfdbfe;margin-bottom:12px;">{$logoTextEsc}</div>
+              <div style="font-size:28px;line-height:1.2;font-weight:700;color:#ffffff;margin-bottom:12px;">{$heroEsc}</div>
+              <div style="font-size:15px;line-height:1.6;color:#dbeafe;">{$leadEsc}</div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:26px 30px 10px;">
+              <div style="background:#f8fafc;border:1px solid #dbeafe;border-radius:18px;padding:18px 20px;margin-bottom:18px;">
+                <div style="font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:{$statusColorEsc};margin-bottom:10px;">{$estadoUpper}</div>
+                <p style="margin:4px 0;color:#0f172a;"><strong>Hola:</strong> {$nombreEsc}</p>
+                <p style="margin:4px 0;color:#0f172a;"><strong>Fecha:</strong> {$fechaEsc}</p>
+                <p style="margin:4px 0;color:#0f172a;"><strong>Hora:</strong> {$horaEsc}</p>
+                <p style="margin:4px 0;color:#0f172a;"><strong>Servicio:</strong> {$servicioEsc}</p>
+              </div>
+              <div style="margin:14px 0;">
+                <a href="{$ctaEsc}" style="display:inline-block;padding:12px 18px;border-radius:12px;background:{$statusColorEsc};color:#ffffff;text-decoration:none;font-weight:700;">{$ctaTextEsc}</a>
+              </div>
+              <p style="color:#94a3b8;font-size:12px;margin:14px 0 4px;">Si no solicitaste esta actualización, responde a este correo.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+HTML;
+
+        $mail->AltBody = "Estado de tu cita: {$estadoNuevo}\nFecha: {$fechaLabel}\nHora: {$horaLabel}\nServicio: {$servicio}\nCTA: {$ctaUrl}\n\nSi no solicitaste esta actualización, responde este correo.";
 
         $mail->send();
         $_SESSION['agenda_flash'] = [
