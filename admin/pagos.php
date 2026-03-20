@@ -215,6 +215,12 @@ $totalesForma = [
     'cuotas' => ['items' => 0, 'monto' => 0.0, 'pagado' => 0.0, 'total' => 0.0],
 ];
 $progresoCuotasProyectos = [];
+$detallesForma = [
+    'contado' => [],
+    'cuotas' => [],
+];
+$detallesMoneda = [];
+$maxCardItems = 6;
 
 foreach (['contado', 'cuotas'] as $forma) {
     $whereForma = $whereClauses;
@@ -227,6 +233,21 @@ foreach (['contado', 'cuotas'] as $forma) {
             $totalesForma[$forma]['monto'] = (float) ($row['monto_total'] ?? 0);
         }
         $resForma->free();
+    }
+
+    // Detalle reciente por forma de pago
+    $detalleSql = "SELECT pp.*, pr.titulo AS proyecto_titulo, pr.cliente AS proyecto_cliente 
+                   FROM proyecto_pagos pp 
+                   LEFT JOIN proyectos pr ON pr.id = pp.proyecto_id 
+                   {$whereSqlForma}
+                   ORDER BY pp.fecha_pago DESC, pp.id DESC
+                   LIMIT {$maxCardItems}";
+    $detalleRes = $conn->query($detalleSql);
+    if ($detalleRes instanceof mysqli_result) {
+        while ($row = $detalleRes->fetch_assoc()) {
+            $detallesForma[$forma][] = $row;
+        }
+        $detalleRes->free();
     }
 }
 
@@ -265,6 +286,79 @@ if ($cuotasResult instanceof mysqli_result) {
         $progresoCuotasProyectos[$projectKey]['pagado'] += $pagadoMonto;
     }
     $cuotasResult->free();
+}
+
+// Detalles por moneda (usando mismos filtros)
+foreach (array_keys($totalesMoneda) as $currencyKey) {
+    $whereMoneda = $whereClauses;
+    $whereMoneda[] = "pp.moneda = '" . $conn->real_escape_string($currencyKey) . "'";
+    $whereSqlMoneda = 'WHERE ' . implode(' AND ', $whereMoneda);
+    $monedaSql = "SELECT pp.*, pr.titulo AS proyecto_titulo, pr.cliente AS proyecto_cliente 
+                  FROM proyecto_pagos pp 
+                  LEFT JOIN proyectos pr ON pr.id = pp.proyecto_id 
+                  {$whereSqlMoneda}
+                  ORDER BY pp.fecha_pago DESC, pp.id DESC
+                  LIMIT {$maxCardItems}";
+    $monedaRes = $conn->query($monedaSql);
+    $detallesMoneda[$currencyKey] = [];
+    if ($monedaRes instanceof mysqli_result) {
+        while ($row = $monedaRes->fetch_assoc()) {
+            $detallesMoneda[$currencyKey][] = $row;
+        }
+        $monedaRes->free();
+    }
+}
+
+// Ingresos totales con filtro por mes/año (sin alterar filtros generales)
+$ingresosMonth = isset($_GET['mes_ingresos']) ? (int) $_GET['mes_ingresos'] : (int) date('m');
+$ingresosYear = isset($_GET['anio_ingresos']) ? (int) $_GET['anio_ingresos'] : (int) date('Y');
+$ingresosMonth = ($ingresosMonth >= 1 && $ingresosMonth <= 12) ? $ingresosMonth : (int) date('m');
+$ingresosYear = ($ingresosYear >= 2000 && $ingresosYear <= 2100) ? $ingresosYear : (int) date('Y');
+
+$filterParams['mes_ingresos'] = $ingresosMonth;
+$filterParams['anio_ingresos'] = $ingresosYear;
+
+$ingresosWhere = $whereClauses;
+$ingresosWhere[] = 'MONTH(pp.fecha_pago) = ' . $ingresosMonth;
+$ingresosWhere[] = 'YEAR(pp.fecha_pago) = ' . $ingresosYear;
+$ingresosWhereSql = 'WHERE ' . implode(' AND ', $ingresosWhere);
+
+$ingresosTotales = ['items' => 0, 'monto' => 0.0];
+$ingresosMoneda = [];
+
+$ingRes = $conn->query("SELECT COUNT(*) AS total_items, COALESCE(SUM(pp.monto), 0) AS monto_total FROM proyecto_pagos pp {$ingresosWhereSql}");
+if ($ingRes instanceof mysqli_result) {
+    if ($row = $ingRes->fetch_assoc()) {
+        $ingresosTotales['items'] = (int) ($row['total_items'] ?? 0);
+        $ingresosTotales['monto'] = (float) ($row['monto_total'] ?? 0);
+    }
+    $ingRes->free();
+}
+
+$ingMonRes = $conn->query("SELECT pp.moneda, COUNT(*) AS total_items, COALESCE(SUM(pp.monto), 0) AS monto_total FROM proyecto_pagos pp {$ingresosWhereSql} GROUP BY pp.moneda");
+if ($ingMonRes instanceof mysqli_result) {
+    while ($row = $ingMonRes->fetch_assoc()) {
+        $monKey = strtoupper(trim((string) ($row['moneda'] ?? 'COP')));
+        $ingresosMoneda[$monKey] = [
+            'items' => (int) ($row['total_items'] ?? 0),
+            'monto' => (float) ($row['monto_total'] ?? 0),
+        ];
+    }
+    $ingMonRes->free();
+}
+
+$ingresosDetalle = [];
+$ingDetRes = $conn->query("SELECT pp.*, pr.titulo AS proyecto_titulo, pr.cliente AS proyecto_cliente 
+                           FROM proyecto_pagos pp 
+                           LEFT JOIN proyectos pr ON pr.id = pp.proyecto_id 
+                           {$ingresosWhereSql}
+                           ORDER BY pp.fecha_pago DESC, pp.id DESC
+                           LIMIT 10");
+if ($ingDetRes instanceof mysqli_result) {
+    while ($row = $ingDetRes->fetch_assoc()) {
+        $ingresosDetalle[] = $row;
+    }
+    $ingDetRes->free();
 }
 
 $safeDateDiff = function (?string $dateString) {
@@ -344,25 +438,137 @@ function payment_status_badge_class(string $status): string
                     </div>
                 </div>
 
-                <?php if (count($totalesMoneda) > 0): ?>
-                    <div class="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                        <?php foreach ($totalesMoneda as $currency => $summary): ?>
-                            <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-                                <p class="text-sm font-semibold text-gray-500">Total en <?php echo admin_escape($currency); ?></p>
-                                <p class="mt-2 text-2xl font-bold text-slate-900"><?php echo payment_format_amount((float) $summary['monto'], $currency); ?></p>
-                                <p class="text-sm text-gray-500 mt-1"><?php echo (int) $summary['items']; ?> pago<?php echo ((int) $summary['items'] === 1) ? '' : 's'; ?></p>
+                <div class="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    <div class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm hover:shadow-md transition cursor-pointer" role="button" tabindex="0" data-toggle-target="#panel-ingresos">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-500">Ingresos totales (<?php echo str_pad($ingresosMonth, 2, '0', STR_PAD_LEFT) . '/' . $ingresosYear; ?>)</p>
+                                <p class="mt-2 text-2xl font-bold text-slate-900"><?php echo payment_format_amount((float) $ingresosTotales['monto'], 'COP'); ?></p>
+                                <p class="text-sm text-gray-500 mt-1"><?php echo (int) $ingresosTotales['items']; ?> pago<?php echo ((int) $ingresosTotales['items'] === 1) ? '' : 's'; ?></p>
                             </div>
-                        <?php endforeach; ?>
+                            <i class="fas fa-chevron-down text-gray-400 group-hover:text-gray-600"></i>
+                        </div>
                     </div>
-                <?php endif; ?>
+                    <?php foreach ($totalesMoneda as $currency => $summary): ?>
+                        <div class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm hover:shadow-md transition cursor-pointer" role="button" tabindex="0" data-toggle-target="#panel-moneda-<?php echo admin_escape($currency); ?>">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-500">Total en <?php echo admin_escape($currency); ?></p>
+                                    <p class="mt-2 text-2xl font-bold text-slate-900"><?php echo payment_format_amount((float) $summary['monto'], $currency); ?></p>
+                                    <p class="text-sm text-gray-500 mt-1"><?php echo (int) $summary['items']; ?> pago<?php echo ((int) $summary['items'] === 1) ? '' : 's'; ?></p>
+                                </div>
+                                <i class="fas fa-chevron-down text-gray-400 group-hover:text-gray-600"></i>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <div id="panel-ingresos" class="mb-6 hidden rounded-2xl bg-white p-5 shadow">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">Detalle de ingresos</h3>
+                            <p class="text-sm text-gray-500">Mes y año seleccionados.</p>
+                        </div>
+                        <form method="GET" class="flex flex-wrap items-end gap-2 text-sm">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Mes</label>
+                                <select name="mes_ingresos" class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none">
+                                    <?php for ($m = 1; $m <= 12; $m++): ?>
+                                        <option value="<?php echo $m; ?>" <?php echo $ingresosMonth === $m ? 'selected' : ''; ?>><?php echo str_pad($m, 2, '0', STR_PAD_LEFT); ?></option>
+                                    <?php endfor; ?>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Año</label>
+                                <select name="anio_ingresos" class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none">
+                                    <?php for ($y = (int) date('Y') + 1; $y >= (int) date('Y') - 4; $y--): ?>
+                                        <option value="<?php echo $y; ?>" <?php echo $ingresosYear === $y ? 'selected' : ''; ?>><?php echo $y; ?></option>
+                                    <?php endfor; ?>
+                                </select>
+                            </div>
+                            <?php foreach ($filterParams as $key => $value): ?>
+                                <?php if ($value !== null && !in_array($key, ['mes_ingresos', 'anio_ingresos'], true)): ?>
+                                    <input type="hidden" name="<?php echo admin_escape($key); ?>" value="<?php echo admin_escape($value); ?>">
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                            <button type="submit" class="rounded-lg bg-slate-900 px-4 py-2 text-white font-semibold hover:bg-slate-800">Aplicar</button>
+                        </form>
+                    </div>
+                    <?php if (count($ingresosMoneda) > 0): ?>
+                        <div class="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                            <?php foreach ($ingresosMoneda as $cur => $info): ?>
+                                <div class="rounded-xl border border-gray-100 p-4">
+                                    <p class="text-xs font-semibold text-gray-500">Moneda <?php echo admin_escape($cur); ?></p>
+                                    <p class="mt-1 text-lg font-bold text-slate-900"><?php echo payment_format_amount((float) $info['monto'], $cur); ?></p>
+                                    <p class="text-xs text-gray-500"><?php echo (int) $info['items']; ?> pago<?php echo ((int) $info['items'] === 1) ? '' : 's'; ?></p>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                    <div class="mt-4 divide-y divide-gray-100">
+                        <?php if (count($ingresosDetalle) === 0): ?>
+                            <p class="py-2 text-sm text-gray-500">No hay ingresos en el periodo seleccionado.</p>
+                        <?php else: ?>
+                            <?php foreach ($ingresosDetalle as $ing): ?>
+                                <div class="py-2 flex items-center justify-between gap-3">
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-900"><?php echo admin_escape($ing['concepto']); ?></p>
+                                        <p class="text-xs text-gray-500">
+                                            <?php echo !empty($ing['proyecto_titulo']) ? admin_escape($ing['proyecto_titulo']) : 'Sin proyecto'; ?>
+                                            • <?php echo date('d/m/Y', strtotime($ing['fecha_pago'])); ?>
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm font-semibold text-slate-900"><?php echo payment_format_amount((float) $ing['monto'], $ing['moneda']); ?></p>
+                                        <a href="pago-editar.php?id=<?php echo (int) $ing['id']; ?>" class="text-xs text-blue-700 hover:underline">Ver</a>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <?php foreach ($totalesMoneda as $currency => $summary): ?>
+                    <div id="panel-moneda-<?php echo admin_escape($currency); ?>" class="mb-6 hidden rounded-2xl bg-white p-5 shadow">
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-500">Pagos en <?php echo admin_escape($currency); ?></p>
+                                <h3 class="text-lg font-bold text-slate-900"><?php echo payment_format_amount((float) $summary['monto'], $currency); ?></h3>
+                            </div>
+                            <a href="<?php echo admin_build_url('pagos.php', array_merge($filterParams, ['moneda' => $currency, 'page' => 1])); ?>" class="text-sm text-blue-700 hover:underline">Ver todo filtrado</a>
+                        </div>
+                        <div class="mt-3 divide-y divide-gray-100">
+                            <?php if (count($detallesMoneda[$currency] ?? []) === 0): ?>
+                                <p class="py-2 text-sm text-gray-500">No hay pagos en esta moneda con los filtros actuales.</p>
+                            <?php else: ?>
+                                <?php foreach ($detallesMoneda[$currency] as $item): ?>
+                                    <div class="py-2 flex items-center justify-between gap-3">
+                                        <div>
+                                            <p class="text-sm font-semibold text-slate-900"><?php echo admin_escape($item['concepto']); ?></p>
+                                            <p class="text-xs text-gray-500">
+                                                <?php echo !empty($item['proyecto_titulo']) ? admin_escape($item['proyecto_titulo']) : 'Sin proyecto'; ?>
+                                                • <?php echo date('d/m/Y', strtotime($item['fecha_pago'])); ?>
+                                            </p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-semibold text-slate-900"><?php echo payment_format_amount((float) $item['monto'], $item['moneda']); ?></p>
+                                            <a href="pago-editar.php?id=<?php echo (int) $item['id']; ?>" class="text-xs text-blue-700 hover:underline">Ver</a>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
 
                 <div class="mb-6 grid gap-4 md:grid-cols-2">
-                    <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+                    <div class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm hover:shadow-md transition cursor-pointer" role="button" tabindex="0" data-toggle-target="#panel-contado">
                         <p class="text-sm font-semibold text-gray-500">Total a contado</p>
                         <p class="mt-2 text-2xl font-bold text-slate-900"><?php echo payment_format_amount((float) $totalesForma['contado']['monto'], 'COP'); ?></p>
                         <p class="text-sm text-gray-500 mt-1"><?php echo (int) $totalesForma['contado']['items']; ?> pago<?php echo ((int) $totalesForma['contado']['items'] === 1) ? '' : 's'; ?></p>
+                        <i class="fas fa-chevron-down mt-2 text-gray-400 group-hover:text-gray-600"></i>
                     </div>
-                    <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+                    <div class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm hover:shadow-md transition cursor-pointer" role="button" tabindex="0" data-toggle-target="#panel-cuotas">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-semibold text-gray-500">Total en cuotas</p>
@@ -386,6 +592,83 @@ function payment_status_badge_class(string $status): string
                                 <div class="h-2 rounded-full <?php echo $barColorGlobal; ?>" style="width: <?php echo $progresoGlobal; ?>%;"></div>
                             </div>
                         </div>
+                        <i class="fas fa-chevron-down mt-2 text-gray-400 group-hover:text-gray-600"></i>
+                    </div>
+                </div>
+
+                <div id="panel-contado" class="mb-6 hidden rounded-2xl bg-white p-5 shadow">
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                        <h3 class="text-lg font-bold text-slate-900">Pagos a contado</h3>
+                        <a href="<?php echo admin_build_url('pagos.php', array_merge($filterParams, ['forma_pago' => 'contado', 'page' => 1])); ?>" class="text-sm text-blue-700 hover:underline">Ver todo filtrado</a>
+                    </div>
+                    <div class="mt-3 divide-y divide-gray-100">
+                        <?php if (count($detallesForma['contado']) === 0): ?>
+                            <p class="py-2 text-sm text-gray-500">No hay pagos a contado con los filtros actuales.</p>
+                        <?php else: ?>
+                            <?php foreach ($detallesForma['contado'] as $item): ?>
+                                <div class="py-2 flex items-center justify-between gap-3">
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-900"><?php echo admin_escape($item['concepto']); ?></p>
+                                        <p class="text-xs text-gray-500">
+                                            <?php echo !empty($item['proyecto_titulo']) ? admin_escape($item['proyecto_titulo']) : 'Sin proyecto'; ?>
+                                            • <?php echo date('d/m/Y', strtotime($item['fecha_pago'])); ?>
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm font-semibold text-slate-900"><?php echo payment_format_amount((float) $item['monto'], $item['moneda']); ?></p>
+                                        <a href="pago-editar.php?id=<?php echo (int) $item['id']; ?>" class="text-xs text-blue-700 hover:underline">Ver</a>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div id="panel-cuotas" class="mb-6 hidden rounded-2xl bg-white p-5 shadow">
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                        <h3 class="text-lg font-bold text-slate-900">Pagos en cuotas</h3>
+                        <a href="<?php echo admin_build_url('pagos.php', array_merge($filterParams, ['forma_pago' => 'cuotas', 'page' => 1])); ?>" class="text-sm text-blue-700 hover:underline">Ver todo filtrado</a>
+                    </div>
+                    <div class="mt-3 divide-y divide-gray-100">
+                        <?php if (count($detallesForma['cuotas']) === 0): ?>
+                            <p class="py-2 text-sm text-gray-500">No hay pagos en cuotas con los filtros actuales.</p>
+                        <?php else: ?>
+                            <?php foreach ($detallesForma['cuotas'] as $item): ?>
+                                <?php
+                                    $totalC = (int) ($item['cuotas_totales'] ?? 0);
+                                    $pendC = ($item['cuotas_pendientes'] !== null) ? (int) $item['cuotas_pendientes'] : $totalC;
+                                    $pendC = max(0, $pendC);
+                                    $pagadas = max(0, $totalC - $pendC);
+                                    $percent = ($totalC > 0) ? round(($pagadas / $totalC) * 100) : 0;
+                                    $barColor = 'bg-slate-300';
+                                    if ($percent >= 90) { $barColor = 'bg-emerald-500'; }
+                                    elseif ($percent >= 50) { $barColor = 'bg-amber-500'; }
+                                    elseif ($percent > 0) { $barColor = 'bg-rose-500'; }
+                                ?>
+                                <div class="py-3">
+                                    <div class="flex items-center justify-between gap-3 flex-wrap">
+                                        <div>
+                                            <p class="text-sm font-semibold text-slate-900"><?php echo admin_escape($item['concepto']); ?></p>
+                                            <p class="text-xs text-gray-500">
+                                                <?php echo !empty($item['proyecto_titulo']) ? admin_escape($item['proyecto_titulo']) : 'Sin proyecto'; ?>
+                                                • <?php echo date('d/m/Y', strtotime($item['fecha_pago'])); ?>
+                                            </p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-semibold text-slate-900"><?php echo payment_format_amount((float) $item['monto'], $item['moneda']); ?></p>
+                                            <a href="pago-editar.php?id=<?php echo (int) $item['id']; ?>#cuotas_wrapper" class="text-xs text-blue-700 hover:underline">Registrar cuota</a>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 flex items-center justify-between text-xs text-gray-600">
+                                        <span><?php echo "{$pagadas}/{$totalC} pagadas"; ?></span>
+                                        <span><?php echo $percent; ?>%</span>
+                                    </div>
+                                    <div class="mt-1 h-2 w-full rounded-full bg-slate-100">
+                                        <div class="h-2 rounded-full <?php echo $barColor; ?>" style="width: <?php echo min(100, max(0, $percent)); ?>%;"></div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -718,6 +1001,25 @@ function payment_status_badge_class(string $status): string
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('[data-toggle-target]').forEach(function (el) {
+                const toggle = function (evt) {
+                    if (evt.type === 'keypress' && !['Enter', ' ', 'Spacebar'].includes(evt.key)) {
+                        return;
+                    }
+                    const target = el.getAttribute('data-toggle-target');
+                    if (!target) return;
+                    const panel = document.querySelector(target);
+                    if (panel) {
+                        panel.classList.toggle('hidden');
+                    }
+                };
+                el.addEventListener('click', toggle);
+                el.addEventListener('keypress', toggle);
+            });
+        });
+    </script>
     <?php include __DIR__ . '/partials/sidebar-script.php'; ?>
 </body>
 </html>
