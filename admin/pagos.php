@@ -279,11 +279,22 @@ if ($cuotasResult instanceof mysqli_result) {
                 'total' => 0.0,
                 'pagado' => 0.0,
                 'moneda' => strtoupper(trim((string) ($row['moneda'] ?? 'COP'))),
+                'proxima' => null,
+                'pendientes' => 0,
             ];
         }
 
         $progresoCuotasProyectos[$projectKey]['total'] += $monto;
         $progresoCuotasProyectos[$projectKey]['pagado'] += $pagadoMonto;
+        $progresoCuotasProyectos[$projectKey]['pendientes'] += $pendientes;
+
+        if (!empty($row['proxima_cuota'])) {
+            $currentStored = $progresoCuotasProyectos[$projectKey]['proxima'];
+            $newDate = $row['proxima_cuota'];
+            if ($currentStored === null || strtotime($newDate) < strtotime($currentStored)) {
+                $progresoCuotasProyectos[$projectKey]['proxima'] = $newDate;
+            }
+        }
     }
     $cuotasResult->free();
 }
@@ -685,6 +696,20 @@ function payment_status_badge_class(string $status): string
                                         $pct = ($proyecto['total'] > 0) ? round(($proyecto['pagado'] / $proyecto['total']) * 100) : 0;
                                         $pct = max(0, min(100, $pct));
                                         $color = $pct >= 90 ? 'bg-emerald-500' : ($pct >= 50 ? 'bg-amber-500' : 'bg-rose-500');
+                                        $proximaRaw = $proyecto['proxima'] ?? null;
+                                        $proximaTxt = '-';
+                                        $badge = '';
+                                        if (!empty($proximaRaw)) {
+                                            $proximaTxt = date('d/m/Y', strtotime($proximaRaw));
+                                            $diff = $safeDateDiff($proximaRaw);
+                                            if ($diff !== null) {
+                                                if ($diff < 0) {
+                                                    $badge = '<span class="ml-2 inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-[11px] font-semibold text-red-700">Vencida</span>';
+                                                } elseif ($diff <= 7) {
+                                                    $badge = '<span class="ml-2 inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">Próx 7 días</span>';
+                                                }
+                                            }
+                                        }
                                     ?>
                                     <div class="rounded-lg border border-gray-200 p-3 bg-white">
                                         <div class="flex items-center justify-between gap-3 flex-wrap">
@@ -701,6 +726,21 @@ function payment_status_badge_class(string $status): string
                                                 <p><span class="font-semibold text-slate-900"><?php echo payment_format_amount((float) $proyecto['pagado'], $proyecto['moneda']); ?></span> pagado</p>
                                                 <p class="text-[11px] text-gray-500"><?php echo payment_format_amount((float) $proyecto['total'], $proyecto['moneda']); ?> total</p>
                                             </div>
+                                        </div>
+                                        <div class="mt-2 flex flex-wrap items-center gap-3 text-[11px] text-gray-600">
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1 font-semibold text-slate-700">
+                                                <i class="fas fa-hourglass-half text-slate-500"></i>
+                                                <?php echo (int) $proyecto['pendientes']; ?> cuota<?php echo ((int) $proyecto['pendientes'] === 1) ? '' : 's'; ?> pendientes
+                                            </span>
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1 font-semibold text-slate-700">
+                                                <i class="fas fa-calendar-alt text-slate-500"></i>
+                                                Próxima: <?php echo admin_escape($proximaTxt); ?><?php echo $badge; ?>
+                                            </span>
+                                            <?php if ($proyecto['id'] > 0): ?>
+                                                <a href="<?php echo admin_build_url('pagos.php', array_merge($filterParams, ['proyecto_id' => $proyecto['id'], 'forma_pago' => 'cuotas', 'page' => 1])); ?>" class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 font-semibold text-blue-700 hover:bg-blue-100">
+                                                    <i class="fas fa-table"></i> Ver en tabla
+                                                </a>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="mt-2">
                                             <div class="flex items-center justify-between text-[11px] text-gray-600">
