@@ -99,6 +99,12 @@ function mce_nav_item(string $slug, string $href, string $label, string $icon, s
             <li><?= mce_nav_item('mensajes', 'mensajes.php', 'Mensajes', 'fa-envelope', $activePage) ?></li>
             <li><?= mce_nav_item('auditoria', 'auditoria.php', 'Actividad', 'fa-clock-rotate-left', $activePage) ?></li>
             <li><?= mce_nav_item('password', 'cambiar-password.php', 'Cambiar clave', 'fa-lock', $activePage) ?></li>
+            <li>
+                <a href="pagos.php?open_reset=1" class="nav-link flex items-center space-x-2 p-2 rounded hover:bg-red-50 text-red-700 border border-red-100">
+                    <i class="fas fa-broom"></i>
+                    <span>Limpiar panel</span>
+                </a>
+            </li>
             <li><a href="logout.php" class="nav-link flex items-center space-x-2 p-2 hover:bg-gray-100 rounded text-red-600"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a></li>
         </ul>
     </nav>

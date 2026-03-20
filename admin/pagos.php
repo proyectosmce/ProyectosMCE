@@ -26,6 +26,7 @@ $fromDate = trim((string) ($_GET['desde'] ?? ''));
 $toDate = trim((string) ($_GET['hasta'] ?? ''));
 $onlyCuotas = isset($_GET['solo_cuotas']) && $_GET['solo_cuotas'] === '1';
 $page = max(1, (int) ($_GET['page'] ?? 1));
+$openReset = isset($_GET['open_reset']) && $_GET['open_reset'] === '1';
 $perPage = 12;
 
 $toast = admin_build_toast($_GET['msg'] ?? '', [
@@ -47,6 +48,7 @@ $filterParams = [
     'desde' => $fromDate,
     'hasta' => $toDate,
     'solo_cuotas' => $onlyCuotas ? '1' : null,
+    'open_reset' => $openReset ? '1' : null,
     'page' => $page,
 ];
 
@@ -1139,6 +1141,9 @@ function payment_status_badge_class(string $status): string
                     if (e.target === resetModal) { toggleReset(false); }
                 });
             }
+            <?php if ($openReset): ?>
+            toggleReset(true);
+            <?php endif; ?>
         });
     </script>
     <?php include __DIR__ . '/partials/sidebar-script.php'; ?>
