@@ -919,48 +919,49 @@ function payment_status_badge_class(string $status): string
                                             </td>
                                             <td class="px-6 py-4 text-sm text-gray-600"><?php echo date('d/m/Y', strtotime($pago['fecha_pago'])); ?></td>
                                             <td class="px-6 py-4">
-                                                <div class="flex flex-wrap items-center gap-2">
-                                                    <a href="pago-editar.php?id=<?php echo (int) $pago['id']; ?>" class="inline-flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100">
-                                                        <i class="fas fa-edit"></i>
-                                                        <span>Editar</span>
-                                                    </a>
-                                                    <a href="pago-factura.php?id=<?php echo (int) $pago['id']; ?>&modo=pdf" target="_blank" class="inline-flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100" title="Descargar PDF">
-                                                        <i class="fas fa-file-pdf"></i>
-                                                        <span>PDF</span>
-                                                    </a>
-                                                    <a href="pago-factura.php?id=<?php echo (int) $pago['id']; ?>&modo=html" target="_blank" class="inline-flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-sm font-medium text-amber-700 hover:bg-amber-100" title="Ver / Imprimir">
-                                                        <i class="fas fa-print"></i>
-                                                        <span>Imprimir</span>
-                                                    </a>
-                                                    <a href="pago-factura.php?id=<?php echo (int) $pago['id']; ?>&modo=sendform" class="inline-flex items-center gap-2 rounded-lg bg-purple-50 px-3 py-2 text-sm font-medium text-purple-700 hover:bg-purple-100" title="Enviar por correo">
-                                                        <i class="fas fa-paper-plane"></i>
-                                                        <span>Enviar</span>
-                                                    </a>
-                                                    <?php if ((int) ($pago['cuotas_totales'] ?? 0) > 1): ?>
-                                                        <a href="pago-editar.php?id=<?php echo (int) $pago['id']; ?>#cuotas_wrapper" class="inline-flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100" title="Registrar cuota / actualizar cuotas">
-                                                            <i class="fas fa-plus-circle"></i>
-                                                            <span>Registrar cuota</span>
-                                                        </a>
-                                                    <?php endif; ?>
-                                                    <form method="POST" class="inline" onsubmit="return confirm('Eliminar este pago?');">
-                                                        <input type="hidden" name="csrf_token" value="<?php echo admin_escape($csrfToken); ?>">
-                                                        <input type="hidden" name="action" value="delete">
-                                                        <input type="hidden" name="id" value="<?php echo (int) $pago['id']; ?>">
-                                                        <input type="hidden" name="q" value="<?php echo admin_escape($searchTerm); ?>">
-                                                        <input type="hidden" name="proyecto_id" value="<?php echo (int) $projectId; ?>">
-                                                        <input type="hidden" name="estado" value="<?php echo admin_escape($statusFilter); ?>">
-                                                        <input type="hidden" name="metodo" value="<?php echo admin_escape($methodFilter); ?>">
-                                                        <input type="hidden" name="forma_pago" value="<?php echo admin_escape($formaPagoFilter); ?>">
-                                                        <input type="hidden" name="moneda" value="<?php echo admin_escape($currencyFilter); ?>">
-                                                        <input type="hidden" name="desde" value="<?php echo admin_escape($fromDate); ?>">
-                                                        <input type="hidden" name="hasta" value="<?php echo admin_escape($toDate); ?>">
-                                                        <input type="hidden" name="solo_cuotas" value="<?php echo $onlyCuotas ? '1' : ''; ?>">
-                                                        <input type="hidden" name="page" value="<?php echo (int) $pagination['page']; ?>">
-                                                        <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-100">
-                                                            <i class="fas fa-trash"></i>
-                                                            <span>Eliminar</span>
-                                                        </button>
-                                                    </form>
+                                                <div class="relative inline-block text-left">
+                                                    <button type="button" class="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-gray-50" data-menu-trigger>
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <div class="absolute right-0 z-20 mt-2 w-56 origin-top-right rounded-xl border border-gray-100 bg-white shadow-lg hidden" data-menu-panel>
+                                                        <div class="py-1 text-sm text-slate-700">
+                                                            <a href="pago-editar.php?id=<?php echo (int) $pago['id']; ?>" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50">
+                                                                <i class="fas fa-edit text-blue-600"></i> Editar
+                                                            </a>
+                                                            <a href="pago-factura.php?id=<?php echo (int) $pago['id']; ?>&modo=pdf" target="_blank" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50">
+                                                                <i class="fas fa-file-pdf text-emerald-600"></i> PDF
+                                                            </a>
+                                                            <a href="pago-factura.php?id=<?php echo (int) $pago['id']; ?>&modo=html" target="_blank" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50">
+                                                                <i class="fas fa-print text-amber-600"></i> Imprimir
+                                                            </a>
+                                                            <a href="pago-factura.php?id=<?php echo (int) $pago['id']; ?>&modo=sendform" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50">
+                                                                <i class="fas fa-paper-plane text-purple-600"></i> Enviar correo
+                                                            </a>
+                                                            <?php if ((int) ($pago['cuotas_totales'] ?? 0) > 1): ?>
+                                                                <a href="pago-editar.php?id=<?php echo (int) $pago['id']; ?>#cuotas_wrapper" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50">
+                                                                    <i class="fas fa-plus-circle text-emerald-600"></i> Registrar cuota
+                                                                </a>
+                                                            <?php endif; ?>
+                                                            <form method="POST" class="border-t border-gray-100 mt-1" onsubmit="return confirm('Eliminar este pago?');">
+                                                                <input type="hidden" name="csrf_token" value="<?php echo admin_escape($csrfToken); ?>">
+                                                                <input type="hidden" name="action" value="delete">
+                                                                <input type="hidden" name="id" value="<?php echo (int) $pago['id']; ?>">
+                                                                <input type="hidden" name="q" value="<?php echo admin_escape($searchTerm); ?>">
+                                                                <input type="hidden" name="proyecto_id" value="<?php echo (int) $projectId; ?>">
+                                                                <input type="hidden" name="estado" value="<?php echo admin_escape($statusFilter); ?>">
+                                                                <input type="hidden" name="metodo" value="<?php echo admin_escape($methodFilter); ?>">
+                                                                <input type="hidden" name="forma_pago" value="<?php echo admin_escape($formaPagoFilter); ?>">
+                                                                <input type="hidden" name="moneda" value="<?php echo admin_escape($currencyFilter); ?>">
+                                                                <input type="hidden" name="desde" value="<?php echo admin_escape($fromDate); ?>">
+                                                                <input type="hidden" name="hasta" value="<?php echo admin_escape($toDate); ?>">
+                                                                <input type="hidden" name="solo_cuotas" value="<?php echo $onlyCuotas ? '1' : ''; ?>">
+                                                                <input type="hidden" name="page" value="<?php echo (int) $pagination['page']; ?>">
+                                                                <button type="submit" class="flex w-full items-center gap-2 px-4 py-2 text-red-700 hover:bg-red-50">
+                                                                    <i class="fas fa-trash"></i> Eliminar
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -1017,6 +1018,34 @@ function payment_status_badge_class(string $status): string
                 };
                 el.addEventListener('click', toggle);
                 el.addEventListener('keypress', toggle);
+            });
+
+            const menuPanels = [];
+            const closeAllMenus = function () {
+                menuPanels.forEach(function (p) { p.classList.add('hidden'); });
+            };
+            document.querySelectorAll('[data-menu-trigger]').forEach(function (btn) {
+                const panel = btn.parentElement.querySelector('[data-menu-panel]');
+                if (!panel) return;
+                menuPanels.push(panel);
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isHidden = panel.classList.contains('hidden');
+                    closeAllMenus();
+                    if (isHidden) {
+                        panel.classList.remove('hidden');
+                    }
+                });
+            });
+            document.addEventListener('click', function (e) {
+                if (!(e.target.closest('[data-menu-panel]') || e.target.closest('[data-menu-trigger]'))) {
+                    closeAllMenus();
+                }
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    closeAllMenus();
+                }
             });
         });
     </script>
