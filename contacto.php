@@ -397,7 +397,16 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
     const renderHours = (dateStr) => {
         if (!horaSelect || !fechaInput) return;
         const booked = bookedSlots[dateStr] || [];
-        const options = availableHours.filter(h => !booked.includes(h));
+        let options = availableHours.filter(h => !booked.includes(h));
+
+        // Si es hoy, eliminar horas que ya pasaron
+        const todayStr = new Date().toISOString().slice(0, 10);
+        if (dateStr === todayStr) {
+            const now = new Date();
+            const currentHHMM = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+            options = options.filter(h => h > currentHHMM);
+        }
+
         horaSelect.innerHTML = '';
         if (options.length === 0) {
             horaSelect.disabled = true;
