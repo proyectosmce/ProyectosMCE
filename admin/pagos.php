@@ -132,10 +132,8 @@ if ($exporting) {
     if ($exportResult instanceof mysqli_result) {
         while ($row = $exportResult->fetch_assoc()) {
             $risk = '';
-            if (!empty($row['proxima_cuota'])) {
-                $today = new DateTime('today');
-                $proxima = new DateTime($row['proxima_cuota']);
-                $diffDays = (int) $today->diff($proxima)->format('%r%a');
+            $diffDays = $safeDateDiff($row['proxima_cuota'] ?? null);
+            if ($diffDays !== null) {
                 if ($diffDays < 0) {
                     $risk = 'vencida';
                 } elseif ($diffDays <= 7) {
@@ -187,6 +185,19 @@ if ($totalsByCurrency instanceof mysqli_result) {
     }
     $totalsByCurrency->free();
 }
+
+$safeDateDiff = function (?string $dateString) {
+    if (empty($dateString)) {
+        return null;
+    }
+    try {
+        $today = new DateTime('today');
+        $target = new DateTime($dateString);
+        return (int) $today->diff($target)->format('%r%a');
+    } catch (Exception $e) {
+        return null;
+    }
+};
 
 $pagination = admin_paginate($totalItems, $perPage, $page);
 $paymentsSql = "SELECT pp.*, pr.titulo AS proyecto_titulo, pr.cliente AS proyecto_cliente FROM proyecto_pagos pp LEFT JOIN proyectos pr ON pr.id = pp.proyecto_id {$whereSql} ORDER BY pp.fecha_pago DESC, pp.id DESC LIMIT {$pagination['offset']}, {$pagination['per_page']}";
@@ -258,7 +269,7 @@ function payment_status_badge_class(string $status): string
                 <?php endif; ?>
 
                 <div class="mb-6 flex flex-col gap-4 rounded-2xl bg-white p-5 shadow">
-                    <form method="GET" class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+                    <form id="filter-form" method="GET" class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
                         <div class="col-span-2">
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Buscar</label>
                             <div class="relative">
@@ -444,10 +455,8 @@ function payment_status_badge_class(string $status): string
                                                     $proximaCuotaRaw = $pago['proxima_cuota'] ?? '';
                                                     $proximaCuota = !empty($proximaCuotaRaw) ? date('d/m/Y', strtotime($proximaCuotaRaw)) : '-';
                                                     $badge = '';
-                                                    if (!empty($proximaCuotaRaw)) {
-                                                        $today = new DateTime('today');
-                                                        $pDate = new DateTime($proximaCuotaRaw);
-                                                        $diff = (int) $today->diff($pDate)->format('%r%a');
+                                                    $diff = $safeDateDiff($proximaCuotaRaw);
+                                                    if ($diff !== null) {
                                                         if ($diff < 0) {
                                                             $badge = '<span class="ml-2 inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-[11px] font-semibold text-red-700">Vencida</span>';
                                                         } elseif ($diff <= 7) {
@@ -495,6 +504,7 @@ function payment_status_badge_class(string $status): string
                                                         <input type="hidden" name="moneda" value="<?php echo admin_escape($currencyFilter); ?>">
                                                         <input type="hidden" name="desde" value="<?php echo admin_escape($fromDate); ?>">
                                                         <input type="hidden" name="hasta" value="<?php echo admin_escape($toDate); ?>">
+                                                        <input type="hidden" name="solo_cuotas" value="<?php echo $onlyCuotas ? '1' : ''; ?>">
                                                         <input type="hidden" name="page" value="<?php echo (int) $pagination['page']; ?>">
                                                         <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-100">
                                                             <i class="fas fa-trash"></i>
