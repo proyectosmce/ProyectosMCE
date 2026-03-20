@@ -36,7 +36,7 @@ ensureCitasSchema($conn);
 // Obtener datos de la cita antes de actualizar para notificar al cliente.
 $cita = null;
 $selectError = null;
-if ($stmt = $conn->prepare('SELECT id, nombre, email, telefono, servicio, fecha, hora, COALESCE(estado, \"pendiente\") AS estado FROM citas WHERE id = ?')) {
+if ($stmt = $conn->prepare('SELECT id, nombre, email, telefono, servicio, fecha, hora, COALESCE(estado, "pendiente") AS estado FROM citas WHERE id = ?')) {
     $stmt->bind_param('i', $id);
     if ($stmt->execute()) {
         $stmt->bind_result($cid, $cnombre, $cemail, $ctelefono, $cservicio, $cfecha, $chora, $cestado);
