@@ -124,6 +124,19 @@ if ($onlyCuotas) {
 
 $whereSql = count($whereClauses) > 0 ? 'WHERE ' . implode(' AND ', $whereClauses) : '';
 
+$safeDateDiff = function (?string $dateString) {
+    if (empty($dateString)) {
+        return null;
+    }
+    try {
+        $today = new DateTime('today');
+        $target = new DateTime($dateString);
+        return (int) $today->diff($target)->format('%r%a');
+    } catch (Exception $e) {
+        return null;
+    }
+};
+
 $exporting = isset($_GET['export']) && $_GET['export'] === 'csv';
 if ($exporting) {
     $exportSql = "SELECT pp.id, pp.concepto, pp.monto, pp.moneda, pp.estado, pp.metodo, pp.forma_pago, pp.cuotas_totales, pp.cuotas_pendientes, pp.proxima_cuota, pp.referencia, pp.fecha_pago, pr.titulo AS proyecto, COALESCE(pp.cliente, pr.cliente) AS cliente FROM proyecto_pagos pp LEFT JOIN proyectos pr ON pr.id = pp.proyecto_id {$whereSql} ORDER BY pp.fecha_pago DESC, pp.id DESC";
