@@ -57,6 +57,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mensajeRaw = form_guard_normalize_multiline($_POST['mensaje'] ?? '');
     $fechaCitaRaw = trim((string) ($_POST['fecha_llamada'] ?? ''));
     $horaCitaRaw = trim((string) ($_POST['hora_llamada'] ?? ''));
+    $modoLlamadaRaw = strtolower(trim((string) ($_POST['modo_llamada'] ?? 'telefono')));
+    $modoLlamada = in_array($modoLlamadaRaw, ['video', 'telefono'], true) ? $modoLlamadaRaw : 'telefono';
+    $enlaceReunion = '';
+    if ($modoLlamada === 'video') {
+        $enlaceReunion = 'https://meet.jit.si/' . uniqid('mce-call-');
+    }
 
     if ($nombreRaw === '' || $emailRaw === '' || $mensajeRaw === '') {
         redirect('contacto.php?error=6' . $redirectHash);
@@ -129,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $horaCitaPlain = $horaCitaLabel;
     $mensajeParaGuardar = $mensaje;
     if ($isAgendaForm) {
-        $mensajeParaGuardar = trim($mensaje . "\n\nAgenda solicitada:\nFecha: {$fechaCitaLabel}\nHora: {$horaCitaPlain}");
+        $mensajeParaGuardar = trim($mensaje . "\n\nAgenda solicitada:\nFecha: {$fechaCitaLabel}\nHora: {$horaCitaPlain}\nModalidad: " . ($modoLlamada === 'video' ? 'Videollamada' : 'Teléfono') . ($enlaceReunion !== '' ? "\nEnlace: {$enlaceReunion}" : ''));
     }
 
     // Crear tabla de citas si no existe
@@ -144,10 +150,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             servicio VARCHAR(120),
             notas TEXT,
             estado VARCHAR(20) NOT NULL DEFAULT 'pendiente',
+            tipo_llamada VARCHAR(20) NOT NULL DEFAULT 'telefono',
+            enlace_reunion VARCHAR(255) NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             KEY idx_fecha_hora (fecha, hora)
         ) ENGINE=InnoDB
     ");
+
+    $checkTipo = $conn->query("SHOW COLUMNS FROM citas LIKE 'tipo_llamada'");
+    if (!$checkTipo || $checkTipo->num_rows === 0) {
+        $conn->query("ALTER TABLE citas ADD COLUMN tipo_llamada VARCHAR(20) NOT NULL DEFAULT 'telefono' AFTER estado");
+    }
+    $checkLink = $conn->query("SHOW COLUMNS FROM citas LIKE 'enlace_reunion'");
+    if (!$checkLink || $checkLink->num_rows === 0) {
+        $conn->query("ALTER TABLE citas ADD COLUMN enlace_reunion VARCHAR(255) NULL AFTER tipo_llamada");
+    }
 
     // Verificar disponibilidad
     if ($isAgendaForm) {
@@ -180,9 +197,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt->execute()) {
         // Guardar cita si aplica
         if ($isAgendaForm) {
-            $insertCita = $conn->prepare("INSERT INTO citas (fecha, hora, nombre, email, telefono, servicio, notas, estado) VALUES (?, ?, ?, ?, ?, ?, ?, 'pendiente')");
+            $insertCita = $conn->prepare("INSERT INTO citas (fecha, hora, nombre, email, telefono, servicio, notas, estado, tipo_llamada, enlace_reunion) VALUES (?, ?, ?, ?, ?, ?, ?, 'pendiente', ?, ?)");
             if ($insertCita) {
-                $insertCita->bind_param("sssssss", $fechaCitaLabel, $horaCitaLabel, $nombre, $email, $telefono, $servicio, $mensaje);
+                $insertCita->bind_param("sssssssss", $fechaCitaLabel, $horaCitaLabel, $nombre, $email, $telefono, $servicio, $mensaje, $modoLlamada, $enlaceReunion);
                 if (!$insertCita->execute()) {
                     // si falla por duplicado, redirige a horario ocupado
                     if ($conn->errno === 1062) {

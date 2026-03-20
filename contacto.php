@@ -17,10 +17,22 @@ $conn->query("
         servicio VARCHAR(120),
         notas TEXT,
         estado VARCHAR(20) NOT NULL DEFAULT 'pendiente',
+        tipo_llamada VARCHAR(20) NOT NULL DEFAULT 'telefono',
+        enlace_reunion VARCHAR(255) NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         KEY idx_fecha_hora (fecha, hora)
     ) ENGINE=InnoDB
 ");
+
+// Asegurar columnas nuevas en instalaciones previas
+$colCheck = $conn->query("SHOW COLUMNS FROM citas LIKE 'tipo_llamada'");
+if (!$colCheck || $colCheck->num_rows === 0) {
+    $conn->query("ALTER TABLE citas ADD COLUMN tipo_llamada VARCHAR(20) NOT NULL DEFAULT 'telefono' AFTER estado");
+}
+$colCheck = $conn->query("SHOW COLUMNS FROM citas LIKE 'enlace_reunion'");
+if (!$colCheck || $colCheck->num_rows === 0) {
+    $conn->query("ALTER TABLE citas ADD COLUMN enlace_reunion VARCHAR(255) NULL AFTER tipo_llamada");
+}
 
 // Cargar citas ocupadas proximos 14 dias
 $bookedSlotsByDate = [];
@@ -213,6 +225,19 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                         <select id="agenda-hora" name="hora_llamada" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                         </select>
                         <p id="agenda-hora-msg" class="text-sm text-red-600 mt-2 hidden">No hay horarios disponibles para esta fecha.</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-800 mb-2 font-semibold">¿Prefieres videollamada o teléfono?</label>
+                        <div class="flex flex-wrap gap-4">
+                            <label class="inline-flex items-center gap-2 text-sm font-semibold text-gray-700">
+                                <input type="radio" name="modo_llamada" value="video" class="h-4 w-4 text-blue-600" checked>
+                                Videollamada (te enviamos el enlace)
+                            </label>
+                            <label class="inline-flex items-center gap-2 text-sm font-semibold text-gray-700">
+                                <input type="radio" name="modo_llamada" value="telefono" class="h-4 w-4 text-blue-600">
+                                Solo llamada telef&oacute;nica
+                            </label>
+                        </div>
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-gray-800 mb-2 font-semibold">Objetivo de la llamada *</label>

@@ -70,6 +70,8 @@ CREATE TABLE IF NOT EXISTS citas (
     servicio VARCHAR(120),
     notas TEXT,
     estado VARCHAR(20) NOT NULL DEFAULT 'pendiente',
+    tipo_llamada VARCHAR(20) NOT NULL DEFAULT 'telefono',
+    enlace_reunion VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     KEY idx_fecha_hora (fecha, hora)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
