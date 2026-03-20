@@ -42,6 +42,7 @@ function ensureTestimonialsSchema(mysqli $conn): void
         'destacado' => "ALTER TABLE testimonios ADD COLUMN destacado BOOLEAN DEFAULT FALSE AFTER proyecto_id",
         'aprobado' => "ALTER TABLE testimonios ADD COLUMN aprobado BOOLEAN NOT NULL DEFAULT FALSE AFTER destacado",
         'orden' => "ALTER TABLE testimonios ADD COLUMN orden INT DEFAULT 0 AFTER aprobado",
+        'likes' => "ALTER TABLE testimonios ADD COLUMN likes INT NOT NULL DEFAULT 0 AFTER valoracion",
     ];
 
     foreach ($missingColumns as $column => $sql) {

@@ -41,6 +41,24 @@ CREATE TABLE IF NOT EXISTS mensajes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+-- Tabla de testimonios
+CREATE TABLE IF NOT EXISTS testimonios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    cargo VARCHAR(100),
+    empresa VARCHAR(100),
+    testimonio TEXT NOT NULL,
+    foto VARCHAR(255),
+    valoracion INT DEFAULT 5,
+    likes INT NOT NULL DEFAULT 0,
+    proyecto_id INT,
+    destacado BOOLEAN DEFAULT FALSE,
+    aprobado BOOLEAN NOT NULL DEFAULT FALSE,
+    orden INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (proyecto_id) REFERENCES proyectos(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Tabla de citas (agenda de llamadas)
 CREATE TABLE IF NOT EXISTS citas (
     id INT AUTO_INCREMENT PRIMARY KEY,

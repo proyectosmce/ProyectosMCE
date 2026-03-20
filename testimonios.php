@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
     redirect('testimonios.php?error=validation#form-testimonio');
 }
 
-$testimonios     = $conn->query("SELECT t.nombre, t.testimonio, t.valoracion, COALESCE(p.titulo, t.empresa, 'Proyecto MCE') AS proyecto FROM testimonios t LEFT JOIN proyectos p ON t.proyecto_id = p.id WHERE t.aprobado = 1 ORDER BY t.destacado DESC, t.created_at DESC LIMIT 9");
+$testimonios     = $conn->query("SELECT t.id, t.nombre, t.testimonio, t.valoracion, t.likes, COALESCE(p.titulo, t.empresa, 'Proyecto MCE') AS proyecto FROM testimonios t LEFT JOIN proyectos p ON t.proyecto_id = p.id WHERE t.aprobado = 1 ORDER BY t.destacado DESC, t.created_at DESC LIMIT 9");
 $projectOptions  = fetchProjectDropdownOptions($conn);
 $testimonioOk    = isset($_GET['testimonio']) && $_GET['testimonio'] === 'ok';
 $testimonioError = $_GET['error'] ?? '';
@@ -251,7 +251,16 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
                     $projName = $t['proyecto'] ?? 'su proyecto';
                     $textoFinal = "Yo, {$t['nombre']} dueño de {$projName}, {$t['testimonio']}";
                 ?>
-                <p class="text-gray-700 leading-relaxed text-sm">"<?php echo nl2br(htmlspecialchars($textoFinal, ENT_QUOTES, 'UTF-8')); ?>"</p>
+                <p class="text-gray-700 leading-relaxed text-sm mb-4">"<?php echo nl2br(htmlspecialchars($textoFinal, ENT_QUOTES, 'UTF-8')); ?>"</p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-500 flex items-center gap-2">
+                        <i class="fas fa-shield-alt text-blue-500"></i> Testimonio verificado
+                    </span>
+                    <button type="button" class="flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-3 py-1 text-sm font-semibold text-red-600 hover:bg-red-100 transition like-btn" data-like-id="<?php echo (int) $t['id']; ?>">
+                        <i class="fas fa-heart"></i>
+                        <span class="like-count"><?php echo (int) ($t['likes'] ?? 0); ?></span>
+                    </button>
+                </div>
             </div>
             <?php endwhile; ?>
         <?php endif; ?>
@@ -378,6 +387,40 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
     const ratingInputs = document.querySelectorAll('input[name=\"valoracion\"]');
     const starLabels = document.querySelectorAll('[data-star]');
     const ratingText = document.getElementById('rating-text');
+    const likeButtons = document.querySelectorAll('.like-btn');
+
+    // Likes testimonios
+    likeButtons.forEach((btn) => {
+        const id = btn.dataset.likeId;
+        const countEl = btn.querySelector('.like-count');
+        const storageKey = 'mce_like_' + id;
+        const markLiked = () => {
+            btn.classList.add('bg-red-600', 'text-white', 'border-red-600', 'liked');
+            btn.classList.remove('bg-red-50', 'text-red-600');
+        };
+        if (localStorage.getItem(storageKey)) {
+            markLiked();
+        }
+        btn.addEventListener('click', () => {
+            if (btn.classList.contains('liked')) return;
+            btn.disabled = true;
+            fetch('ajax/testimonio-like.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'id=' + encodeURIComponent(id),
+            })
+                .then((res) => res.ok ? res.json() : null)
+                .then((data) => {
+                    if (data && data.ok) {
+                        countEl.textContent = data.likes;
+                        localStorage.setItem(storageKey, '1');
+                        markLiked();
+                    }
+                })
+                .catch(() => {})
+                .finally(() => { btn.disabled = false; });
+        });
+    });
 
     function updatePreview() {
         const n = (nombre.value || 'tu nombre').trim();
