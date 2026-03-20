@@ -424,10 +424,10 @@ function payment_status_badge_class(string $status): string
 </head>
 <body class="bg-gray-100">
     <div class="flex min-h-screen">
-        <?php $activePage = 'pagos'; include __DIR__ . '/partials/sidebar.php'; ?>
+        <?php $activePage = $openReset ? '' : 'pagos'; include __DIR__ . '/partials/sidebar.php'; ?>
         <div class="flex-1 overflow-y-auto lg:ml-0">
             <div class="p-8">
-                <div id="reset-modal" class="fixed inset-0 z-30 hidden items-center justify-center bg-black/40 px-4">
+                <div id="reset-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
                     <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
                         <div class="flex items-start justify-between gap-3">
                             <div>
@@ -1128,6 +1128,7 @@ function payment_status_badge_class(string $status): string
             const toggleReset = function (show) {
                 if (!resetModal) return;
                 resetModal.classList.toggle('hidden', !show);
+                document.body.classList.toggle('overflow-hidden', show);
                 if (show) {
                     const input = resetModal.querySelector('input[name=\"admin_password\"]');
                     if (input) { setTimeout(() => input.focus(), 50); }
