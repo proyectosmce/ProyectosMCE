@@ -161,6 +161,18 @@ $lastPayments = $conn->query("
                         <span>Menú</span>
                     </button>
                 </div>
+
+                <?php if (!empty($_SESSION['agenda_flash'])): ?>
+                    <?php $flash = $_SESSION['agenda_flash']; unset($_SESSION['agenda_flash']); ?>
+                    <div class="mb-4 rounded-xl border <?php echo ($flash['ok'] ?? false) ? 'border-green-200 bg-green-50 text-green-800' : 'border-red-200 bg-red-50 text-red-800'; ?> px-4 py-3">
+                        <?php if (!empty($flash['ok'])): ?>
+                            Correo enviado al cliente (<?php echo admin_escape($flash['email'] ?? ''); ?>) con estado <?php echo admin_escape($flash['estado'] ?? ''); ?>.
+                        <?php else: ?>
+                            No se pudo enviar el correo al cliente. <?php if (!empty($flash['error'])): ?>Detalle: <?php echo admin_escape($flash['error']); ?><?php endif; ?>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+
                 <h1 class="text-3xl font-bold mb-8">Dashboard</h1>
 
                 <?php if ($testimonios_pendientes > 0): ?>

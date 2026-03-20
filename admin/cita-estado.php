@@ -81,8 +81,17 @@ function admin_send_cita_email(array $cita, string $estadoNuevo, array $smtp): v
         $mail->SMTPAuth = true;
         $mail->Username = $smtp['user'];
         $mail->Password = $smtp['pass'];
-        if ($smtp['secure'] === 'ssl') {
+        $mail->Timeout = 30;
+        $mail->SMTPDebug = $smtp['debug'] ? 2 : 0;
+        $mail->Debugoutput = static function ($str, $level) {
+            error_log('SMTP[' . $level . ']: ' . $str);
+        };
+
+        if ($smtp['secure'] === 'ssl' || $smtp['secure'] === 'smtps' || (int) $smtp['port'] === 465) {
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        } elseif ($smtp['secure'] === 'none' || $smtp['secure'] === '') {
+            $mail->SMTPSecure = '';
+            $mail->SMTPAutoTLS = false;
         } else {
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         }
@@ -134,8 +143,19 @@ function admin_send_cita_email(array $cita, string $estadoNuevo, array $smtp): v
         $mail->AltBody = "Estado de tu cita: {$estadoNuevo}\nFecha: {$fechaLabel}\nHora: {$horaLabel}\nServicio: {$servicio}\n\nSi no solicitaste esta actualización, responde este correo.";
 
         $mail->send();
+        $_SESSION['agenda_flash'] = [
+            'ok' => true,
+            'estado' => $estadoNuevo,
+            'email' => $cita['email'],
+        ];
     } catch (Exception $e) {
         error_log('No se pudo enviar correo de cita: ' . $mail->ErrorInfo);
+        $_SESSION['agenda_flash'] = [
+            'ok' => false,
+            'estado' => $estadoNuevo,
+            'email' => $cita['email'] ?? '',
+            'error' => $mail->ErrorInfo,
+        ];
     }
 }
 
@@ -147,6 +167,7 @@ admin_send_cita_email($cita ?? [], $estado, [
     'secure' => $smtpSecure,
     'from_email' => $smtpFromEmail,
     'from_name' => $smtpFromName,
+    'debug' => $smtpDebug,
 ]);
 
 admin_log_action($conn, 'Actualizar cita', 'cita', $id, 'Estado: ' . $estado);
