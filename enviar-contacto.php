@@ -23,6 +23,17 @@ $smtpFromName = $SMTP_FROM_NAME ?? getenv('SMTP_FROM_NAME') ?? 'Proyectos MCE';
 $smtpToEmail = $SMTP_TO_EMAIL ?? getenv('SMTP_TO_EMAIL') ?? $smtpUser;
 $smtpDebug = (string) ($SMTP_DEBUG ?? getenv('SMTP_DEBUG') ?? '0') === '1';
 
+// Helper para generar enlace de reunión (Teams por defecto)
+function mce_generate_meet_link(): string
+{
+    $token = uniqid('mce-', true);
+    $template = getenv('TEAMS_MEET_URL') ?: ($GLOBALS['TEAMS_MEET_URL'] ?? '');
+    if ($template) {
+        return str_replace('{ID}', $token, $template);
+    }
+    return 'https://teams.live.com/meet/' . $token;
+}
+
 if (stripos($smtpHost, 'gmail.com') !== false) {
     $smtpPass = str_replace(' ', '', $smtpPass);
 }
@@ -61,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $modoLlamada = in_array($modoLlamadaRaw, ['video', 'telefono'], true) ? $modoLlamadaRaw : 'telefono';
     $enlaceReunion = '';
     if ($modoLlamada === 'video') {
-        $enlaceReunion = 'https://meet.jit.si/' . uniqid('mce-call-');
+        $enlaceReunion = mce_generate_meet_link();
     }
 
     if ($nombreRaw === '' || $emailRaw === '' || $mensajeRaw === '') {
