@@ -33,6 +33,8 @@ $toast = admin_build_toast($_GET['msg'] ?? '', [
     'deleted' => ['message' => 'Pago eliminado correctamente.'],
     'factura_enviada' => ['message' => 'Factura enviada al correo indicado.'],
     'csrf' => ['type' => 'error', 'title' => 'Sesion no valida', 'message' => 'Recarga la pagina e intenta de nuevo.'],
+    'reset_ok' => ['message' => 'Datos borrados. El panel quedó limpio.'],
+    'reset_error' => ['type' => 'error', 'title' => 'No se pudo borrar', 'message' => 'Contraseña incorrecta o acción no autorizada.'],
 ]);
 
 $filterParams = [
@@ -423,6 +425,31 @@ function payment_status_badge_class(string $status): string
         <?php $activePage = 'pagos'; include __DIR__ . '/partials/sidebar.php'; ?>
         <div class="flex-1 overflow-y-auto lg:ml-0">
             <div class="p-8">
+                <div id="reset-modal" class="fixed inset-0 z-30 hidden items-center justify-center bg-black/40 px-4">
+                    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-900">Limpiar panel</h2>
+                                <p class="mt-1 text-sm text-gray-600">Eliminará pagos, proyectos, servicios, citas, mensajes y testimonios. No borra usuarios.</p>
+                            </div>
+                            <button type="button" id="reset-close" class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <form method="POST" action="pagos-reset.php" class="mt-4 space-y-4">
+                            <input type="hidden" name="csrf_token" value="<?php echo admin_escape($csrfToken); ?>">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Contraseña de administrador</label>
+                                <input type="password" name="admin_password" required class="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-red-500 focus:ring-red-200 focus:outline-none" placeholder="Ingresa tu contraseña para confirmar">
+                            </div>
+                            <p class="text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg p-3">Esta acción es irreversible. Se reiniciarán los conteos y las tablas de datos.</p>
+                            <div class="flex items-center justify-end gap-3">
+                                <button type="button" id="reset-cancel" class="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">Cancelar</button>
+                                <button type="submit" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">Borrar todo</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
                 <div class="mb-4 flex items-center justify-between lg:hidden">
                     <button id="sidebar-open" class="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm font-semibold text-blue-700 shadow-sm hover:bg-blue-50">
                         <span class="flex flex-col gap-1">
@@ -446,6 +473,9 @@ function payment_status_badge_class(string $status): string
                         <a href="pago-editar.php" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
                             <i class="fas fa-plus mr-2"></i>Registrar pago
                         </a>
+                        <button type="button" id="reset-open" class="inline-flex items-center rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 border border-red-200">
+                            <i class="fas fa-broom mr-2"></i>Limpiar panel
+                        </button>
                     </div>
                 </div>
 
@@ -1087,6 +1117,28 @@ function payment_status_badge_class(string $status): string
                     closeAllMenus();
                 }
             });
+
+            // Modal limpiar panel
+            const resetModal = document.getElementById('reset-modal');
+            const openReset = document.getElementById('reset-open');
+            const closeReset = document.getElementById('reset-close');
+            const cancelReset = document.getElementById('reset-cancel');
+            const toggleReset = function (show) {
+                if (!resetModal) return;
+                resetModal.classList.toggle('hidden', !show);
+                if (show) {
+                    const input = resetModal.querySelector('input[name=\"admin_password\"]');
+                    if (input) { setTimeout(() => input.focus(), 50); }
+                }
+            };
+            if (openReset) { openReset.addEventListener('click', () => toggleReset(true)); }
+            if (closeReset) { closeReset.addEventListener('click', () => toggleReset(false)); }
+            if (cancelReset) { cancelReset.addEventListener('click', () => toggleReset(false)); }
+            if (resetModal) {
+                resetModal.addEventListener('click', (e) => {
+                    if (e.target === resetModal) { toggleReset(false); }
+                });
+            }
         });
     </script>
     <?php include __DIR__ . '/partials/sidebar-script.php'; ?>
