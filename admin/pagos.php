@@ -435,7 +435,7 @@ function payment_status_badge_class(string $status): string
                         <div class="flex items-start justify-between gap-3">
                             <div>
                                 <h2 class="text-xl font-bold text-slate-900">Limpiar panel</h2>
-                                <p class="mt-1 text-sm text-gray-600">Eliminará pagos, proyectos, servicios, citas, mensajes y testimonios. No borra usuarios.</p>
+                                <p class="mt-1 text-sm text-gray-600">Eliminará pagos, cuotas y citas del panel. No borra portafolio, servicios ni testimonios públicos.</p>
                             </div>
                         </div>
                         <form method="POST" action="pagos-reset.php" class="mt-4 space-y-4">

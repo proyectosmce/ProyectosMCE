@@ -57,11 +57,8 @@ $table_exists = function (mysqli $conn, string $table): bool {
 $tablesToTruncate = [
     'proyecto_pagos',
     'abonos_historial',
-    'proyectos',
-    'servicios',
-    'mensajes',
     'citas',
-    'testimonios',
+    'mensajes',
 ];
 
 $conn->query('SET FOREIGN_KEY_CHECKS=0');
