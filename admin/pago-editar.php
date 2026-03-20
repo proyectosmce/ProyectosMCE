@@ -1,4 +1,8 @@
 ﻿<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once '../includes/config.php';
 require_once '../includes/project-helpers.php';
 require_once '../includes/testimonial-helpers.php';
@@ -28,7 +32,88 @@ $projectsOptions = fetchProjectDropdownOptions($conn);
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $payment = null;
 $pageTitle = 'Registrar pago';
+$abonoError = '';
 
+// ========== PROCESAR ABONO (REGISTRAR CUOTA) ==========
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'registrar_abono') {
+    if (!admin_validate_csrf($_POST['csrf_token'] ?? null)) {
+        $abonoError = 'La sesion de seguridad no es valida.';
+    } else {
+        $pago_id = (int) ($_POST['pago_id'] ?? 0);
+        $abono = (float) str_replace(',', '.', trim($_POST['abono'] ?? '0'));
+        
+        if ($pago_id <= 0 || $abono <= 0) {
+            $abonoError = 'Datos inválidos para registrar el abono.';
+        } else {
+            // Obtener datos del pago
+            $stmt = $conn->prepare("SELECT monto, cuotas_totales, cuotas_pendientes FROM proyecto_pagos WHERE id = ?");
+            $stmt->bind_param('i', $pago_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $pago = $result->fetch_assoc();
+            $stmt->close();
+            
+            if (!$pago) {
+                $abonoError = 'Pago no encontrado.';
+            } else {
+                $cuotas_totales = (int) $pago['cuotas_totales'];
+                $cuotas_pendientes = (int) $pago['cuotas_pendientes'];
+                $monto_total = (float) $pago['monto'];
+                
+                if ($cuotas_totales <= 1 || $cuotas_pendientes <= 0) {
+                    $abonoError = 'Este pago no tiene cuotas pendientes.';
+                } else {
+                    // Calcular valor por cuota (con recargo del 18% si aplica)
+                    $recargo = $monto_total * 0.18;
+                    $total_con_recargo = $monto_total + $recargo;
+                    $valor_por_cuota = $total_con_recargo / $cuotas_totales;
+                    
+                    // Determinar cuántas cuotas se pagan con este abono
+                    $cuotas_a_reducir = floor($abono / $valor_por_cuota);
+                    
+                    if ($cuotas_a_reducir <= 0) {
+                        $abonoError = "El abono debe ser al menos de $" . number_format($valor_por_cuota, 2) . " (valor de una cuota)";
+                    } elseif ($cuotas_a_reducir > $cuotas_pendientes) {
+                        $abonoError = "No se pueden pagar más cuotas de las pendientes ($cuotas_pendientes restantes).";
+                    } else {
+                        $nuevas_pendientes = $cuotas_pendientes - $cuotas_a_reducir;
+                        
+                        // Actualizar cuotas pendientes
+                        $update = $conn->prepare("UPDATE proyecto_pagos SET cuotas_pendientes = ?, fecha_ultimo_abono = NOW() WHERE id = ?");
+                        $update->bind_param('ii', $nuevas_pendientes, $pago_id);
+                        
+                        if ($update->execute()) {
+                            // Crear tabla de historial si no existe
+                            $conn->query("CREATE TABLE IF NOT EXISTS abonos_historial (
+                                id INT AUTO_INCREMENT PRIMARY KEY,
+                                pago_id INT NOT NULL,
+                                abono DECIMAL(15,2) NOT NULL,
+                                cuotas_pagadas INT NOT NULL,
+                                fecha DATETIME DEFAULT CURRENT_TIMESTAMP
+                            )");
+                            
+                            // Registrar historial de abono
+                            $logStmt = $conn->prepare("INSERT INTO abonos_historial (pago_id, abono, cuotas_pagadas) VALUES (?, ?, ?)");
+                            $logStmt->bind_param('idi', $pago_id, $abono, $cuotas_a_reducir);
+                            $logStmt->execute();
+                            $logStmt->close();
+                            
+                            admin_log_action($conn, 'update', 'payment', $pago_id, "Abono registrado: {$abono} ({$cuotas_a_reducir} cuotas)");
+                            
+                            header('Location: pagos.php?msg=abono_registrado');
+                            exit;
+                        } else {
+                            $abonoError = 'Error al actualizar las cuotas: ' . $update->error;
+                        }
+                        $update->close();
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Obtener datos del pago para edición
 if ($id > 0) {
     $result = $conn->query('SELECT * FROM proyecto_pagos WHERE id = ' . $id . ' LIMIT 1');
     if ($result instanceof mysqli_result) {
@@ -43,7 +128,8 @@ if ($id > 0) {
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$error = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && (!isset($_POST['action']) || $_POST['action'] !== 'registrar_abono')) {
     if (!admin_validate_csrf($_POST['csrf_token'] ?? null)) {
         $error = 'La sesion de seguridad no es valida. Recarga la pagina e intenta de nuevo.';
     }
@@ -115,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $conn->prepare('UPDATE proyecto_pagos SET proyecto_id = NULLIF(?, 0), cliente = NULLIF(?, \'\'), forma_pago = ?, proxima_cuota = NULLIF(?, \'\'), cuotas_totales = ?, cuotas_pendientes = ?, concepto = ?, monto = ?, moneda = ?, estado = ?, metodo = ?, referencia = ?, notas = ?, fecha_pago = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
             if ($stmt) {
                 $stmt->bind_param(
-                    'isssiisdssssss',
+                    'isssiisdssssssi',
                     $proyectoId,
                     $clienteLibre,
                     $formaPago,
@@ -226,9 +312,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </a>
                 </div>
 
-                <?php if (isset($error)): ?>
+                <?php if (!empty($error)): ?>
                     <div class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
                         <?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($abonoError)): ?>
+                    <div class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+                        <?php echo htmlspecialchars($abonoError, ENT_QUOTES, 'UTF-8'); ?>
                     </div>
                 <?php endif; ?>
 
@@ -369,22 +461,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Total de cuotas</label>
                                     <input
                                         type="number"
-        min="1"
-        name="cuotas_totales"
-        id="cuotas_totales"
-        value="<?php echo admin_escape($payment['cuotas_totales'] ?? ''); ?>"
-        class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 focus:border-blue-600 focus:bg-white focus:outline-none"
+                                        min="1"
+                                        name="cuotas_totales"
+                                        id="cuotas_totales"
+                                        value="<?php echo admin_escape($payment['cuotas_totales'] ?? ''); ?>"
+                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 focus:border-blue-600 focus:bg-white focus:outline-none"
                                     >
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Cuotas pendientes</label>
                                     <input
                                         type="number"
-        min="0"
-        name="cuotas_pendientes"
-        id="cuotas_pendientes"
-        value="<?php echo admin_escape($payment['cuotas_pendientes'] ?? ''); ?>"
-        class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 focus:border-blue-600 focus:bg-white focus:outline-none"
+                                        min="0"
+                                        name="cuotas_pendientes"
+                                        id="cuotas_pendientes"
+                                        value="<?php echo admin_escape($payment['cuotas_pendientes'] ?? ''); ?>"
+                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 focus:border-blue-600 focus:bg-white focus:outline-none"
                                     >
                                     <p class="mt-1 text-xs text-gray-500">Usa 0 cuando ya no quedan cuotas pendientes.</p>
                                 </div>
@@ -436,6 +528,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php endif; ?>
                     </div>
                 </form>
+
+                <?php if ($id > 0 && isset($payment['cuotas_totales']) && $payment['cuotas_totales'] > 1): ?>
+                    <div id="cuotas_wrapper_section" class="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-6">
+                        <h3 class="text-lg font-semibold text-amber-800">
+                            <i class="fas fa-coins mr-2"></i>Registrar abono
+                        </h3>
+                        <p class="mt-1 text-sm text-amber-700">
+                            Cuotas pendientes: <strong><?php echo $payment['cuotas_pendientes']; ?></strong> de <?php echo $payment['cuotas_totales']; ?>
+                        </p>
+                        
+                        <?php
+                            // Calcular valor por cuota para mostrar
+                            $recargo_mostrar = $payment['monto'] * 0.18;
+                            $total_con_recargo_mostrar = $payment['monto'] + $recargo_mostrar;
+                            $valor_por_cuota_mostrar = $total_con_recargo_mostrar / $payment['cuotas_totales'];
+                        ?>
+                        <p class="text-xs text-amber-600 mt-1">
+                            Valor por cuota: <strong><?php echo number_format($valor_por_cuota_mostrar, 2); ?></strong> (monto + 18% recargo)
+                        </p>
+                        
+                        <form method="POST" class="mt-4 grid gap-4 md:grid-cols-3" onsubmit="return confirm('¿Registrar este abono? Se descontarán automáticamente las cuotas correspondientes.')">
+                            <input type="hidden" name="csrf_token" value="<?php echo admin_escape($csrfToken); ?>">
+                            <input type="hidden" name="action" value="registrar_abono">
+                            <input type="hidden" name="pago_id" value="<?php echo $id; ?>">
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Valor del abono *</label>
+                                <input type="number" name="abono" step="0.01" min="0" required class="w-full rounded-xl border border-gray-200 px-4 py-3">
+                            </div>
+                            <div class="flex items-end">
+                                <button type="submit" class="inline-flex items-center rounded-lg bg-amber-600 px-5 py-3 text-sm font-semibold text-white hover:bg-amber-700">
+                                    <i class="fas fa-save mr-2"></i>Registrar abono
+                                </button>
+                            </div>
+                        </form>
+                        <p class="mt-3 text-xs text-amber-600">
+                            * El sistema calculará automáticamente cuántas cuotas cubre este abono según el valor por cuota.
+                        </p>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
