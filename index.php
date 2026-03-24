@@ -567,6 +567,94 @@
             pt: 'Backup: cópias programadas para restaurar rápido após erros ou incidentes.',
             it: 'Backup: copie programmate per ripristinare rapidamente in caso di errori o incidenti.'
         }},
+        { keywords: ['inicio', 'home', 'start'], answers: {
+            es: 'Inicio: portada con el resumen de Proyectos MCE, propuesta de valor y llamados a agendar o ver portafolio.',
+            en: 'Home: the landing page with Proyectos MCE value prop and CTAs to book or view portfolio.',
+            fr: 'Accueil : page d’entrée avec la proposition de valeur MCE et CTA pour réserver ou voir le portfolio.',
+            de: 'Startseite: Überblick mit Value Proposition von MCE und CTAs zum Buchen oder Portfolio ansehen.',
+            pt: 'Início: página principal com a proposta de valor da MCE e CTAs para agendar ou ver portfólio.',
+            it: 'Home: pagina di ingresso con value proposition MCE e CTA per prenotare o vedere il portfolio.'
+        }},
+        { keywords: ['servicios', 'services'], answers: {
+            es: 'Servicios: lista de lo que hacemos (desarrollo a medida, ecommerce, inventarios, UX/UI, integraciones, soporte 24/7).',
+            en: 'Services: what we deliver (custom dev, ecommerce, inventory, UX/UI, integrations, 24/7 support).',
+            fr: 'Services : ce que nous faisons (dev sur mesure, ecommerce, inventaires, UX/UI, intégrations, support 24/7).',
+            de: 'Services: unsere Leistungen (Custom Dev, E‑Commerce, Inventar, UX/UI, Integrationen, 24/7 Support).',
+            pt: 'Serviços: o que fazemos (dev sob medida, ecommerce, inventário, UX/UI, integrações, suporte 24/7).',
+            it: 'Servizi: cosa offriamo (sviluppo su misura, ecommerce, inventari, UX/UI, integrazioni, supporto 24/7).'
+        }},
+        { keywords: ['portafolio', 'portfolio'], answers: {
+            es: 'Portafolio: casos en vivo y proyectos entregados para que veas ejemplos reales.',
+            en: 'Portfolio: live cases and delivered projects so you can see real examples.',
+            fr: 'Portfolio : cas réels et projets livrés pour voir des exemples concrets.',
+            de: 'Portfolio: Live-Cases und gelieferte Projekte als echte Beispiele.',
+            pt: 'Portfólio: casos ao vivo e projetos entregues para ver exemplos reais.',
+            it: 'Portfolio: casi reali e progetti consegnati per vedere esempi concreti.'
+        }},
+        { keywords: ['testimonios', 'testimonials', 'reviews'], answers: {
+            es: 'Testimonios: opiniones de clientes sobre cómo trabajamos y los resultados obtenidos.',
+            en: 'Testimonials: client feedback about how we work and the results delivered.',
+            fr: 'Témoignages : avis clients sur notre manière de travailler et les résultats obtenus.',
+            de: 'Referenzen: Kundenmeinungen zu unserer Arbeit und den erzielten Ergebnissen.',
+            pt: 'Depoimentos: opiniões de clientes sobre nosso trabalho e resultados.',
+            it: 'Testimonianze: feedback dei clienti sul nostro lavoro e risultati.'
+        }},
+        { keywords: ['contacto', 'contact', 'contactar'], answers: {
+            es: 'Contacto: sección con formulario, WhatsApp y correo. Tel: +57 311 412 5971 · Email: proyectosmceaa@gmail.com',
+            en: 'Contact: form plus WhatsApp and email. Phone: +57 311 412 5971 · Email: proyectosmceaa@gmail.com',
+            fr: 'Contact : formulaire, WhatsApp et email. Tél : +57 311 412 5971 · Email : proyectosmceaa@gmail.com',
+            de: 'Kontakt: Formular, WhatsApp und E-Mail. Tel: +57 311 412 5971 · E-Mail: proyectosmceaa@gmail.com',
+            pt: 'Contato: formulário, WhatsApp e e-mail. Tel: +57 311 412 5971 · Email: proyectosmceaa@gmail.com',
+            it: 'Contatti: form, WhatsApp ed email. Tel: +57 311 412 5971 · Email: proyectosmceaa@gmail.com'
+        }},
+        { keywords: ['whatsapp', 'wa'], answers: {
+            es: 'Nuestro WhatsApp: https://wa.me/573114125971',
+            en: 'Our WhatsApp: https://wa.me/573114125971',
+            fr: 'Notre WhatsApp : https://wa.me/573114125971',
+            de: 'Unser WhatsApp: https://wa.me/573114125971',
+            pt: 'Nosso WhatsApp: https://wa.me/573114125971',
+            it: 'Il nostro WhatsApp: https://wa.me/573114125971'
+        }},
+        { keywords: ['telegram'], answers: {
+            es: 'Telegram: https://t.me/proyectosmce',
+            en: 'Telegram: https://t.me/proyectosmce',
+            fr: 'Telegram : https://t.me/proyectosmce',
+            de: 'Telegram: https://t.me/proyectosmce',
+            pt: 'Telegram: https://t.me/proyectosmce',
+            it: 'Telegram: https://t.me/proyectosmce'
+        }},
+        { keywords: ['instagram', 'ig'], answers: {
+            es: 'Instagram: https://www.instagram.com/proyectosmce/',
+            en: 'Instagram: https://www.instagram.com/proyectosmce/',
+            fr: 'Instagram : https://www.instagram.com/proyectosmce/',
+            de: 'Instagram: https://www.instagram.com/proyectosmce/',
+            pt: 'Instagram: https://www.instagram.com/proyectosmce/',
+            it: 'Instagram: https://www.instagram.com/proyectosmce/'
+        }},
+        { keywords: ['linkedin', 'linkein', 'ln'], answers: {
+            es: 'LinkedIn: https://www.linkedin.com/company/proyectosmce/',
+            en: 'LinkedIn: https://www.linkedin.com/company/proyectosmce/',
+            fr: 'LinkedIn : https://www.linkedin.com/company/proyectosmce/',
+            de: 'LinkedIn: https://www.linkedin.com/company/proyectosmce/',
+            pt: 'LinkedIn: https://www.linkedin.com/company/proyectosmce/',
+            it: 'LinkedIn: https://www.linkedin.com/company/proyectosmce/'
+        }},
+        { keywords: ['facebook', 'fb'], answers: {
+            es: 'Facebook: https://www.facebook.com/proyectosmce',
+            en: 'Facebook: https://www.facebook.com/proyectosmce',
+            fr: 'Facebook : https://www.facebook.com/proyectosmce',
+            de: 'Facebook: https://www.facebook.com/proyectosmce',
+            pt: 'Facebook: https://www.facebook.com/proyectosmce',
+            it: 'Facebook: https://www.facebook.com/proyectosmce'
+        }},
+        { keywords: ['tiktok', 'tt'], answers: {
+            es: 'TikTok: https://www.tiktok.com/@proyectosmce',
+            en: 'TikTok: https://www.tiktok.com/@proyectosmce',
+            fr: 'TikTok : https://www.tiktok.com/@proyectosmce',
+            de: 'TikTok: https://www.tiktok.com/@proyectosmce',
+            pt: 'TikTok: https://www.tiktok.com/@proyectosmce',
+            it: 'TikTok: https://www.tiktok.com/@proyectosmce'
+        }},
         { keywords: ['mce'], answers: {
             es: 'MCE es nuestra marca: Proyectos MCE. Son las iniciales de Marlon Carabalí, programador y líder del equipo.',
             en: 'MCE is our brand: Proyectos MCE. It’s the initials of Marlon Carabalí, programmer and team lead.',
