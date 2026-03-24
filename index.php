@@ -29,7 +29,15 @@
     font-size: 1.3rem;
 }
 .float-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 26px rgba(0,0,0,0.32); }
-.float-btn.assistant { background: linear-gradient(135deg, #ffd700, #f0b400); }
+.float-btn.assistant {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    padding: 0;
+}
 .float-btn.whatsapp {
     width: 64px;
     height: 64px;
@@ -305,7 +313,7 @@
 <!-- Botón flotante del asistente (botón de WhatsApp original permanece en footer) -->
 <div class="floating-buttons" id="floating-buttons">
     <button class="float-btn assistant" id="assistant-toggle" aria-label="Asistente virtual">
-        <img src="<?php echo app_url('asstv.webp'); ?>" alt="Abrir asistente MCE" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+        <img src="<?php echo app_url('asstv.webp'); ?>" alt="Abrir asistente MCE" style="width:64px;height:64px;object-fit:cover;border-radius:0;">
         <span style="position:absolute;opacity:0;">Asistente</span>
     </button>
 </div>
