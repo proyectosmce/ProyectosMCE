@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flyer Proyectos MCE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f6f8fb;
+            padding: 32px;
+            display: grid;
+            gap: 28px;
+            justify-content: center;
+        }
+        .flyer {
+            width: 520px;
+            min-height: 720px;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+        .hero {
+            position: relative;
+            min-height: 220px;
+            padding: 20px;
+            background: radial-gradient(circle at 15% 20%, rgba(255,215,0,0.25), transparent 40%),
+                        linear-gradient(135deg, #0a1630 0%, #14366d 50%, #1f4a99 100%);
+            color: white;
+        }
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(255,255,255,0.08), transparent 45%);
+            pointer-events: none;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,215,0,0.18);
+            color: #ffd700;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+        .title {
+            margin-top: 12px;
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+        }
+        .subtitle {
+            margin-top: 6px;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 6px;
+        }
+        .logo-img {
+            width: 64px;
+            height: 64px;
+            border-radius: 14px;
+            object-fit: cover;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            border: 2px solid rgba(255,215,0,0.6);
+        }
+        .brand-text h3 { font-size: 1.15rem; font-weight: 800; color: #ffd700; }
+        .brand-text p { font-size: 0.8rem; color: #d7e3ff; letter-spacing: 0.4px; }
+        .body {
+            padding: 24px 24px 18px;
+            flex: 1;
+            display: grid;
+            gap: 18px;
+        }
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #12325f;
+            letter-spacing: 0.3px;
+        }
+        .lead {
+            font-size: 0.95rem;
+            color: #1b2b48;
+            line-height: 1.55;
+            font-weight: 600;
+        }
+        .services {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .service {
+            background: #f5f7fb;
+            border: 1px solid #e3e9f3;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+        .service .icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            background: #12325f;
+            color: #ffd700;
+            font-size: 0.95rem;
+        }
+        .service h4 { margin: 0; font-size: 0.95rem; color: #0f274b; }
+        .service p { margin: 4px 0 0; font-size: 0.82rem; color: #3b4a63; line-height: 1.4; }
+        .steps {
+            display: grid;
+            gap: 10px;
+        }
+        .step {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .step .num {
+            width: 26px; height: 26px; border-radius: 50%;
+            background: #ffd700; color: #0f274b;
+            display: grid; place-items: center;
+            font-weight: 800; font-size: 0.9rem;
+        }
+        .step p { margin: 0; color: #1b2b48; font-size: 0.9rem; }
+        .cta {
+            background: linear-gradient(135deg, #ffd700 0%, #ffb100 50%, #ff9f1c 100%);
+            color: #0f274b;
+            padding: 14px 16px;
+            border-radius: 14px;
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: 0.2px;
+        }
+        .cta small { display: block; color: #0f274b; font-weight: 600; margin-top: 2px; }
+        .contact {
+            margin-top: auto;
+            padding: 16px 20px;
+            background: #0f274b;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .contact-info { display: grid; gap: 8px; }
+        .contact-row { display: flex; gap: 10px; align-items: center; font-weight: 700; }
+        .contact-row i { color: #ffd700; }
+        .contact-row span { word-break: break-word; }
+        .domain {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,215,0,0.6);
+            color: #ffd700;
+            font-weight: 700;
+            font-size: 0.9rem;
+            width: fit-content;
+        }
+        .qr-code {
+            width: 110px;
+            height: 110px;
+            padding: 6px;
+            border-radius: 12px;
+            background: white;
+            border: 1px solid rgba(255,215,0,0.6);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.22);
+            flex-shrink: 0;
+        }
+        @media (max-width: 560px) {
+            .flyer { width: 100%; }
+            .services { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Flyer frente -->
+    <div class="flyer">
+        <div class="hero">
+            <div class="brand-row">
+                <img src="MCE.jpg" alt="Logo MCE" class="logo-img">
+                <div class="brand-text">
+                    <h3>PROYECTOS MCE</h3>
+                    <p>Desarrollo web a Medida</p>
+                </div>
+            </div>
+            <div class="title">MCE | Software a medida para que tu operación no se detenga</div>
+            <div class="subtitle">Desarrollo, automatización y soporte continuo para tu operación.</div>
+        </div>
+        <div class="body">
+            <div class="section-title">¿Qué hacemos?</div>
+            <div class="lead"><strong>Planificamos, diseñamos y desarrollamos plataformas web que soportan ventas, inventarios y atención al cliente con control total y visibilidad.</strong></div>
+            <div class="section-title">Servicios clave</div>
+            <div class="services">
+                <div class="service">
+                    <div class="icon"><i class="fas fa-laptop-code"></i></div>
+                    <div>
+                        <h4>Desarrollo a medida</h4>
+                        <p>Aplicaciones web y móviles alineadas al proceso real de tu negocio.</p>
+                    </div>
+                </div>
+                <div class="service">
+                    <div class="icon"><i class="fas fa-shopping-cart"></i></div>
+                    <div>
+                        <h4>Tiendas online</h4>
+                        <p>Ecommerce integrado a inventarios, pagos y logística.</p>
+                    </div>
+                </div>
+                <div class="service">
+                    <div class="icon"><i class="fas fa-boxes"></i></div>
+                    <div>
+                        <h4>Inventarios</h4>
+                        <p>Control de stock, bodegas y trazabilidad en tiempo real.</p>
+                    </div>
+                </div>
+                <div class="service">
+                    <div class="icon"><i class="fas fa-pencil-ruler"></i></div>
+                    <div>
+                        <h4>Diseño UX/UI</h4>
+                        <p>Interfaces claras y centradas en conversión y retención.</p>
+                    </div>
+                </div>
+                <div class="service">
+                    <div class="icon"><i class="fas fa-plug"></i></div>
+                    <div>
+                        <h4>Conexiones API</h4>
+                        <p>Integraciones con ERP, pasarelas de pago y CRMs.</p>
+                    </div>
+                </div>
+                <div class="service">
+                    <div class="icon"><i class="fas fa-headset"></i></div>
+                    <div>
+                        <h4>Soporte 24/7</h4>
+                        <p>Monitoreo, alertas y mesa de ayuda para que nada se detenga.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="section-title">Proceso</div>
+            <div class="steps">
+                <div class="step"><div class="num">1</div><p><strong>Discovery:</strong> entendemos tu operación y objetivos.</p></div>
+                <div class="step"><div class="num">2</div><p><strong>Diseño:</strong> prototipos y validación con usuarios.</p></div>
+                <div class="step"><div class="num">3</div><p><strong>Desarrollo:</strong> entregas rápidas con QA continuo.</p></div>
+                <div class="step"><div class="num">4</div><p><strong>Soporte:</strong> monitoreo, mejoras y crecimiento.</p></div>
+            </div>
+            <div class="cta">
+                Agenda tu sesión Discovery sin costo
+                <small>Hablemos de tu proyecto hoy</small>
+            </div>
+        </div>
+        <div class="contact">
+            <div class="contact-info">
+                <div class="contact-row"><i class="fab fa-whatsapp"></i><span>+57 311 412 5971</span></div>
+                <div class="contact-row"><i class="far fa-envelope"></i><span>proyectosmceaa@gmail.com</span></div>
+                <div class="domain"><i class="fas fa-globe"></i> proyectosmce.com</div>
+            </div>
+            <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fproyectosmce.infinityfree.me" alt="QR proyectosmce.infinityfree.me">
+        </div>
+    </div>
+</body>
+</html>
