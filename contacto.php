@@ -1,4 +1,4 @@
-<?php require_once 'includes/config.php'; ?>
+﻿<?php require_once 'includes/config.php'; ?>
 <?php require_once 'includes/form-guard.php'; ?>
 <?php
 $contactFormGuard = form_guard_issue('contacto');
@@ -66,16 +66,16 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
         <div class="grid lg:grid-cols-12 gap-10 items-center">
             <div class="lg:col-span-7 space-y-5">
                 <span class="inline-flex items-center px-3 py-1 text-sm font-semibold bg-white/10 border border-white/20 rounded-full backdrop-blur">
-                    <i class="fas fa-headset mr-2 text-yellow-300"></i> Contacto · Proyectos MCE
+                    <i class="fas fa-headset mr-2 text-yellow-300"></i> <span class="i18n-ct-badge" data-i18n="ct-badge">Contacto · Proyectos MCE</span>
                 </span>
-                <h1 class="text-4xl md:text-5xl font-bold leading-tight">Agenda un diagnóstico técnico</h1>
-                <p class="text-lg text-blue-50 max-w-3xl">
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight i18n-ct-hero-title" data-i18n="ct-hero-title">Agenda un diagnóstico técnico</h1>
+                <p class="text-lg text-blue-50 max-w-3xl i18n-ct-hero-sub" data-i18n="ct-hero-sub">
                     Cuéntanos qué necesitas automatizar o lanzar. Te respondemos con esfuerzo estimado, riesgos visibles, tecnología recomendada y primeros pasos.
                 </p>
                 <div class="flex flex-wrap gap-3">
-                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm"><i class="fas fa-bolt mr-2 text-yellow-300"></i>Respuesta en &lt; 24h</span>
-                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm"><i class="fas fa-diagram-project mr-2 text-yellow-300"></i>Discovery + propuesta</span>
-                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm"><i class="fas fa-lock mr-2 text-yellow-300"></i>Confidencialidad garantizada</span>
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-ct-chip1" data-i18n="ct-chip1"><i class="fas fa-bolt mr-2 text-yellow-300"></i><span>Respuesta en &lt; 24h</span></span>
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-ct-chip2" data-i18n="ct-chip2"><i class="fas fa-diagram-project mr-2 text-yellow-300"></i><span>Discovery + propuesta</span></span>
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-ct-chip3" data-i18n="ct-chip3"><i class="fas fa-lock mr-2 text-yellow-300"></i><span>Confidencialidad garantizada</span></span>
                 </div>
             </div>
 
@@ -83,8 +83,8 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                 <div class="bg-white/10 border border-white/20 backdrop-blur-xl rounded-2xl p-8 shadow-2xl space-y-5">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-blue-100">Contacta directo</p>
-                            <p class="text-2xl font-semibold text-white">Equipo técnico listo para ayudarte</p>
+                            <p class="text-sm text-blue-100 i18n-ct-card-title" data-i18n="ct-card-title">Contacta directo</p>
+                            <p class="text-2xl font-semibold text-white i18n-ct-card-sub" data-i18n="ct-card-sub">Equipo técnico listo para ayudarte</p>
                         </div>
                         <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-300 text-slate-900 font-bold shadow-lg">MCE</span>
                     </div>
@@ -92,7 +92,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-phone"></i></span>
                             <div>
-                                <p class="font-semibold">Teléfono</p>
+                                <p class="font-semibold i18n-ct-phone" data-i18n="ct-phone">Teléfono</p>
                                 <p class="text-sm text-blue-100">
                                     <a class="hover:underline" href="tel:+573114125971">+57 311 412 59 71</a>
                                 </p>
@@ -101,7 +101,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-envelope"></i></span>
                             <div>
-                                <p class="font-semibold">Correo</p>
+                                <p class="font-semibold i18n-ct-mail" data-i18n="ct-mail">Correo</p>
                                 <p class="text-sm text-blue-100">
                                     <a class="hover:underline" href="mailto:proyectosmceaa@gmail.com">proyectosmceaa@gmail.com</a>
                                 </p>
@@ -110,7 +110,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fab fa-whatsapp"></i></span>
                             <div>
-                                <p class="font-semibold">WhatsApp</p>
+                                <p class="font-semibold i18n-ct-wa" data-i18n="ct-wa">WhatsApp</p>
                                 <p class="text-sm text-blue-100">
                                     <a class="hover:underline" href="https://wa.me/573114125971?text=Hola%21%20Quiero%20consultar%20por%20un%20proyecto" target="_blank" rel="noopener">wa.me/573114125971</a>
                                 </p>
@@ -119,8 +119,8 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                     </ul>
                     <div class="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-blue-100">Horario</p>
-                            <p class="font-semibold">Lunes a Viernes · 8:00 - 17:00 <br>Sabados · 9:00 - 13:00</p>
+                            <p class="text-sm text-blue-100 i18n-ct-hours" data-i18n="ct-hours">Horario</p>
+                            <p class="font-semibold i18n-ct-hours-detail" data-i18n="ct-hours-detail">Lunes a Viernes · 8:00 - 17:00 <br>Sábados · 9:00 - 13:00</p>
                         </div>
                         <i class="fas fa-arrow-right text-yellow-300"></i>
                     </div>
@@ -155,7 +155,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
             <?php elseif ($_GET['error'] == 8): ?>
                 Debes completar la verificacion reCAPTCHA antes de enviar el formulario.
             <?php elseif ($_GET['error'] == 9): ?>
-                El horario elegido ya no está disponible. Por favor elige otra hora.
+                El horario elegido ya no estÃ¡ disponible. Por favor elige otra hora.
             <?php else: ?>
                 Hubo un error. Por favor intenta nuevamente.
             <?php endif; ?>
@@ -229,7 +229,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                         <p id="agenda-hora-msg" class="text-sm text-red-600 mt-1 hidden">No hay horarios disponibles para esta fecha.</p>
                     </div>
                     <div class="md:col-span-2">
-                        <label class="block text-gray-800 mb-2 font-semibold">¿Prefieres videollamada o teléfono?</label>
+                        <label class="block text-gray-800 mb-2 font-semibold">Â¿Prefieres videollamada o telÃ©fono?</label>
                         <div class="flex flex-wrap gap-4">
                             <label class="inline-flex items-center gap-2 text-sm font-semibold text-gray-700">
                                 <input type="radio" name="modo_llamada" value="video" class="h-4 w-4 text-blue-600" checked>
@@ -280,10 +280,10 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
             <div>
                 <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Contacto por correo</p>
                 <h2 class="text-3xl font-bold text-slate-900">Prefieres escribirnos</h2>
-                <p class="text-gray-600 mt-2">Envíanos detalles y te respondemos por el mismo medio en menos de 24h.</p>
+                <p class="text-gray-600 mt-2">EnvÃ­anos detalles y te respondemos por el mismo medio en menos de 24h.</p>
             </div>
             <a href="#agenda-llamada" class="inline-flex items-center text-blue-700 font-semibold hover:text-blue-900">
-                <i class="fas fa-phone-alt mr-2"></i> ¿Mejor una llamada? Agenda aquí
+                <i class="fas fa-phone-alt mr-2"></i> Â¿Mejor una llamada? Agenda aquÃ­
             </a>
         </div>
     </div>
@@ -308,11 +308,11 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                         <input type="email" name="email" required maxlength="120" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold">Teléfono</label>
+                        <label class="block text-gray-800 mb-2 font-semibold">TelÃ©fono</label>
                         <input type="tel" name="telefono" maxlength="25" inputmode="tel" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold">¿Qué servicio te interesa?</label>
+                        <label class="block text-gray-800 mb-2 font-semibold">Â¿QuÃ© servicio te interesa?</label>
                         <select name="servicio" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                             <option value="">Seleccionar...</option>
                             <?php
@@ -355,16 +355,16 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
 
         <div class="lg:col-span-5 order-1 lg:order-2">
             <div class="bg-white rounded-2xl mce-rounded-panel shadow-2xl border border-slate-100 overflow-hidden p-8 space-y-4">
-                <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Información clave</p>
-                <h3 class="text-2xl font-bold text-slate-900">¿Qué recibes al escribirnos?</h3>
+                <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide">InformaciÃ³n clave</p>
+                <h3 class="text-2xl font-bold text-slate-900">Â¿QuÃ© recibes al escribirnos?</h3>
                 <ul class="space-y-3 text-gray-800 mt-3">
                     <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span>Respuesta personalizada con una ruta inicial y esfuerzos aproximados.</span></li>
-                    <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span>Reunión virtual de discovery para entender procesos y objetivos.</span></li>
-                    <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span>Documento de alcance con los próximos pasos para aprobar o iterar.</span></li>
+                    <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span>ReuniÃ³n virtual de discovery para entender procesos y objetivos.</span></li>
+                    <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span>Documento de alcance con los prÃ³ximos pasos para aprobar o iterar.</span></li>
                 </ul>
                 <div class="mt-6 p-4 rounded-xl bg-blue-50 text-blue-800 flex items-start gap-3">
                     <i class="fas fa-info-circle mt-1"></i>
-                    <p class="text-sm">Si necesitas NDA antes de compartir detalles, indícalo en el mensaje y lo enviamos.</p>
+                    <p class="text-sm">Si necesitas NDA antes de compartir detalles, indÃ­calo en el mensaje y lo enviamos.</p>
                 </div>
                 <div class="grid sm:grid-cols-2 gap-3">
                     <a href="https://wa.me/573114125971?text=Hola%21%20Quiero%20consultar%20por%20un%20proyecto" target="_blank" rel="noopener" class="inline-flex items-center justify-center px-4 py-3 rounded-xl bg-green-500 text-white font-semibold shadow hover:bg-green-600 transition">

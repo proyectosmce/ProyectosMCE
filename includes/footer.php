@@ -734,7 +734,20 @@
                 'ts-b2': 'Equipos de negocio y tecnología siempre informados.',
                 'ts-b3': 'Feedback directo que usamos para mejorar el producto.',
                 'ts-btn-read': 'Leer testimonios',
-                'ts-btn-share': 'Compartir mi experiencia'
+                'ts-btn-share': 'Compartir mi experiencia',
+                'ct-badge': 'Contacto · Proyectos MCE',
+                'ct-hero-title': 'Agenda un diagnóstico técnico',
+                'ct-hero-sub': 'Cuéntanos qué necesitas automatizar o lanzar. Te respondemos con esfuerzo estimado, riesgos visibles, tecnología recomendada y primeros pasos.',
+                'ct-chip1': 'Respuesta en < 24h',
+                'ct-chip2': 'Discovery + propuesta',
+                'ct-chip3': 'Confidencialidad garantizada',
+                'ct-card-title': 'Contacta directo',
+                'ct-card-sub': 'Equipo técnico listo para ayudarte',
+                'ct-phone': 'Teléfono',
+                'ct-mail': 'Correo',
+                'ct-wa': 'WhatsApp',
+                'ct-hours': 'Horario',
+                'ct-hours-detail': 'Lunes a Viernes · 8:00 - 17:00 <br>Sábados · 9:00 - 13:00'
             },
             'en': {
                 'nav-home': 'Home',
@@ -820,7 +833,20 @@
                 'ts-b2': 'Business and tech teams always informed.',
                 'ts-b3': 'Direct feedback we use to improve the product.',
                 'ts-btn-read': 'Read testimonials',
-                'ts-btn-share': 'Share my experience'
+                'ts-btn-share': 'Share my experience',
+                'ct-badge': 'Contact · MCE Projects',
+                'ct-hero-title': 'Book a technical diagnostic',
+                'ct-hero-sub': 'Tell us what you need to automate or launch. We reply with estimated effort, visible risks, recommended tech and first steps.',
+                'ct-chip1': 'Reply in < 24h',
+                'ct-chip2': 'Discovery + proposal',
+                'ct-chip3': 'Confidentiality guaranteed',
+                'ct-card-title': 'Contact directly',
+                'ct-card-sub': 'Tech team ready to help you',
+                'ct-phone': 'Phone',
+                'ct-mail': 'Email',
+                'ct-wa': 'WhatsApp',
+                'ct-hours': 'Hours',
+                'ct-hours-detail': 'Mon to Fri · 8:00 - 17:00 <br>Sat · 9:00 - 13:00'
             },
             'fr': {
                 'nav-home': 'Accueil',
@@ -906,7 +932,20 @@
                 'ts-b2': 'Équipes métiers et tech toujours informées.',
                 'ts-b3': 'Feedback direct que nous utilisons pour améliorer le produit.',
                 'ts-btn-read': 'Lire les témoignages',
-                'ts-btn-share': 'Partager mon expérience'
+                'ts-btn-share': 'Partager mon expérience',
+                'ct-badge': 'Contact · Projets MCE',
+                'ct-hero-title': 'Planifier un diagnostic technique',
+                'ct-hero-sub': 'Dites-nous ce que vous devez automatiser ou lancer. Nous répondons avec effort estimé, risques visibles, techno recommandée et premières étapes.',
+                'ct-chip1': 'Réponse en < 24h',
+                'ct-chip2': 'Discovery + proposition',
+                'ct-chip3': 'Confidentialité garantie',
+                'ct-card-title': 'Contact direct',
+                'ct-card-sub': 'Équipe technique prête à vous aider',
+                'ct-phone': 'Téléphone',
+                'ct-mail': 'Email',
+                'ct-wa': 'WhatsApp',
+                'ct-hours': 'Horaires',
+                'ct-hours-detail': 'Lun à Ven · 8:00 - 17:00 <br>Sam · 9:00 - 13:00'
             },
             'de': {
                 'nav-home': 'Start',
@@ -992,7 +1031,20 @@
                 'ts-b2': 'Business- und Tech-Teams stets informiert.',
                 'ts-b3': 'Direktes Feedback, das wir zur Verbesserung nutzen.',
                 'ts-btn-read': 'Referenzen lesen',
-                'ts-btn-share': 'Meine Erfahrung teilen'
+                'ts-btn-share': 'Meine Erfahrung teilen',
+                'ct-badge': 'Kontakt · Proyectos MCE',
+                'ct-hero-title': 'Technisches Gespräch buchen',
+                'ct-hero-sub': 'Sag uns, was du automatisieren oder launchen willst. Wir antworten mit Aufwand, Risiken, empfohlener Tech und ersten Schritten.',
+                'ct-chip1': 'Antwort in < 24h',
+                'ct-chip2': 'Discovery + Vorschlag',
+                'ct-chip3': 'Vertraulichkeit garantiert',
+                'ct-card-title': 'Direkt kontaktieren',
+                'ct-card-sub': 'Tech-Team bereit, dir zu helfen',
+                'ct-phone': 'Telefon',
+                'ct-mail': 'E-Mail',
+                'ct-wa': 'WhatsApp',
+                'ct-hours': 'Zeiten',
+                'ct-hours-detail': 'Mo–Fr · 8:00 - 17:00 <br>Sa · 9:00 - 13:00'
             },
             'pt': {
                 'nav-home': 'Início',
@@ -1078,7 +1130,20 @@
                 'ts-b2': 'Times de negócio e tech sempre informados.',
                 'ts-b3': 'Feedback direto que usamos para melhorar o produto.',
                 'ts-btn-read': 'Ler depoimentos',
-                'ts-btn-share': 'Compartilhar minha experiência'
+                'ts-btn-share': 'Compartilhar minha experiência',
+                'ct-badge': 'Contato · Proyectos MCE',
+                'ct-hero-title': 'Agende um diagnóstico técnico',
+                'ct-hero-sub': 'Conte o que precisa automatizar ou lançar. Respondemos com esforço estimado, riscos visíveis, tecnologia recomendada e primeiros passos.',
+                'ct-chip1': 'Resposta em < 24h',
+                'ct-chip2': 'Discovery + proposta',
+                'ct-chip3': 'Confidencialidade garantida',
+                'ct-card-title': 'Contato direto',
+                'ct-card-sub': 'Time técnico pronto para ajudar',
+                'ct-phone': 'Telefone',
+                'ct-mail': 'E-mail',
+                'ct-wa': 'WhatsApp',
+                'ct-hours': 'Horário',
+                'ct-hours-detail': 'Seg a Sex · 8:00 - 17:00 <br>Sáb · 9:00 - 13:00'
             },
             'it': {
                 'nav-home': 'Home',
@@ -1164,7 +1229,20 @@
                 'ts-b2': 'Team business e tech sempre informati.',
                 'ts-b3': 'Feedback diretto che usiamo per migliorare il prodotto.',
                 'ts-btn-read': 'Leggi le testimonianze',
-                'ts-btn-share': 'Condividi la mia esperienza'
+                'ts-btn-share': 'Condividi la mia esperienza',
+                'ct-badge': 'Contatto · Proyectos MCE',
+                'ct-hero-title': 'Prenota una diagnosi tecnica',
+                'ct-hero-sub': 'Dicci cosa vuoi automatizzare o lanciare. Rispondiamo con sforzo stimato, rischi visibili, tecnologia consigliata e primi passi.',
+                'ct-chip1': 'Risposta in < 24h',
+                'ct-chip2': 'Discovery + proposta',
+                'ct-chip3': 'Riserbo garantito',
+                'ct-card-title': 'Contatto diretto',
+                'ct-card-sub': 'Team tecnico pronto ad aiutarti',
+                'ct-phone': 'Telefono',
+                'ct-mail': 'Email',
+                'ct-wa': 'WhatsApp',
+                'ct-hours': 'Orari',
+                'ct-hours-detail': 'Lun–Ven · 8:00 - 17:00 <br>Sab · 9:00 - 13:00'
             }
         };
 
