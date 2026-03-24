@@ -45,7 +45,7 @@
     height: 64px;
     object-fit: cover;
     border-radius: 0;
-    animation: botBobCycle 14s ease-in-out infinite;
+    animation: botWaveCycle 14s ease-in-out infinite;
 }
 .float-btn.whatsapp {
     width: 64px;
@@ -57,38 +57,16 @@
     box-shadow: 0 10px 20px rgba(0,0,0,0.25);
     font-size: 1.2rem;
 }
-.float-btn.assistant::after {
-    content: '';
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #ffd700;
-    top: 8px;
-    right: -6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-    transform-origin: left center;
-    animation: botWaveCycle 14s ease-in-out infinite;
-}
 .float-btn.assistant:hover img.bot-img,
-.float-btn.assistant:hover::after,
-.float-btn.assistant.paused img.bot-img,
-.float-btn.assistant.paused::after {
+.float-btn.assistant.paused img.bot-img {
     animation-play-state: paused;
 }
 
-@keyframes botBobCycle {
-    0%,70%   { transform: translateY(0) rotate(0deg); }
-    78%      { transform: translateY(-4px) rotate(-2deg); }
-    86%      { transform: translateY(2px) rotate(2deg); }
-    94%      { transform: translateY(-2px) rotate(-1deg); }
-    100%     { transform: translateY(0) rotate(0deg); }
-}
 @keyframes botWaveCycle {
-    0%,72%   { transform: rotate(0deg); }
-    80%      { transform: rotate(20deg); }
-    88%      { transform: rotate(-16deg); }
-    95%      { transform: rotate(8deg); }
+    0%,70%   { transform: rotate(0deg); }
+    80%      { transform: rotate(10deg); }
+    88%      { transform: rotate(-10deg); }
+    95%      { transform: rotate(6deg); }
     100%     { transform: rotate(0deg); }
 }
 .assistant-panel {
