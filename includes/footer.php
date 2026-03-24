@@ -1106,6 +1106,7 @@
             });
             // Clases i18n-*
             document.querySelectorAll('[class*=\"i18n-\"]').forEach(el => {
+                if (el.dataset.i18n) return; // si ya tiene data-i18n no sobrescribimos (para no borrar íconos)
                 const key = Array.from(el.classList).find(c => c.startsWith('i18n-'))?.replace('i18n-','');
                 if (key && dict[key]) el.innerHTML = dict[key];
             });
