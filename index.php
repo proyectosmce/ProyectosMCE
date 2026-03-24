@@ -148,6 +148,8 @@
     padding: 6px;
     display: none;
     z-index: 5;
+    max-height: 220px;
+    overflow-y: auto;
 }
 .lang-list.open { display: block; }
 .lang-option {
