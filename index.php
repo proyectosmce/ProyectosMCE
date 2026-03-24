@@ -205,39 +205,39 @@
                     <i class="fas fa-sparkles mr-2 text-yellow-300"></i>
                     Proyectos MCE · Software a medida
                 </span>
-                <h1 class="text-4xl md:text-6xl font-bold leading-tight">
+                <h1 class="text-4xl md:text-6xl font-bold leading-tight i18n-hero-title">
                     Software a medida para que tu operación no se detenga
                 </h1>
-                <p class="text-lg md:text-xl text-blue-50 max-w-3xl">
+                <p class="text-lg md:text-xl text-blue-50 max-w-3xl i18n-hero-sub">
                     Planificamos, diseñamos y desarrollamos plataformas web que soportan ventas, inventarios y atención al cliente con control total y visibilidad.
                 </p>
 
                 <div class="flex flex-wrap gap-3">
-                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm">
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-chip1">
                         <i class="fas fa-diagram-project mr-2 text-yellow-300"></i>Entendemos tu proceso primero
                     </span>
-                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm">
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-chip2">
                         <i class="fas fa-pen-ruler mr-2 text-yellow-300"></i>Diseño gráfico (UX/UI) con maquetas claras
                     </span>
-                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm">
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-chip3">
                         <i class="fas fa-bolt mr-2 text-yellow-300"></i>Entregas cortas con pruebas y control
                     </span>
-                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm">
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-chip4">
                         <i class="fas fa-database mr-2 text-yellow-300"></i>Conexiones a servidores (APIs) y datos en orden
                     </span>
                 </div>
 
                 <div class="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
-                    <a href="<?php echo app_url('contacto.php'); ?>" class="inline-flex items-center justify-center bg-white text-slate-900 px-8 py-4 rounded-xl font-semibold shadow-lg shadow-slate-900/20 hover:bg-gray-100 transition">
+                    <a href="<?php echo app_url('contacto.php'); ?>" class="inline-flex items-center justify-center bg-white text-slate-900 px-8 py-4 rounded-xl font-semibold shadow-lg shadow-slate-900/20 hover:bg-gray-100 transition i18n-btn-plan">
                         <i class="fas fa-rocket mr-2"></i> Armar mi plan
                     </a>
-                    <a href="<?php echo app_url('portafolio.php'); ?>" class="inline-flex items-center justify-center border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-slate-900 transition">
+                    <a href="<?php echo app_url('portafolio.php'); ?>" class="inline-flex items-center justify-center border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-slate-900 transition i18n-btn-portfolio">
                         <i class="fas fa-eye mr-2"></i> Ver casos en vivo
                     </a>
-                    <a href="<?php echo app_url('portafolio.php#casos-exito-portafolio'); ?>" class="inline-flex items-center justify-center border-2 border-yellow-300 text-yellow-300 px-8 py-4 rounded-xl font-semibold hover:bg-yellow-300 hover:text-slate-900 transition">
+                    <a href="<?php echo app_url('portafolio.php#casos-exito-portafolio'); ?>" class="inline-flex items-center justify-center border-2 border-yellow-300 text-yellow-300 px-8 py-4 rounded-xl font-semibold hover:bg-yellow-300 hover:text-slate-900 transition i18n-btn-cases">
                         <i class="fas fa-trophy mr-2"></i> Casos de éxito
                     </a>
-                    <a href="<?php echo app_url('servicios.php'); ?>" class="inline-flex items-center text-blue-100 hover:text-white font-semibold">
+                    <a href="<?php echo app_url('servicios.php'); ?>" class="inline-flex items-center text-blue-100 hover:text-white font-semibold i18n-link-services">
                         <span>Servicios</span>
                         <i class="fas fa-arrow-down ml-2"></i>
                     </a>
@@ -245,16 +245,16 @@
 
                 <div class="grid sm:grid-cols-3 gap-4 pt-6 border-t border-white/10 max-w-4xl">
                     <div class="bg-white/5 border border-white/10 rounded-xl p-4">
-                        <p class="text-sm text-blue-100">Gobernanza</p>
-                        <p class="text-lg font-semibold">Backlog claro, prioridades y criterios de entrega</p>
+                        <p class="text-sm text-blue-100 i18n-card1-label">Gobernanza</p>
+                        <p class="text-lg font-semibold i18n-card1-text">Backlog claro, prioridades y criterios de entrega</p>
                     </div>
                     <div class="bg-white/5 border border-white/10 rounded-xl p-4">
-                        <p class="text-sm text-blue-100">Entrega iterativa</p>
-                        <p class="text-lg font-semibold">Demos quincenales, pruebas automáticas y regresiones</p>
+                        <p class="text-sm text-blue-100 i18n-card2-label">Entrega iterativa</p>
+                        <p class="text-lg font-semibold i18n-card2-text">Demos quincenales, pruebas automáticas y regresiones</p>
                     </div>
                     <div class="bg-white/5 border border-white/10 rounded-xl p-4">
-                        <p class="text-sm text-blue-100">Operabilidad</p>
-                        <p class="text-lg font-semibold">Monitoreo, alertas y soporte continuo</p>
+                        <p class="text-sm text-blue-100 i18n-card3-label">Operabilidad</p>
+                        <p class="text-lg font-semibold i18n-card3-text">Monitoreo, alertas y soporte continuo</p>
                     </div>
                 </div>
             </div>
@@ -263,8 +263,8 @@
                 <div class="bg-white/10 border border-white/20 backdrop-blur-xl rounded-2xl p-8 shadow-2xl space-y-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-blue-100">Hoja de ruta MCE</p>
-                            <p class="text-2xl font-semibold text-white">Tu proyecto, con control total</p>
+                            <p class="text-sm text-blue-100 i18n-card4-label">Hoja de ruta MCE</p>
+                            <p class="text-2xl font-semibold text-white i18n-card4-title">Tu proyecto, con control total</p>
                         </div>
                         <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white text-slate-900 font-bold shadow-lg">MCE</span>
                     </div>
@@ -272,22 +272,22 @@
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-clipboard-check"></i></span>
                             <div>
-                                <p class="font-semibold">Arranque y plan</p>
-                                <p class="text-sm text-blue-100">Conversamos de tus procesos y definimos lo más importante primero.</p>
+                                <p class="font-semibold i18n-card4-step1-title">Arranque y plan</p>
+                                <p class="text-sm text-blue-100 i18n-card4-step1-text">Conversamos de tus procesos y definimos lo más importante primero.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-pen-ruler"></i></span>
                             <div>
-                                <p class="font-semibold">Diseño claro</p>
-                                <p class="text-sm text-blue-100">Pantallas fáciles de usar para tu equipo y tus clientes.</p>
+                                <p class="font-semibold i18n-card4-step2-title">Diseño claro</p>
+                                <p class="text-sm text-blue-100 i18n-card4-step2-text">Pantallas fáciles de usar para tu equipo y tus clientes.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-bolt"></i></span>
                             <div>
-                                <p class="font-semibold">Construcción por etapas</p>
-                                <p class="text-sm text-blue-100">Avanzamos en ciclos cortos con avances y pruebas visibles.</p>
+                                <p class="font-semibold i18n-card4-step3-title">Construcción por etapas</p>
+                                <p class="text-sm text-blue-100 i18n-card4-step3-text">Avanzamos en ciclos cortos con avances y pruebas visibles.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
@@ -316,27 +316,27 @@
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
         <div class="grid md:grid-cols-2">
             <div class="p-10 space-y-4">
-                <p class="text-sm font-semibold text-blue-600 uppercase tracking-wide">Presentación</p>
-                <h2 class="text-3xl font-bold text-slate-900">Proyectos MCE </h2>
-                <p class="text-gray-700 leading-relaxed">
+                <p class="text-sm font-semibold text-blue-600 uppercase tracking-wide i18n-pres-label">Presentación</p>
+                <h2 class="text-3xl font-bold text-slate-900 i18n-pres-title">Proyectos MCE </h2>
+                <p class="text-gray-700 leading-relaxed i18n-pres-desc">
                     Equipo con experiencia que entiende tu negocio, diseña la experiencia y entrega software confiable listo para producción.
                 </p>
                 <div class="space-y-3">
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-magnifying-glass-chart"></i></span>
-                        <p class="text-gray-800">Mapeamos objetivos, usuarios y métricas para no programar a ciegas.</p>
+                        <p class="text-gray-800 i18n-pres-b1">Mapeamos objetivos, usuarios y métricas para no programar a ciegas.</p>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-pen-ruler"></i></span>
-                        <p class="text-gray-800">Diseño gráfico (UX/UI) con flujos claros y pantallas que cualquier persona entiende.</p>
+                        <p class="text-gray-800 i18n-pres-b2">Diseño gráfico (UX/UI) con flujos claros y pantallas que cualquier persona entiende.</p>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-server"></i></span>
-                        <p class="text-gray-800">Conexiones a servidores (APIs) y bases de datos para que todo hable entre sí.</p>
+                        <p class="text-gray-800 i18n-pres-b3">Conexiones a servidores (APIs) y bases de datos para que todo hable entre sí.</p>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="mt-1 text-blue-600"><i class="fas fa-headset"></i></span>
-                        <p class="text-gray-800">Soporte, monitoreo y mejoras continuas después de lanzar.</p>
+                        <p class="text-gray-800 i18n-pres-b4">Soporte, monitoreo y mejoras continuas después de lanzar.</p>
                     </div>
                 </div>
             </div>
@@ -346,40 +346,84 @@
                     <li class="flex items-start gap-3 timeline-item">
                         <span class="timeline-bullet w-8 h-8 rounded-full bg-white/15 flex items-center justify-center font-semibold">1</span>
                         <div>
-                            <p class="font-semibold">Kickoff y plan</p>
-                            <p class="text-sm text-blue-100">Revisamos tus objetivos y qué debe hacer la solución.</p>
+                            <p class="font-semibold i18n-tl1-title">Kickoff y plan</p>
+                            <p class="text-sm text-blue-100 i18n-tl1-text">Revisamos tus objetivos y qué debe hacer la solución.</p>
                         </div>
                     </li>
                     <li class="flex items-start gap-3 timeline-item">
                         <span class="timeline-bullet w-8 h-8 rounded-full bg-white/15 flex items-center justify-center font-semibold">2</span>
                         <div>
-                            <p class="font-semibold">Diseño y prototipos</p>
-                            <p class="text-sm text-blue-100">Te mostramos maquetas para confirmar que el flujo es correcto.</p>
+                            <p class="font-semibold i18n-tl2-title">Diseño y prototipos</p>
+                            <p class="text-sm text-blue-100 i18n-tl2-text">Te mostramos maquetas para confirmar que el flujo es correcto.</p>
                         </div>
                     </li>
                     <li class="flex items-start gap-3 timeline-item">
                         <span class="timeline-bullet w-8 h-8 rounded-full bg-white/15 flex items-center justify-center font-semibold">3</span>
                         <div>
-                            <p class="font-semibold">Desarrollo incremental</p>
-                            <p class="text-sm text-blue-100">Entregamos en ciclos cortos con pruebas y notas claras.</p>
+                            <p class="font-semibold i18n-tl3-title">Desarrollo incremental</p>
+                            <p class="text-sm text-blue-100 i18n-tl3-text">Entregamos en ciclos cortos con pruebas y notas claras.</p>
                         </div>
                     </li>
                     <li class="flex items-start gap-3 timeline-item">
                         <span class="timeline-bullet w-8 h-8 rounded-full bg-white/15 flex items-center justify-center font-semibold">4</span>
                         <div>
-                            <p class="font-semibold">Lanzamiento y soporte</p>
-                            <p class="text-sm text-blue-100">Publicamos, monitoreamos y mejoramos de forma continua.</p>
+                            <p class="font-semibold i18n-tl4-title">Lanzamiento y soporte</p>
+                            <p class="text-sm text-blue-100 i18n-tl4-text">Publicamos, monitoreamos y mejoramos de forma continua.</p>
                         </div>
                     </li>
                 </ul>
                 <div class="p-4 border border-white/20 rounded-xl bg-white/10">
-                    <p class="text-sm text-blue-100">Disponibilidad</p>
-                    <p class="font-semibold">Equipo listo para comenzar en menos de 7 días</p>
+                    <p class="text-sm text-blue-100 i18n-availability-label">Disponibilidad</p>
+                    <p class="font-semibold i18n-availability-text">Equipo listo para comenzar en menos de 7 días</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Selector de idioma global -->
+<section class="max-w-7xl mx-auto px-4 mt-10">
+    <div class="bg-white rounded-xl shadow-md border border-slate-200 p-4 flex items-center justify-between">
+        <div class="space-y-1">
+            <p class="text-sm text-slate-500 i18n-lang-title">Idioma del sitio</p>
+            <p class="text-lg font-semibold i18n-lang-desc">Elige el idioma para navegar esta página</p>
+        </div>
+        <div class="assistant-lang" style="position:relative;">
+            <select id="site-lang" aria-hidden="true">
+                <option value="es" selected>ES</option>
+                <option value="en">EN</option>
+                <option value="fr">FR</option>
+                <option value="de">DE</option>
+                <option value="pt">PT</option>
+                <option value="it">IT</option>
+            </select>
+            <button id="site-lang-toggle" class="lang-toggle" type="button">
+                <img id="site-lang-flag" src="https://flagcdn.com/w20/es.png" alt="Español">
+                <span id="site-lang-label">Español</span>
+            </button>
+            <div class="lang-list" id="site-lang-list">
+                <div class="lang-option" data-lang="es" data-flag="es" data-label="Español">
+                    <img src="https://flagcdn.com/w20/es.png" alt="Español"><span>Español</span>
+                </div>
+                <div class="lang-option" data-lang="en" data-flag="us" data-label="English">
+                    <img src="https://flagcdn.com/w20/us.png" alt="English"><span>English</span>
+                </div>
+                <div class="lang-option" data-lang="fr" data-flag="fr" data-label="Français">
+                    <img src="https://flagcdn.com/w20/fr.png" alt="Français"><span>Français</span>
+                </div>
+                <div class="lang-option" data-lang="de" data-flag="de" data-label="Deutsch">
+                    <img src="https://flagcdn.com/w20/de.png" alt="Deutsch"><span>Deutsch</span>
+                </div>
+                <div class="lang-option" data-lang="pt" data-flag="br" data-label="Português">
+                    <img src="https://flagcdn.com/w20/br.png" alt="Português"><span>Português</span>
+                </div>
+                <div class="lang-option" data-lang="it" data-flag="it" data-label="Italiano">
+                    <img src="https://flagcdn.com/w20/it.png" alt="Italiano"><span>Italiano</span>
+                </div>
+            </div>
+        </div>
+    </div>
+ </section>
 
 <?php include 'includes/footer.php'; ?>
 

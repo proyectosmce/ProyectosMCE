@@ -645,6 +645,454 @@
         });
     })();
     </script>
+
+    <!-- Traducción del sitio -->
+    <script>
+    (() => {
+        const t = {
+            'es': {
+                'nav-home': 'Inicio',
+                'nav-services': 'Servicios',
+                'nav-portfolio': 'Portafolio',
+                'nav-testimonials': 'Testimonios',
+                'nav-contact': 'Contacto',
+                'nav-subtitle': 'Desarrollo   Web',
+                'hero-title': 'Software a medida para que tu operación no se detenga',
+                'hero-sub': 'Planificamos, diseñamos y desarrollamos plataformas web que soportan ventas, inventarios y atención al cliente con control total y visibilidad.',
+                'chip1': 'Entendemos tu proceso primero',
+                'chip2': 'Diseño gráfico (UX/UI) con maquetas claras',
+                'chip3': 'Entregas cortas con pruebas y control',
+                'chip4': 'Conexiones a servidores (APIs) y datos en orden',
+                'btn-plan': 'Armar mi plan',
+                'btn-portfolio': 'Ver casos en vivo',
+                'btn-cases': 'Casos de éxito',
+                'link-services': 'Servicios',
+                'card1-label': 'Gobernanza',
+                'card1-text': 'Backlog claro, prioridades y criterios de entrega',
+                'card2-label': 'Entrega iterativa',
+                'card2-text': 'Demos quincenales, pruebas automáticas y regresiones',
+                'card3-label': 'Operabilidad',
+                'card3-text': 'Monitoreo, alertas y soporte continuo',
+                'card4-label': 'Hoja de ruta MCE',
+                'card4-title': 'Tu proyecto, con control total',
+                'card4-step1-title': 'Arranque y plan',
+                'card4-step1-text': 'Conversamos de tus procesos y definimos lo más importante primero.',
+                'card4-step2-title': 'Diseño claro',
+                'card4-step2-text': 'Pantallas fáciles de usar para tu equipo y tus clientes.',
+                'card4-step3-title': 'Construcción por etapas',
+                'card4-step3-text': 'Avanzamos en ciclos cortos con avances y pruebas visibles.',
+                'pres-label': 'Presentación',
+                'pres-title': 'Proyectos MCE',
+                'pres-desc': 'Equipo con experiencia que entiende tu negocio, diseña la experiencia y entrega software confiable listo para producción.',
+                'pres-b1': 'Mapeamos objetivos, usuarios y métricas para no programar a ciegas.',
+                'pres-b2': 'Diseño gráfico (UX/UI) con flujos claros y pantallas que cualquier persona entiende.',
+                'pres-b3': 'Conexiones a servidores (APIs) y bases de datos para que todo hable entre sí.',
+                'pres-b4': 'Soporte, monitoreo y mejoras continuas después de lanzar.',
+                'tl1-title': 'Kickoff y plan',
+                'tl1-text': 'Revisamos tus objetivos y qué debe hacer la solución.',
+                'tl2-title': 'Diseño y prototipos',
+                'tl2-text': 'Te mostramos maquetas para confirmar que el flujo es correcto.',
+                'tl3-title': 'Desarrollo incremental',
+                'tl3-text': 'Entregamos en ciclos cortos con pruebas y notas claras.',
+                'tl4-title': 'Lanzamiento y soporte',
+                'tl4-text': 'Publicamos, monitoreamos y mejoramos de forma continua.',
+                'availability-label': 'Disponibilidad',
+                'availability-text': 'Equipo listo para comenzar en menos de 7 días',
+                'lang-title': 'Idioma del sitio',
+                'lang-desc': 'Elige el idioma para navegar esta página'
+            },
+            'en': {
+                'nav-home': 'Home',
+                'nav-services': 'Services',
+                'nav-portfolio': 'Portfolio',
+                'nav-testimonials': 'Testimonials',
+                'nav-contact': 'Contact',
+                'nav-subtitle': 'Web Development',
+                'hero-title': 'Custom software so your operation never stops',
+                'hero-sub': 'We plan, design and build web platforms that support sales, inventory and customer care with full control and visibility.',
+                'chip1': 'We understand your process first',
+                'chip2': 'UX/UI design with clear mockups',
+                'chip3': 'Short iterations with tests and control',
+                'chip4': 'Server (API) connections and data in order',
+                'btn-plan': 'Build my plan',
+                'btn-portfolio': 'See live cases',
+                'btn-cases': 'Success stories',
+                'link-services': 'Services',
+                'card1-label': 'Governance',
+                'card1-text': 'Clear backlog, priorities and acceptance criteria',
+                'card2-label': 'Iterative delivery',
+                'card2-text': 'Bi-weekly demos, automated tests and regressions',
+                'card3-label': 'Operability',
+                'card3-text': 'Monitoring, alerts and continuous support',
+                'card4-label': 'MCE roadmap',
+                'card4-title': 'Your project, full control',
+                'card4-step1-title': 'Kickoff & plan',
+                'card4-step1-text': 'We review your processes and define what matters most first.',
+                'card4-step2-title': 'Clear design',
+                'card4-step2-text': 'Screens your team and customers can use easily.',
+                'card4-step3-title': 'Build in stages',
+                'card4-step3-text': 'Short cycles with visible advances and tests.',
+                'pres-label': 'Overview',
+                'pres-title': 'Proyectos MCE',
+                'pres-desc': 'A seasoned team that understands your business, designs the experience and ships reliable software to production.',
+                'pres-b1': 'We map goals, users and metrics so we don’t code blindly.',
+                'pres-b2': 'UX/UI design with clear flows and screens anyone can follow.',
+                'pres-b3': 'API and database connections so everything talks to each other.',
+                'pres-b4': 'Support, monitoring and continuous improvements after launch.',
+                'tl1-title': 'Kickoff & plan',
+                'tl1-text': 'We review your goals and what the solution must do.',
+                'tl2-title': 'Design & prototypes',
+                'tl2-text': 'We show mockups to confirm the flow is right.',
+                'tl3-title': 'Incremental delivery',
+                'tl3-text': 'Short cycles with tests and clear notes.',
+                'tl4-title': 'Launch & support',
+                'tl4-text': 'We deploy, monitor and improve continuously.',
+                'availability-label': 'Availability',
+                'availability-text': 'Team ready to start in under 7 days',
+                'lang-title': 'Site language',
+                'lang-desc': 'Pick the language to browse this page'
+            },
+            'fr': {
+                'nav-home': 'Accueil',
+                'nav-services': 'Services',
+                'nav-portfolio': 'Portfolio',
+                'nav-testimonials': 'Témoignages',
+                'nav-contact': 'Contact',
+                'nav-subtitle': 'Développement Web',
+                'hero-title': 'Logiciel sur mesure pour que votre opération ne s’arrête pas',
+                'hero-sub': 'Nous planifions, concevons et développons des plateformes web pour ventes, inventaires et service client avec contrôle total et visibilité.',
+                'chip1': 'Nous comprenons d’abord vos processus',
+                'chip2': 'Design UX/UI avec maquettes claires',
+                'chip3': 'Itérations courtes avec tests et contrôle',
+                'chip4': 'Connexions serveurs (APIs) et données en ordre',
+                'btn-plan': 'Créer mon plan',
+                'btn-portfolio': 'Voir des cas en ligne',
+                'btn-cases': 'Succès clients',
+                'link-services': 'Services',
+                'card1-label': 'Gouvernance',
+                'card1-text': 'Backlog clair, priorités et critères d’acceptation',
+                'card2-label': 'Livraison itérative',
+                'card2-text': 'Démos bi-hebdo, tests automatiques et régressions',
+                'card3-label': 'Opérabilité',
+                'card3-text': 'Monitoring, alertes et support continu',
+                'card4-label': 'Feuille de route MCE',
+                'card4-title': 'Votre projet, avec contrôle total',
+                'card4-step1-title': 'Kickoff & plan',
+                'card4-step1-text': 'On revoit vos processus et on priorise l’essentiel.',
+                'card4-step2-title': 'Design clair',
+                'card4-step2-text': 'Écrans faciles pour votre équipe et vos clients.',
+                'card4-step3-title': 'Construction par étapes',
+                'card4-step3-text': 'Cycles courts avec avancées et tests visibles.',
+                'pres-label': 'Présentation',
+                'pres-title': 'Projets MCE',
+                'pres-desc': 'Équipe expérimentée qui comprend votre métier, conçoit l’expérience et livre du logiciel fiable prêt pour la prod.',
+                'pres-b1': 'Nous cartographions objectifs, utilisateurs et métriques pour ne pas coder à l’aveugle.',
+                'pres-b2': 'Design UX/UI avec parcours clairs et écrans compréhensibles.',
+                'pres-b3': 'Connexions API et bases de données pour que tout communique.',
+                'pres-b4': 'Support, monitoring et améliorations continues après lancement.',
+                'tl1-title': 'Kickoff & plan',
+                'tl1-text': 'Nous revoyons vos objectifs et ce que doit faire la solution.',
+                'tl2-title': 'Design & prototypes',
+                'tl2-text': 'Nous montrons des maquettes pour confirmer le flux.',
+                'tl3-title': 'Développement incrémental',
+                'tl3-text': 'Cycles courts avec tests et notes claires.',
+                'tl4-title': 'Lancement & support',
+                'tl4-text': 'Nous publions, monitorons et améliorons en continu.',
+                'availability-label': 'Disponibilité',
+                'availability-text': 'Équipe prête à démarrer en moins de 7 jours',
+                'lang-title': 'Langue du site',
+                'lang-desc': 'Choisissez la langue pour naviguer cette page'
+            },
+            'de': {
+                'nav-home': 'Start',
+                'nav-services': 'Leistungen',
+                'nav-portfolio': 'Portfolio',
+                'nav-testimonials': 'Referenzen',
+                'nav-contact': 'Kontakt',
+                'nav-subtitle': 'Webentwicklung',
+                'hero-title': 'Individuelle Software, damit dein Betrieb nicht stoppt',
+                'hero-sub': 'Wir planen, designen und bauen Webplattformen für Vertrieb, Lager und Kundenservice mit vollem Überblick.',
+                'chip1': 'Wir verstehen zuerst deinen Prozess',
+                'chip2': 'UX/UI-Design mit klaren Mockups',
+                'chip3': 'Kurze Iterationen mit Tests und Kontrolle',
+                'chip4': 'Server- (API) Anbindungen und saubere Daten',
+                'btn-plan': 'Meinen Plan starten',
+                'btn-portfolio': 'Live-Cases ansehen',
+                'btn-cases': 'Erfolgsgeschichten',
+                'link-services': 'Leistungen',
+                'card1-label': 'Governance',
+                'card1-text': 'Klares Backlog, Prioritäten und Abnahmekriterien',
+                'card2-label': 'Iterative Lieferung',
+                'card2-text': 'Zweiwöchentliche Demos, automatisierte Tests und Regressionen',
+                'card3-label': 'Betriebsfähigkeit',
+                'card3-text': 'Monitoring, Alerts und kontinuierlicher Support',
+                'card4-label': 'MCE Roadmap',
+                'card4-title': 'Dein Projekt, volle Kontrolle',
+                'card4-step1-title': 'Kickoff & Plan',
+                'card4-step1-text': 'Wir prüfen Prozesse und priorisieren das Wichtigste zuerst.',
+                'card4-step2-title': 'Klares Design',
+                'card4-step2-text': 'Einfache Screens für Team und Kunden.',
+                'card4-step3-title': 'Schrittweiser Aufbau',
+                'card4-step3-text': 'Kurze Zyklen mit sichtbaren Fortschritten und Tests.',
+                'pres-label': 'Vorstellung',
+                'pres-title': 'Proyectos MCE',
+                'pres-desc': 'Ein erfahrenes Team versteht dein Business, designt die Experience und liefert verlässliche Software in Produktion.',
+                'pres-b1': 'Wir mappen Ziele, Nutzer und Metriken, damit wir nicht blind entwickeln.',
+                'pres-b2': 'UX/UI mit klaren Flows und verständlichen Screens.',
+                'pres-b3': 'API- und Datenbank-Anbindungen, damit alles spricht.',
+                'pres-b4': 'Support, Monitoring und kontinuierliche Verbesserungen nach dem Launch.',
+                'tl1-title': 'Kickoff & Plan',
+                'tl1-text': 'Wir prüfen deine Ziele und was die Lösung leisten muss.',
+                'tl2-title': 'Design & Prototypen',
+                'tl2-text': 'Wir zeigen Mockups, um den Flow zu bestätigen.',
+                'tl3-title': 'Inkrementelle Entwicklung',
+                'tl3-text': 'Kurze Zyklen mit Tests und klaren Notizen.',
+                'tl4-title': 'Launch & Support',
+                'tl4-text': 'Wir deployen, monitoren und verbessern kontinuierlich.',
+                'availability-label': 'Verfügbarkeit',
+                'availability-text': 'Team startklar in unter 7 Tagen',
+                'lang-title': 'Seitensprache',
+                'lang-desc': 'Wähle die Sprache für diese Seite'
+            },
+            'pt': {
+                'nav-home': 'Início',
+                'nav-services': 'Serviços',
+                'nav-portfolio': 'Portfólio',
+                'nav-testimonials': 'Depoimentos',
+                'nav-contact': 'Contato',
+                'nav-subtitle': 'Desenvolvimento Web',
+                'hero-title': 'Software sob medida para sua operação não parar',
+                'hero-sub': 'Planejamos, desenhamos e desenvolvemos plataformas web que suportam vendas, estoques e atendimento com controle total e visibilidade.',
+                'chip1': 'Entendemos seu processo primeiro',
+                'chip2': 'Design UX/UI com maquetes claras',
+                'chip3': 'Entregas curtas com testes e controle',
+                'chip4': 'Conexões com servidores (APIs) e dados em ordem',
+                'btn-plan': 'Montar meu plano',
+                'btn-portfolio': 'Ver casos ao vivo',
+                'btn-cases': 'Casos de sucesso',
+                'link-services': 'Serviços',
+                'card1-label': 'Governança',
+                'card1-text': 'Backlog claro, prioridades e critérios de entrega',
+                'card2-label': 'Entrega iterativa',
+                'card2-text': 'Demos quinzenais, testes automáticos e regressões',
+                'card3-label': 'Operabilidade',
+                'card3-text': 'Monitoramento, alertas e suporte contínuo',
+                'card4-label': 'Roteiro MCE',
+                'card4-title': 'Seu projeto, com controle total',
+                'card4-step1-title': 'Kickoff e plano',
+                'card4-step1-text': 'Revisamos processos e priorizamos o mais importante primeiro.',
+                'card4-step2-title': 'Design claro',
+                'card4-step2-text': 'Telass fáceis para seu time e clientes.',
+                'card4-step3-title': 'Construção por etapas',
+                'card4-step3-text': 'Ciclos curtos com avanços e testes visíveis.',
+                'pres-label': 'Apresentação',
+                'pres-title': 'Proyectos MCE',
+                'pres-desc': 'Equipe experiente que entende seu negócio, desenha a experiência e entrega software confiável pronto para produção.',
+                'pres-b1': 'Mapeamos objetivos, usuários e métricas para não programar no escuro.',
+                'pres-b2': 'UX/UI com fluxos claros e telas fáceis de entender.',
+                'pres-b3': 'Conexões API e bases de dados para tudo conversar.',
+                'pres-b4': 'Suporte, monitoramento e melhorias contínuas após o lançamento.',
+                'tl1-title': 'Kickoff e plano',
+                'tl1-text': 'Revisamos seus objetivos e o que a solução deve fazer.',
+                'tl2-title': 'Design e protótipos',
+                'tl2-text': 'Mostramos maquetes para confirmar o fluxo.',
+                'tl3-title': 'Desenvolvimento incremental',
+                'tl3-text': 'Ciclos curtos com testes e notas claras.',
+                'tl4-title': 'Lançamento e suporte',
+                'tl4-text': 'Publicamos, monitoramos e melhoramos continuamente.',
+                'availability-label': 'Disponibilidade',
+                'availability-text': 'Equipe pronta para começar em menos de 7 dias',
+                'lang-title': 'Idioma do site',
+                'lang-desc': 'Escolha o idioma para navegar na página'
+            },
+            'it': {
+                'nav-home': 'Home',
+                'nav-services': 'Servizi',
+                'nav-portfolio': 'Portfolio',
+                'nav-testimonials': 'Testimonianze',
+                'nav-contact': 'Contatti',
+                'nav-subtitle': 'Sviluppo Web',
+                'hero-title': 'Software su misura perché la tua operazione non si fermi',
+                'hero-sub': 'Pianifichiamo, progettiamo e sviluppiamo piattaforme web per vendite, inventari e customer care con controllo totale e visibilità.',
+                'chip1': 'Capire prima il tuo processo',
+                'chip2': 'Design UX/UI con mockup chiari',
+                'chip3': 'Rilasci brevi con test e controllo',
+                'chip4': 'Connessioni server (API) e dati in ordine',
+                'btn-plan': 'Crea il mio piano',
+                'btn-portfolio': 'Vedi casi live',
+                'btn-cases': 'Casi di successo',
+                'link-services': 'Servizi',
+                'card1-label': 'Governance',
+                'card1-text': 'Backlog chiaro, priorità e criteri di consegna',
+                'card2-label': 'Consegna iterativa',
+                'card2-text': 'Demo quindicinali, test automatici e regression',
+                'card3-label': 'Operatività',
+                'card3-text': 'Monitoraggio, alert e supporto continuo',
+                'card4-label': 'Roadmap MCE',
+                'card4-title': 'Il tuo progetto, controllo totale',
+                'card4-step1-title': 'Kickoff e piano',
+                'card4-step1-text': 'Rivediamo i processi e priorizziamo ciò che conta.',
+                'card4-step2-title': 'Design chiaro',
+                'card4-step2-text': 'Schermate semplici per team e clienti.',
+                'card4-step3-title': 'Costruzione a fasi',
+                'card4-step3-text': 'Cicli brevi con progressi e test visibili.',
+                'pres-label': 'Presentazione',
+                'pres-title': 'Proyectos MCE',
+                'pres-desc': 'Team esperto che capisce il tuo business, progetta l’esperienza e consegna software affidabile pronto per la produzione.',
+                'pres-b1': 'Mappiamo obiettivi, utenti e metriche per non programmare al buio.',
+                'pres-b2': 'UX/UI con flussi chiari e schermate comprensibili.',
+                'pres-b3': 'Connessioni API e database per far dialogare tutto.',
+                'pres-b4': 'Supporto, monitoraggio e miglioramenti continui dopo il lancio.',
+                'tl1-title': 'Kickoff e piano',
+                'tl1-text': 'Rivediamo gli obiettivi e cosa deve fare la soluzione.',
+                'tl2-title': 'Design e prototipi',
+                'tl2-text': 'Mostriamo mockup per confermare il flusso.',
+                'tl3-title': 'Sviluppo incrementale',
+                'tl3-text': 'Cicli brevi con test e note chiare.',
+                'tl4-title': 'Lancio e supporto',
+                'tl4-text': 'Pubblicazione, monitoraggio e miglioramenti continui.',
+                'availability-label': 'Disponibilità',
+                'availability-text': 'Team pronto a partire in meno di 7 giorni',
+                'lang-title': 'Lingua del sito',
+                'lang-desc': 'Scegli la lingua per navigare questa pagina'
+            }
+        };
+
+        const elems = (cls, key) => document.querySelectorAll('.i18n-' + key) || [];
+
+        function applyLang(lang) {
+            const dict = t[lang] || t.es;
+            for (const key in dict) {
+                elems('', key).forEach(el => el.innerHTML = dict[key]);
+                const dataElems = document.querySelectorAll(`[data-i18n=\"${key}\"]`);
+                dataElems.forEach(el => el.querySelector('span') ? el.querySelector('span').innerHTML = dict[key] : el.innerHTML = dict[key]);
+            }
+            localStorage.setItem('siteLang', lang);
+        }
+
+        // Map keys to elements
+        const mapClass = {
+            'hero-title': '.i18n-hero-title',
+            'hero-sub': '.i18n-hero-sub',
+            'chip1': '.i18n-chip1',
+            'chip2': '.i18n-chip2',
+            'chip3': '.i18n-chip3',
+            'chip4': '.i18n-chip4',
+            'btn-plan': '.i18n-btn-plan',
+            'btn-portfolio': '.i18n-btn-portfolio',
+            'btn-cases': '.i18n-btn-cases',
+            'link-services': '.i18n-link-services',
+            'card1-label': '.i18n-card1-label',
+            'card1-text': '.i18n-card1-text',
+            'card2-label': '.i18n-card2-label',
+            'card2-text': '.i18n-card2-text',
+            'card3-label': '.i18n-card3-label',
+            'card3-text': '.i18n-card3-text',
+            'card4-label': '.i18n-card4-label',
+            'card4-title': '.i18n-card4-title',
+            'card4-step1-title': '.i18n-card4-step1-title',
+            'card4-step1-text': '.i18n-card4-step1-text',
+            'card4-step2-title': '.i18n-card4-step2-title',
+            'card4-step2-text': '.i18n-card4-step2-text',
+            'card4-step3-title': '.i18n-card4-step3-title',
+            'card4-step3-text': '.i18n-card4-step3-text',
+            'pres-label': '.i18n-pres-label',
+            'pres-title': '.i18n-pres-title',
+            'pres-desc': '.i18n-pres-desc',
+            'pres-b1': '.i18n-pres-b1',
+            'pres-b2': '.i18n-pres-b2',
+            'pres-b3': '.i18n-pres-b3',
+            'pres-b4': '.i18n-pres-b4',
+            'tl1-title': '.i18n-tl1-title',
+            'tl1-text': '.i18n-tl1-text',
+            'tl2-title': '.i18n-tl2-title',
+            'tl2-text': '.i18n-tl2-text',
+            'tl3-title': '.i18n-tl3-title',
+            'tl3-text': '.i18n-tl3-text',
+            'tl4-title': '.i18n-tl4-title',
+            'tl4-text': '.i18n-tl4-text',
+            'availability-label': '.i18n-availability-label',
+            'availability-text': '.i18n-availability-text',
+            'lang-title': '.i18n-lang-title',
+            'lang-desc': '.i18n-lang-desc'
+        };
+
+        function setSiteLangUI(lang) {
+            const flagMap = { es:'es', en:'us', fr:'fr', de:'de', pt:'br', it:'it' };
+            const labelMap = { es:'Español', en:'English', fr:'Français', de:'Deutsch', pt:'Português', it:'Italiano' };
+            const flag = flagMap[lang] || 'es';
+            const label = labelMap[lang] || 'Español';
+            const flagEl = document.getElementById('site-lang-flag');
+            const labelEl = document.getElementById('site-lang-label');
+            if (flagEl) flagEl.src = `https://flagcdn.com/w20/${flag}.png`;
+            if (labelEl) labelEl.textContent = label;
+            const select = document.getElementById('site-lang');
+            if (select) select.value = lang;
+        }
+
+        function initSiteLang() {
+            const stored = localStorage.getItem('siteLang') || 'es';
+            applyLang(stored);
+            setSiteLangUI(stored);
+        }
+
+        document.getElementById('site-lang-toggle')?.addEventListener('click', () => {
+            document.getElementById('site-lang-list')?.classList.toggle('open');
+        });
+        document.querySelectorAll('#site-lang-list .lang-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                const lang = opt.dataset.lang;
+                const flag = opt.dataset.flag;
+                const label = opt.dataset.label;
+                document.getElementById('site-lang-list')?.classList.remove('open');
+                setSiteLangUI(lang);
+                applyLang(lang);
+            });
+        });
+        document.addEventListener('click', (e) => {
+            const list = document.getElementById('site-lang-list');
+            const toggle = document.getElementById('site-lang-toggle');
+            if (list && toggle && !list.contains(e.target) && !toggle.contains(e.target)) {
+                list.classList.remove('open');
+            }
+        });
+
+        // apply classes mapping
+        for (const key in mapClass) {
+            document.querySelectorAll(mapClass[key]).forEach(el => el.dataset.i18nKey = key);
+        }
+        // apply nav data-i18n spans
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            if (!el.querySelector('span')) {
+                const span = document.createElement('span');
+                span.textContent = el.textContent.trim();
+                el.innerHTML = '';
+                el.appendChild(span);
+            }
+        });
+
+        // replace function using dataset
+        function applyLang(lang) {
+            const dict = t[lang] || t.es;
+            for (const key in mapClass) {
+                document.querySelectorAll(mapClass[key]).forEach(el => {
+                    if (dict[key]) el.innerHTML = dict[key];
+                });
+            }
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if (dict[key]) {
+                    const span = el.querySelector('span');
+                    if (span) span.textContent = dict[key];
+                    else el.textContent = dict[key];
+                }
+            });
+            localStorage.setItem('siteLang', lang);
+        }
+
+        initSiteLang();
+    })();
+    </script>
 </body>
 </html>
 
