@@ -145,11 +145,12 @@
     border: 1px solid #d4dce7;
     border-radius: 10px;
     box-shadow: 0 10px 24px rgba(0,0,0,0.12);
-    padding: 6px 6px 10px;
+    padding: 8px 8px 10px;
     display: none;
     z-index: 5;
-    max-height: 260px;
+    max-height: 320px;
     overflow-y: auto;
+    min-width: 180px;
 }
 .lang-list.open { display: block; }
 .lang-option {
