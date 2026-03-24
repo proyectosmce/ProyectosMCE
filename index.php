@@ -830,6 +830,15 @@
     };
     setLangUI('auto', 'un', 'Auto');
 
+    const lockScroll = () => {
+        document.body.dataset.scrollLock = '1';
+        document.body.style.overflow = 'hidden';
+    };
+    const unlockScroll = () => {
+        delete document.body.dataset.scrollLock;
+        document.body.style.overflow = '';
+    };
+
     function handleAsk() {
         const q = (questionInput.value || '').trim().toLowerCase();
         if (!q) return;
@@ -844,12 +853,15 @@
         toggle.classList.add('paused');
         toggle.style.display = 'none';
         setTimeout(() => questionInput.focus(), 50);
+        lockScroll();
     }
 
     function closePanel() {
         panel.classList.remove('open');
         toggle.classList.remove('paused');
         toggle.style.display = 'grid';
+        langList?.classList.remove('open');
+        unlockScroll();
     }
 
     toggle.addEventListener('click', openPanel);
@@ -879,8 +891,10 @@
         if (!langList || !langToggle) return;
         if (!langList.contains(e.target) && !langToggle.contains(e.target)) {
             langList.classList.remove('open');
+            if (!panel.classList.contains('open')) unlockScroll();
         }
     });
+    langToggle?.addEventListener('click', () => lockScroll());
 })();
 </script>
 
