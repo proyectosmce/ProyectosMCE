@@ -888,10 +888,19 @@
         langList?.classList.toggle('open');
     });
     document.addEventListener('click', (e) => {
-        if (!langList || !langToggle) return;
-        if (!langList.contains(e.target) && !langToggle.contains(e.target)) {
+        const clickInsidePanel = panel.contains(e.target);
+        const clickToggle = toggle.contains(e.target);
+        const clickLangToggle = langToggle?.contains(e.target);
+
+        // Cerrar lista de idiomas si se hace clic fuera
+        if (langList && langToggle && !langList.contains(e.target) && !clickLangToggle) {
             langList.classList.remove('open');
             if (!panel.classList.contains('open')) unlockScroll();
+        }
+
+        // Cerrar el asistente si el clic es fuera del panel y del botón
+        if (panel.classList.contains('open') && !clickInsidePanel && !clickToggle) {
+            closePanel();
         }
     });
     langToggle?.addEventListener('click', () => lockScroll());
