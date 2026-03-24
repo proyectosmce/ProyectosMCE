@@ -346,7 +346,7 @@
                 <option value="it">Italiano</option>
             </select>
         </div>
-        <div class="assistant-answer" id="assistant-answer">Hola, ¿en qué puedo ayudarte sobre nuestros servicios?</div>
+        <div class="assistant-answer" id="assistant-answer"></div>
         <div class="assistant-input">
             <input id="assistant-question" type="text" placeholder="Escribe tu pregunta..." />
             <button id="assistant-send">Enviar</button>
@@ -370,8 +370,9 @@
     const sendBtn = document.getElementById('assistant-send');
     const questionInput = document.getElementById('assistant-question');
     const answerBox = document.getElementById('assistant-answer');
+    const langSelect = document.getElementById('assistant-lang');
 
-    if (!panel || !toggle) return;
+    if (!panel || !toggle || !answerBox || !questionInput) return;
 
     const faqs = [
         { keywords: ['hola', 'buenas', 'saludo', 'hello', 'hi', 'hey', 'bonjour', 'salut', 'hallo', 'ola', 'olá', 'ciao'], answers: {
@@ -744,7 +745,7 @@
     function handleAsk() {
         const q = (questionInput.value || '').trim().toLowerCase();
         if (!q) return;
-        const choice = langSelect.value;
+        const choice = langSelect ? langSelect.value : 'auto';
         const lang = choice === 'auto' ? detectLang(q) : choice;
         const raw = isRelevant(q) ? findAnswer(q, lang) : (defaultMsg[lang] || defaultMsg.es);
         answerBox.innerHTML = linkify(raw);
@@ -772,9 +773,11 @@
             handleAsk();
         }
     });
-    langSelect.addEventListener('change', setGreeting);
-
-    setGreeting();
+    langSelect?.addEventListener('change', () => {
+        const choice = langSelect.value;
+        const lang = choice === 'auto' ? 'es' : choice;
+        answerBox.innerHTML = linkify(greeting[lang] || greeting.es);
+    });
 })();
 </script>
 
