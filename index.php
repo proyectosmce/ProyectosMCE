@@ -113,6 +113,18 @@
     min-height: 60px;
     line-height: 1.4;
 }
+.assistant-lang {
+    display: flex;
+    justify-content: flex-end;
+}
+.assistant-lang select {
+    padding: 6px 10px;
+    border-radius: 10px;
+    border: 1px solid #d4dce7;
+    font-size: 0.85rem;
+    background: #fff;
+    color: #1b2b48;
+}
 .assistant-input { display: flex; gap: 8px; }
 .assistant-input input {
     flex: 1; padding: 10px 12px; border-radius: 10px;
@@ -323,6 +335,17 @@
         <button id="assistant-close" style="background:none;border:none;color:#ffd700;font-weight:800;font-size:1rem;cursor:pointer;">×</button>
     </div>
     <div class="assistant-body">
+        <div class="assistant-lang">
+            <select id="assistant-lang">
+                <option value="auto">Auto</option>
+                <option value="es">Español</option>
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="pt">Português</option>
+                <option value="it">Italiano</option>
+            </select>
+        </div>
         <div class="assistant-answer" id="assistant-answer">Hola, ¿en qué puedo ayudarte sobre nuestros servicios?</div>
         <div class="assistant-input">
             <input id="assistant-question" type="text" placeholder="Escribe tu pregunta..." />
@@ -682,6 +705,15 @@
         it: 'Posso rispondere solo sui contenuti e servizi di questo sito: sviluppo web su misura, e-commerce, inventari, UX/UI, API, supporto e sessioni Discovery.'
     };
 
+    const greeting = {
+        es: 'Hola, ¿cómo estás? ¿En qué puedo ayudarte hoy?',
+        en: 'Hi! How are you? How can I help you today?',
+        fr: 'Salut ! Comment ça va ? Comment puis-je t’aider aujourd’hui ?',
+        de: 'Hallo! Wie geht’s? Wobei kann ich dir heute helfen?',
+        pt: 'Oi! Tudo bem? Como posso ajudar você hoje?',
+        it: 'Ciao! Come stai? Come posso aiutarti oggi?'
+    };
+
     const detectLang = (q) => {
         const lower = q;
         if (/[àâçéèêëîïôûùüÿœ]/.test(lower) || lower.match(/\bbonjour|salut\b/)) return 'fr';
@@ -703,10 +735,17 @@
         return match.answers[lang] || match.answers.es || defaultMsg[lang] || defaultMsg.es;
     };
 
+    function setGreeting() {
+        const choice = langSelect.value;
+        const lang = choice === 'auto' ? 'es' : choice;
+        answerBox.innerHTML = linkify(greeting[lang] || greeting.es);
+    }
+
     function handleAsk() {
         const q = (questionInput.value || '').trim().toLowerCase();
         if (!q) return;
-        const lang = detectLang(q);
+        const choice = langSelect.value;
+        const lang = choice === 'auto' ? detectLang(q) : choice;
         const raw = isRelevant(q) ? findAnswer(q, lang) : (defaultMsg[lang] || defaultMsg.es);
         answerBox.innerHTML = linkify(raw);
     }
@@ -733,6 +772,9 @@
             handleAsk();
         }
     });
+    langSelect.addEventListener('change', setGreeting);
+
+    setGreeting();
 })();
 </script>
 
