@@ -105,8 +105,8 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
                 <span class="inline-flex items-center px-3 py-1 text-sm font-semibold bg-white/10 border border-white/20 rounded-full backdrop-blur">
                     <i class="fas fa-comment-dots mr-2 text-yellow-300"></i> Testimonios · Proyectos MCE
                 </span>
-                <h1 class="text-4xl md:text-5xl font-bold leading-tight">Lo que dicen quienes operan con nuestro software</h1>
-                <p class="text-lg text-blue-50 max-w-3xl">
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight i18n-ts-hero-title" data-i18n="ts-hero-title">Lo que dicen quienes operan con nuestro software</h1>
+                <p class="text-lg text-blue-50 max-w-3xl i18n-ts-hero-sub" data-i18n="ts-hero-sub">
                     Comentarios de equipos que hoy usan las soluciones en producción: releases frecuentes, soporte real y métricas visibles.
                 </p>
                 <div class="space-y-3">

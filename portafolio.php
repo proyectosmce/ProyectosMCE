@@ -45,8 +45,8 @@ $featuredProject = $projects[0] ?? null;
                 <div class="bg-white/10 border border-white/20 backdrop-blur-xl rounded-2xl p-8 shadow-2xl space-y-5">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-blue-100">Qué verás</p>
-                            <p class="text-2xl font-semibold text-white">Casos listos para inspirar tu proyecto</p>
+                            <p class="text-sm text-blue-100 i18n-pf-what" data-i18n="pf-what">Qué verás</p>
+                            <p class="text-2xl font-semibold text-white i18n-pf-what-title" data-i18n="pf-what-title">Casos listos para inspirar tu proyecto</p>
                         </div>
                         <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-300 text-slate-900 font-bold shadow-lg">MCE</span>
                     </div>
@@ -54,29 +54,29 @@ $featuredProject = $projects[0] ?? null;
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-laptop-code"></i></span>
                             <div>
-                                <p class="font-semibold">Aplicaciones internas</p>
-                                <p class="text-sm text-blue-100">Paneles internos con roles y flujos simples.</p>
+                                <p class="font-semibold i18n-pf-b1-title" data-i18n="pf-b1-title">Aplicaciones internas</p>
+                                <p class="text-sm text-blue-100 i18n-pf-b1-text" data-i18n="pf-b1-text">Paneles internos con roles y flujos simples.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-globe"></i></span>
                             <div>
-                                <p class="font-semibold">Sitios y tiendas online</p>
-                                <p class="text-sm text-blue-100">Catálogos, carrito de compra, pagos y medición de ventas.</p>
+                                <p class="font-semibold i18n-pf-b2-title" data-i18n="pf-b2-title">Sitios y tiendas online</p>
+                                <p class="text-sm text-blue-100 i18n-pf-b2-text" data-i18n="pf-b2-text">Catálogos, carrito de compra, pagos y medición de ventas.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-gears"></i></span>
                             <div>
-                                <p class="font-semibold">Automatizaciones</p>
-                                <p class="text-sm text-blue-100">Integraciones que conectan sistemas y reducen tareas manuales.</p>
+                                <p class="font-semibold i18n-pf-b3-title" data-i18n="pf-b3-title">Automatizaciones</p>
+                                <p class="text-sm text-blue-100 i18n-pf-b3-text" data-i18n="pf-b3-text">Integraciones que conectan sistemas y reducen tareas manuales.</p>
                             </div>
                         </li>
                     </ul>
                     <a href="#proyectos-grid" class="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between hover:bg-white/10 transition">
                         <div>
-                            <p class="text-sm text-blue-100">Entrega con visibilidad</p>
-                            <p class="font-semibold">Demos frecuentes y documentación</p>
+                            <p class="text-sm text-blue-100 i18n-pf-cta-small" data-i18n="pf-cta-small">Entrega con visibilidad</p>
+                            <p class="font-semibold i18n-pf-cta-big" data-i18n="pf-cta-big">Demos frecuentes y documentación</p>
                         </div>
                         <i class="fas fa-arrow-right text-yellow-300"></i>
                     </a>
