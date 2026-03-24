@@ -81,7 +81,7 @@
     border-radius: 14px;
     display: none;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
     z-index: 99998;
 }
 .assistant-panel.open { display: flex; }
@@ -148,9 +148,20 @@
     padding: 8px 8px 10px;
     display: none;
     z-index: 5;
-    max-height: 320px;
+    max-height: 200px;
     overflow-y: auto;
     min-width: 180px;
+}
+.lang-list::-webkit-scrollbar {
+    width: 8px;
+}
+.lang-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 6px;
+}
+.lang-list::-webkit-scrollbar-track {
+    background: #f8fafc;
+    border-radius: 6px;
 }
 .lang-list.open { display: block; }
 .lang-option {
