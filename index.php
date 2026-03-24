@@ -2,6 +2,99 @@
 <?php require_once 'includes/project-helpers.php'; ?>
 <?php include 'includes/header.php'; ?>
 
+<style>
+/* Botones flotantes y asistente */
+.floating-buttons {
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    display: grid;
+    gap: 10px;
+    justify-items: end;
+    grid-auto-rows: min-content;
+    grid-auto-flow: row;
+    z-index: 99999;
+}
+.float-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    border: 2px solid #0a1630;
+    cursor: pointer;
+    color: #0f274b;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    font-size: 1.3rem;
+}
+.float-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 26px rgba(0,0,0,0.32); }
+.float-btn.assistant { background: linear-gradient(135deg, #ffd700, #f0b400); }
+.float-btn.whatsapp {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #25D366;
+    color: #fff;
+    border: 2px solid #128C7E;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+    font-size: 1.2rem;
+}
+.assistant-panel {
+    position: fixed;
+    bottom: 110px;
+    right: 18px;
+    width: 320px;
+    max-height: 420px;
+    background: #ffffff;
+    border: 1px solid #e3e9f3;
+    box-shadow: 0 18px 36px rgba(0,0,0,0.25);
+    border-radius: 14px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 99998;
+}
+.assistant-panel.open { display: flex; }
+.assistant-header {
+    background: linear-gradient(135deg, #0a1630, #12325f);
+    color: white;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+.assistant-header .left { display: flex; align-items: center; gap: 10px; }
+.assistant-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid #ffd700;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+.assistant-body { padding: 12px; display: grid; gap: 10px; font-size: 0.9rem; color: #1b2b48; }
+.assistant-answer {
+    background: #f5f7fb;
+    border: 1px solid #e3e9f3;
+    border-radius: 10px;
+    padding: 10px;
+    min-height: 60px;
+    line-height: 1.4;
+}
+.assistant-input { display: flex; gap: 8px; }
+.assistant-input input {
+    flex: 1; padding: 10px 12px; border-radius: 10px;
+    border: 1px solid #d4dce7; font-size: 0.9rem;
+}
+.assistant-input button {
+    padding: 10px 12px; border-radius: 10px; border: none;
+    background: #0f274b; color: #ffd700; font-weight: 700; cursor: pointer;
+}
+</style>
+
 <!-- Hero Section alineado con otras secciones -->
 <section class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white mce-rounded-hero">
     <div class="absolute inset-0 bg-grid-white/10"></div>
@@ -190,5 +283,90 @@
         </div>
     </div>
 </section>
+
+<!-- Panel de asistente -->
+<div class="assistant-panel" id="assistant-panel">
+    <div class="assistant-header">
+        <div class="left">
+            <img src="<?php echo app_url('asstv.webp'); ?>" alt="Asistente MCE" class="assistant-avatar">
+            <span>Asistente MCE</span>
+        </div>
+        <button id="assistant-close" style="background:none;border:none;color:#ffd700;font-weight:800;font-size:1rem;cursor:pointer;">×</button>
+    </div>
+    <div class="assistant-body">
+        <div class="assistant-answer" id="assistant-answer">Hola, ¿en qué puedo ayudarte sobre nuestros servicios?</div>
+        <div class="assistant-input">
+            <input id="assistant-question" type="text" placeholder="Escribe tu pregunta..." />
+            <button id="assistant-send">Enviar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Botón flotante del asistente (botón de WhatsApp original permanece en footer) -->
+<div class="floating-buttons" id="floating-buttons">
+    <button class="float-btn assistant" id="assistant-toggle" aria-label="Asistente virtual">
+        <img src="<?php echo app_url('asstv.webp'); ?>" alt="Abrir asistente MCE" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+        <span style="position:absolute;opacity:0;">Asistente</span>
+    </button>
+</div>
+
+<script>
+(() => {
+    const panel = document.getElementById('assistant-panel');
+    const toggle = document.getElementById('assistant-toggle');
+    const closeBtn = document.getElementById('assistant-close');
+    const sendBtn = document.getElementById('assistant-send');
+    const questionInput = document.getElementById('assistant-question');
+    const answerBox = document.getElementById('assistant-answer');
+
+    if (!panel || !toggle) return;
+
+    const faqs = [
+        { keywords: ['desarrollo', 'web', 'medida'], answer: 'Creamos software y sitios web a medida, alineados a tus procesos y objetivos.' },
+        { keywords: ['tienda', 'ecommerce', 'online'], answer: 'Construimos tiendas online integradas con inventarios, pagos y logística.' },
+        { keywords: ['inventario', 'stock', 'bodega'], answer: 'Implementamos sistemas de inventario con control de stock y trazabilidad en tiempo real.' },
+        { keywords: ['diseño', 'ux', 'ui'], answer: 'Realizamos diseño UX/UI con flujos claros y pantallas fáciles de usar.' },
+        { keywords: ['api', 'integración', 'erp', 'pasarela', 'pago', 'crm'], answer: 'Conectamos tu sistema con ERPs, pasarelas de pago y CRMs mediante APIs seguras.' },
+        { keywords: ['soporte', '24/7', 'monitoreo'], answer: 'Brindamos soporte continuo, monitoreo y mesa de ayuda para que tu operación no se detenga.' },
+        { keywords: ['discovery', 'agenda', 'sesión'], answer: 'Agenda una sesión Discovery sin costo para revisar tu proyecto.' },
+        { keywords: ['contacto', 'correo', 'email', 'whatsapp'], answer: 'Escríbenos a proyectosmceaa@gmail.com o por WhatsApp al +57 311 412 5971.' },
+    ];
+
+    const defaultMsg = 'Solo puedo responder sobre los contenidos y servicios de esta página: desarrollo web a medida, tiendas online, inventarios, UX/UI, APIs, soporte y sesiones Discovery.';
+
+    const isRelevant = (q) => faqs.some(f => f.keywords.some(k => q.includes(k)));
+    const findAnswer = (q) => {
+        const match = faqs.find(f => f.keywords.some(k => q.includes(k)));
+        return match ? match.answer : defaultMsg;
+    };
+
+    function handleAsk() {
+        const q = (questionInput.value || '').trim().toLowerCase();
+        if (!q) return;
+        answerBox.textContent = isRelevant(q) ? findAnswer(q) : defaultMsg;
+    }
+
+    function openPanel() {
+        panel.classList.add('open');
+        toggle.style.display = 'none';
+        setTimeout(() => questionInput.focus(), 50);
+    }
+
+    function closePanel() {
+        panel.classList.remove('open');
+        toggle.style.display = 'grid';
+    }
+
+    toggle.addEventListener('click', openPanel);
+    closeBtn.addEventListener('click', closePanel);
+    sendBtn.addEventListener('click', handleAsk);
+    questionInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleAsk();
+        }
+    });
+})();
+</script>
 
 <?php include 'includes/footer.php'; ?>
