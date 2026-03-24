@@ -351,49 +351,271 @@
     if (!panel || !toggle) return;
 
     const faqs = [
-        { keywords: ['hola', 'buenas', 'saludo'], answer: 'Hola, ¿cómo estás? ¿En qué puedo ayudarte hoy?' },
-        { keywords: ['desarrollo', 'web', 'medida'], answer: 'Creamos software y sitios web a medida, alineados a tus procesos y objetivos.' },
-        { keywords: ['tienda', 'ecommerce', 'online'], answer: 'Construimos tiendas online integradas con inventarios, pagos y logística.' },
-        { keywords: ['inventario', 'stock', 'bodega'], answer: 'Implementamos sistemas de inventario con control de stock y trazabilidad en tiempo real.' },
-        { keywords: ['diseño', 'ux', 'ui'], answer: 'Realizamos diseño UX/UI con flujos claros y pantallas fáciles de usar.' },
-        { keywords: ['api', 'integración', 'erp', 'pasarela', 'pago', 'crm'], answer: 'Conectamos tu sistema con ERPs, pasarelas de pago y CRMs mediante APIs seguras.' },
-        { keywords: ['soporte', '24/7', 'monitoreo'], answer: 'Brindamos soporte continuo, monitoreo y mesa de ayuda para que tu operación no se detenga.' },
-        { keywords: ['discovery', 'agenda', 'sesión'], answer: 'Discovery es la sesión inicial para entender tu negocio y priorizar el primer entregable.' },
-        { keywords: ['mvp'], answer: 'Un MVP es la versión mínima viable: funciones esenciales para operar y validar rápido con usuarios reales.' },
-        { keywords: ['roadmap', 'hoja de ruta'], answer: 'El roadmap es la hoja de ruta del proyecto: qué se hace primero y qué entregables tiene cada fase.' },
-        { keywords: ['backlog'], answer: 'El backlog es la lista priorizada de tareas/funciones pendientes que alimenta cada sprint.' },
-        { keywords: ['sprint'], answer: 'Un sprint es un ciclo corto de trabajo (1-2 semanas) con objetivos claros y demo al final.' },
-        { keywords: ['qa', 'pruebas'], answer: 'QA son pruebas funcionales/técnicas para asegurar que todo funciona antes de publicar.' },
-        { keywords: ['staging'], answer: 'Staging es el ambiente de pruebas idéntico a producción donde validamos antes de subir cambios.' },
-        { keywords: ['hosting', 'servidor'], answer: 'El hosting/servidor es donde vive tu sitio o app para que esté disponible 24/7.' },
-        { keywords: ['ssl', 'https', 'candado'], answer: 'SSL/HTTPS cifra la conexión y muestra el candado para proteger los datos de tus usuarios.' },
-        { keywords: ['performance', 'rápido', 'velocidad'], answer: 'Performance web es qué tan rápido carga y responde tu sitio; clave para retención y SEO.' },
-        { keywords: ['automatización'], answer: 'Automatización: reemplazar tareas manuales por flujos automáticos (notificaciones, reportes, sincronizaciones).' },
-        { keywords: ['observabilidad', 'alertas', 'monitoreo'], answer: 'Observabilidad/alertas: métricas y avisos automáticos si algo falla o se vuelve lento.' },
-        { keywords: ['escalabilidad'], answer: 'Escalabilidad: que la solución crezca en usuarios/datos sin caerse ni volverse lenta.' },
-        { keywords: ['ux writing', 'microcopy'], answer: 'UX writing/microcopys: textos cortos y claros en botones y mensajes para guiar al usuario.' },
-        { keywords: ['mantenimiento', 'evolutivo'], answer: 'Mantenimiento evolutivo: nuevas mejoras y funciones después del lanzamiento, no solo soporte.' },
-        { keywords: ['integración', 'whatsapp', 'telegram', 'mensajería'], answer: 'Integramos mensajería (WhatsApp/Telegram) para enviar/recibir mensajes y notificaciones automáticas.' },
-        { keywords: ['dashboard'], answer: 'Un dashboard es un panel con métricas y gráficos clave para tomar decisiones rápidas.' },
-        { keywords: ['responsive', 'móvil', 'tablet'], answer: 'Responsive: que la web/app se adapte y se vea bien en móvil, tablet y desktop.' },
-        { keywords: ['seo'], answer: 'SEO básico: títulos, descripciones, estructura y velocidad para que los buscadores entiendan y posicionen mejor tu sitio.' },
-        { keywords: ['backup', 'respaldo'], answer: 'Backup: copias de seguridad programadas para restaurar rápido ante errores o incidentes.' },
-        { keywords: ['mce'], answer: 'MCE es nuestra marca: Proyectos MCE. Son las iniciales de Marlon Carabalí, programador y líder del equipo.' },
-        { keywords: ['contacto', 'correo', 'email', 'whatsapp'], answer: 'Escríbenos a proyectosmceaa@gmail.com o por WhatsApp al +57 311 412 5971.' },
+        { keywords: ['hola', 'buenas', 'saludo', 'hello', 'hi', 'hey', 'bonjour', 'salut', 'hallo', 'ola', 'olá', 'ciao'], answers: {
+            es: 'Hola, ¿cómo estás? ¿En qué puedo ayudarte hoy?',
+            en: 'Hi! How are you? How can I help you today?',
+            fr: 'Salut ! Comment ça va ? Comment puis-je t’aider aujourd’hui ?',
+            de: 'Hallo! Wie geht’s? Wobei kann ich dir heute helfen?',
+            pt: 'Oi! Tudo bem? Como posso ajudar você hoje?',
+            it: 'Ciao! Come stai? Come posso aiutarti oggi?'
+        }},
+        { keywords: ['desarrollo', 'web', 'medida'], answers: {
+            es: 'Creamos software y sitios web a medida, alineados a tus procesos y objetivos.',
+            en: 'We build custom software and websites tailored to your processes and goals.',
+            fr: 'Nous créons des logiciels et sites web sur mesure, adaptés à vos processus et objectifs.',
+            de: 'Wir entwickeln maßgeschneiderte Software und Websites, abgestimmt auf deine Prozesse und Ziele.',
+            pt: 'Criamos software e sites sob medida, alinhados aos seus processos e objetivos.',
+            it: 'Creiamo software e siti web su misura, allineati ai tuoi processi e obiettivi.'
+        }},
+        { keywords: ['tienda', 'ecommerce', 'online', 'shop', 'store'], answers: {
+            es: 'Construimos tiendas online integradas con inventarios, pagos y logística.',
+            en: 'We build online stores integrated with inventory, payments, and logistics.',
+            fr: 'Nous créons des boutiques en ligne intégrées aux stocks, paiements et logistique.',
+            de: 'Wir bauen Online-Shops mit Integration von Lager, Zahlungen und Logistik.',
+            pt: 'Construímos lojas online integradas a estoque, pagamentos e logística.',
+            it: 'Realizziamo e-commerce integrati con inventario, pagamenti e logistica.'
+        }},
+        { keywords: ['inventario', 'stock', 'bodega'], answers: {
+            es: 'Implementamos sistemas de inventario con control de stock y trazabilidad en tiempo real.',
+            en: 'We implement inventory systems with real-time stock control and traceability.',
+            fr: 'Nous mettons en place des systèmes d’inventaire avec contrôle et traçabilité en temps réel.',
+            de: 'Wir implementieren Warenwirtschaft mit Echtzeit-Bestand und Rückverfolgbarkeit.',
+            pt: 'Implementamos sistemas de inventário com controle e rastreabilidade em tempo real.',
+            it: 'Implementiamo sistemi di inventario con controllo stock e tracciabilità in tempo reale.'
+        }},
+        { keywords: ['diseño', 'ux', 'ui', 'design'], answers: {
+            es: 'Realizamos diseño UX/UI con flujos claros y pantallas fáciles de usar.',
+            en: 'We deliver UX/UI design with clear flows and easy-to-use screens.',
+            fr: 'Nous réalisons des designs UX/UI avec des parcours clairs et des écrans simples.',
+            de: 'Wir erstellen UX/UI-Design mit klaren Flows und leicht bedienbaren Screens.',
+            pt: 'Fazemos UX/UI com fluxos claros e telas fáceis de usar.',
+            it: 'Facciamo UX/UI con flussi chiari e schermate facili da usare.'
+        }},
+        { keywords: ['api', 'integración', 'erp', 'pasarela', 'pago', 'crm', 'api', 'integration'], answers: {
+            es: 'Conectamos tu sistema con ERPs, pasarelas de pago y CRMs mediante APIs seguras.',
+            en: 'We connect your system with ERPs, payment gateways, and CRMs through secure APIs.',
+            fr: 'Nous connectons votre système aux ERP, passerelles de paiement et CRM via des API sécurisées.',
+            de: 'Wir verbinden dein System per sicheren APIs mit ERP, Payment-Gateways und CRM.',
+            pt: 'Conectamos seu sistema a ERPs, gateways de pagamento e CRMs por APIs seguras.',
+            it: 'Colleghiamo il tuo sistema a ERP, gateway di pagamento e CRM tramite API sicure.'
+        }},
+        { keywords: ['soporte', '24/7', 'monitoreo', 'support'], answers: {
+            es: 'Brindamos soporte continuo, monitoreo y mesa de ayuda para que tu operación no se detenga.',
+            en: 'We provide continuous support, monitoring, and a help desk so your operation doesn’t stop.',
+            fr: 'Nous assurons support continu, monitoring et helpdesk pour que votre opération ne s’arrête pas.',
+            de: 'Wir bieten kontinuierlichen Support, Monitoring und Helpdesk, damit dein Betrieb nicht stoppt.',
+            pt: 'Oferecemos suporte contínuo, monitoramento e help desk para que sua operação não pare.',
+            it: 'Forniamo supporto continuo, monitoraggio e help desk perché la tua operazione non si fermi.'
+        }},
+        { keywords: ['discovery', 'agenda', 'sesión', 'session'], answers: {
+            es: 'Discovery es la sesión inicial para entender tu negocio y priorizar el primer entregable.',
+            en: 'Discovery is the first session to understand your business and prioritize the first deliverable.',
+            fr: 'Le Discovery est la première session pour comprendre votre activité et prioriser le premier livrable.',
+            de: 'Discovery ist die erste Session, um dein Business zu verstehen und das erste Deliverable zu priorisieren.',
+            pt: 'Discovery é a sessão inicial para entender seu negócio e priorizar o primeiro entregável.',
+            it: 'La Discovery è la prima sessione per capire il tuo business e priorizzare il primo deliverable.'
+        }},
+        { keywords: ['mvp'], answers: {
+            es: 'Un MVP es la versión mínima viable: funciones esenciales para operar y validar rápido con usuarios reales.',
+            en: 'An MVP is the minimum viable product: essential functions to operate and validate quickly with real users.',
+            fr: 'Un MVP est le produit minimum viable : fonctions essentielles pour opérer et valider rapidement avec des utilisateurs réels.',
+            de: 'Ein MVP ist das minimal brauchbare Produkt mit Kernfunktionen, um schnell mit echten Nutzern zu validieren.',
+            pt: 'Um MVP é o produto mínimo viável: funções essenciais para operar e validar rápido com usuários reais.',
+            it: 'Un MVP è il prodotto minimo viabile: funzioni essenziali per operare e validare rapidamente con utenti reali.'
+        }},
+        { keywords: ['roadmap', 'hoja de ruta'], answers: {
+            es: 'El roadmap es la hoja de ruta del proyecto: qué se hace primero y qué entregables tiene cada fase.',
+            en: 'The roadmap is the project path: what gets done first and which deliverables each phase has.',
+            fr: 'La roadmap est la feuille de route du projet : ce qui est fait en premier et les livrables de chaque phase.',
+            de: 'Die Roadmap ist der Fahrplan: was zuerst kommt und welche Deliverables jede Phase hat.',
+            pt: 'O roadmap é a trilha do projeto: o que vem primeiro e quais entregáveis cada fase tem.',
+            it: 'La roadmap è il percorso del progetto: cosa si fa per primo e quali deliverable ha ogni fase.'
+        }},
+        { keywords: ['backlog'], answers: {
+            es: 'El backlog es la lista priorizada de tareas/funciones pendientes que alimenta cada sprint.',
+            en: 'The backlog is the prioritized list of pending tasks/features feeding each sprint.',
+            fr: 'Le backlog est la liste priorisée des tâches/fonctions en attente pour chaque sprint.',
+            de: 'Das Backlog ist die priorisierte Liste offener Aufgaben/Funktionen für jeden Sprint.',
+            pt: 'O backlog é a lista priorizada de tarefas/funções que alimenta cada sprint.',
+            it: 'Il backlog è la lista prioritaria di task/funzioni che alimenta ogni sprint.'
+        }},
+        { keywords: ['sprint'], answers: {
+            es: 'Un sprint es un ciclo corto de trabajo (1-2 semanas) con objetivos claros y demo al final.',
+            en: 'A sprint is a short work cycle (1-2 weeks) with clear goals and a demo at the end.',
+            fr: 'Un sprint est un cycle court (1-2 semaines) avec objectifs clairs et démo finale.',
+            de: 'Ein Sprint ist ein kurzer Arbeitszyklus (1-2 Wochen) mit klaren Zielen und Demo am Ende.',
+            pt: 'Um sprint é um ciclo curto (1-2 semanas) com metas claras e demo no final.',
+            it: 'Uno sprint è un ciclo breve (1-2 settimane) con obiettivi chiari e una demo finale.'
+        }},
+        { keywords: ['qa', 'pruebas', 'quality'], answers: {
+            es: 'QA son pruebas funcionales/técnicas para asegurar que todo funciona antes de publicar.',
+            en: 'QA means functional/technical testing to ensure everything works before going live.',
+            fr: 'La QA, ce sont des tests fonctionnels/techniques pour garantir que tout marche avant la mise en ligne.',
+            de: 'QA sind funktionale/technische Tests, damit alles funktioniert, bevor wir live gehen.',
+            pt: 'QA são testes funcionais/técnicos para garantir que tudo funciona antes de publicar.',
+            it: 'QA sono test funzionali/tecnici per assicurare che tutto funzioni prima di andare live.'
+        }},
+        { keywords: ['staging'], answers: {
+            es: 'Staging es el ambiente de pruebas idéntico a producción donde validamos antes de subir cambios.',
+            en: 'Staging is the test environment identical to production where we validate before deploying.',
+            fr: 'Le staging est l’environnement de test identique à la production pour valider avant déploiement.',
+            de: 'Staging ist die Testumgebung wie Produktion, in der wir vor dem Deploy validieren.',
+            pt: 'Staging é o ambiente de testes idêntico à produção para validar antes de publicar.',
+            it: 'Lo staging è l’ambiente di test identico alla produzione per validare prima del deploy.'
+        }},
+        { keywords: ['hosting', 'servidor'], answers: {
+            es: 'El hosting/servidor es donde vive tu sitio o app para que esté disponible 24/7.',
+            en: 'Hosting/server is where your site or app lives so it’s available 24/7.',
+            fr: 'Le hosting/serveur héberge votre site ou app pour la rendre disponible 24/7.',
+            de: 'Hosting/Server ist, wo deine Site/App lebt, damit sie 24/7 erreichbar ist.',
+            pt: 'Hosting/servidor é onde seu site ou app fica disponível 24/7.',
+            it: 'Hosting/server è dove il tuo sito o app vive per essere disponibile 24/7.'
+        }},
+        { keywords: ['ssl', 'https', 'candado'], answers: {
+            es: 'SSL/HTTPS cifra la conexión y muestra el candado para proteger los datos de tus usuarios.',
+            en: 'SSL/HTTPS encrypts the connection and shows the lock to protect your users’ data.',
+            fr: 'SSL/HTTPS chiffre la connexion et affiche le cadenas pour protéger les données.',
+            de: 'SSL/HTTPS verschlüsselt die Verbindung und zeigt das Schloss zum Schutz der Nutzerdaten.',
+            pt: 'SSL/HTTPS criptografa a conexão e mostra o cadeado para proteger os dados.',
+            it: 'SSL/HTTPS cifra la connessione e mostra il lucchetto per proteggere i dati.'
+        }},
+        { keywords: ['performance', 'rápido', 'velocidad', 'speed'], answers: {
+            es: 'Performance web es qué tan rápido carga y responde tu sitio; clave para retención y SEO.',
+            en: 'Web performance is how fast your site loads and responds—key for retention and SEO.',
+            fr: 'La performance web est la vitesse de chargement/réponse, clé pour la rétention et le SEO.',
+            de: 'Web-Performance ist, wie schnell deine Seite lädt und reagiert—wichtig für Retention und SEO.',
+            pt: 'Performance web é quão rápido seu site carrega e responde — chave para retenção e SEO.',
+            it: 'La performance web è la velocità di caricamento/risposta, cruciale per retention e SEO.'
+        }},
+        { keywords: ['automatización', 'automation'], answers: {
+            es: 'Automatización: reemplazar tareas manuales por flujos automáticos (notificaciones, reportes, sincronizaciones).',
+            en: 'Automation: replace manual tasks with automatic flows (notifications, reports, syncs).',
+            fr: 'Automatisation : remplacer les tâches manuelles par des flux automatiques (notifications, rapports, synchro).',
+            de: 'Automatisierung: manuelle Aufgaben durch automatische Abläufe ersetzen (Benachrichtigungen, Reports, Sync).',
+            pt: 'Automação: trocar tarefas manuais por fluxos automáticos (notificações, relatórios, sincronizações).',
+            it: 'Automazione: sostituire compiti manuali con flussi automatici (notifiche, report, sincronizzazioni).'
+        }},
+        { keywords: ['observabilidad', 'alertas', 'monitoreo'], answers: {
+            es: 'Observabilidad/alertas: métricas y avisos automáticos si algo falla o se vuelve lento.',
+            en: 'Observability/alerts: metrics and automatic notices if something fails or slows down.',
+            fr: 'Observabilité/alertes : métriques et notifications automatiques en cas de panne ou lenteur.',
+            de: 'Observability/Alerts: Metriken und automatische Hinweise, wenn etwas ausfällt oder langsam wird.',
+            pt: 'Observabilidade/alertas: métricas e avisos automáticos se algo falhar ou ficar lento.',
+            it: 'Osservabilità/alert: metriche e avvisi automatici se qualcosa fallisce o rallenta.'
+        }},
+        { keywords: ['escalabilidad', 'scalability'], answers: {
+            es: 'Escalabilidad: que la solución crezca en usuarios/datos sin caerse ni volverse lenta.',
+            en: 'Scalability: your solution grows in users/data without crashing or slowing down.',
+            fr: 'Scalabilité : la solution grandit en utilisateurs/données sans tomber ni ralentir.',
+            de: 'Skalierbarkeit: mehr Nutzer/Daten ohne Abstürze oder Verlangsamung.',
+            pt: 'Escalabilidade: crescer em usuários/dados sem cair ou ficar lento.',
+            it: 'Scalabilità: crescere in utenti/dati senza cadere o rallentare.'
+        }},
+        { keywords: ['ux writing', 'microcopy'], answers: {
+            es: 'UX writing/microcopys: textos cortos y claros en botones y mensajes para guiar al usuario.',
+            en: 'UX writing/microcopy: short, clear texts in buttons and messages to guide users.',
+            fr: 'UX writing/microcopy : textes courts et clairs dans les boutons/messages pour guider l’utilisateur.',
+            de: 'UX Writing/Microcopy: kurze, klare Texte in Buttons/Nachrichten zur Nutzerführung.',
+            pt: 'UX writing/microcopy: textos curtos e claros em botões e mensagens para guiar o usuário.',
+            it: 'UX writing/microcopy: testi brevi e chiari in pulsanti e messaggi per guidare l’utente.'
+        }},
+        { keywords: ['mantenimiento', 'evolutivo'], answers: {
+            es: 'Mantenimiento evolutivo: nuevas mejoras y funciones después del lanzamiento, no solo soporte.',
+            en: 'Evolutionary maintenance: new improvements and features after launch, not just bug fixes.',
+            fr: 'Maintenance évolutive : nouvelles améliorations et fonctions après le lancement, pas seulement du support.',
+            de: 'Evolutive Wartung: neue Verbesserungen/Funktionen nach dem Launch, nicht nur Support.',
+            pt: 'Manutenção evolutiva: novas melhorias e funções após o lançamento, não só suporte.',
+            it: 'Manutenzione evolutiva: nuove migliorie e funzioni dopo il lancio, non solo supporto.'
+        }},
+        { keywords: ['integración', 'whatsapp', 'telegram', 'mensajería', 'messaging'], answers: {
+            es: 'Integramos mensajería (WhatsApp/Telegram) para enviar/recibir mensajes y notificaciones automáticas.',
+            en: 'We integrate messaging (WhatsApp/Telegram) to send/receive messages and automatic notifications.',
+            fr: 'Nous intégrons la messagerie (WhatsApp/Telegram) pour envoyer/recevoir des messages et notifications.',
+            de: 'Wir integrieren Messaging (WhatsApp/Telegram) für Nachrichten und automatische Benachrichtigungen.',
+            pt: 'Integramos mensageria (WhatsApp/Telegram) para enviar/receber mensagens e notificações automáticas.',
+            it: 'Integriamo messaggistica (WhatsApp/Telegram) per inviare/ricevere messaggi e notifiche automatiche.'
+        }},
+        { keywords: ['dashboard'], answers: {
+            es: 'Un dashboard es un panel con métricas y gráficos clave para tomar decisiones rápidas.',
+            en: 'A dashboard is a panel with key metrics and charts for quick decisions.',
+            fr: 'Un dashboard est un tableau avec métriques et graphiques clés pour décider vite.',
+            de: 'Ein Dashboard ist ein Panel mit Kennzahlen und Charts für schnelle Entscheidungen.',
+            pt: 'Um dashboard é um painel com métricas e gráficos-chave para decidir rápido.',
+            it: 'Una dashboard è un pannello con metriche e grafici chiave per decisioni rapide.'
+        }},
+        { keywords: ['responsive', 'móvil', 'tablet', 'mobile'], answers: {
+            es: 'Responsive: que la web/app se adapte y se vea bien en móvil, tablet y desktop.',
+            en: 'Responsive means the site/app adapts and looks good on mobile, tablet, and desktop.',
+            fr: 'Responsive signifie que le site/app s’adapte et rend bien sur mobile, tablette et desktop.',
+            de: 'Responsive heißt, dass die Site/App auf Mobile, Tablet und Desktop gut aussieht.',
+            pt: 'Responsivo: o site/app se adapta e fica bom em mobile, tablet e desktop.',
+            it: 'Responsive: il sito/app si adatta e si vede bene su mobile, tablet e desktop.'
+        }},
+        { keywords: ['seo'], answers: {
+            es: 'SEO básico: títulos, descripciones, estructura y velocidad para que los buscadores entiendan y posicionen mejor tu sitio.',
+            en: 'Basic SEO: titles, descriptions, structure, and speed so search engines can rank you better.',
+            fr: 'SEO de base : titres, descriptions, structure et vitesse pour mieux vous positionner.',
+            de: 'Basis-SEO: Titel, Beschreibungen, Struktur und Speed für besseres Ranking.',
+            pt: 'SEO básico: títulos, descrições, estrutura e velocidade para melhor ranqueamento.',
+            it: 'SEO base: titoli, descrizioni, struttura e velocità per posizionarti meglio.'
+        }},
+        { keywords: ['backup', 'respaldo'], answers: {
+            es: 'Backup: copias de seguridad programadas para restaurar rápido ante errores o incidentes.',
+            en: 'Backup: scheduled copies to restore quickly after errors or incidents.',
+            fr: 'Backup : copies programmées pour restaurer rapidement en cas d’erreur ou incident.',
+            de: 'Backup: geplante Sicherungen für schnelle Wiederherstellung bei Fehlern/Incidents.',
+            pt: 'Backup: cópias programadas para restaurar rápido após erros ou incidentes.',
+            it: 'Backup: copie programmate per ripristinare rapidamente in caso di errori o incidenti.'
+        }},
+        { keywords: ['mce'], answers: {
+            es: 'MCE es nuestra marca: Proyectos MCE. Son las iniciales de Marlon Carabalí, programador y líder del equipo.',
+            en: 'MCE is our brand: Proyectos MCE. It’s the initials of Marlon Carabalí, programmer and team lead.',
+            fr: 'MCE est notre marque : Proyectos MCE. Ce sont les initiales de Marlon Carabalí, développeur et lead.',
+            de: 'MCE ist unsere Marke: Proyectos MCE. Es sind die Initialen von Marlon Carabalí, Entwickler und Lead.',
+            pt: 'MCE é nossa marca: Proyectos MCE. São as iniciais de Marlon Carabalí, programador e líder.',
+            it: 'MCE è il nostro brand: Proyectos MCE. Sono le iniziali di Marlon Carabalí, programmatore e lead.'
+        }},
+        { keywords: ['contacto', 'correo', 'email', 'whatsapp'], answers: {
+            es: 'Escríbenos a proyectosmceaa@gmail.com o por WhatsApp al +57 311 412 5971.',
+            en: 'Write to us at proyectosmceaa@gmail.com or WhatsApp +57 311 412 5971.',
+            fr: 'Écrivez-nous à proyectosmceaa@gmail.com ou WhatsApp +57 311 412 5971.',
+            de: 'Schreib uns an proyectosmceaa@gmail.com oder per WhatsApp +57 311 412 5971.',
+            pt: 'Fale conosco em proyectosmceaa@gmail.com ou WhatsApp +57 311 412 5971.',
+            it: 'Scrivici a proyectosmceaa@gmail.com o su WhatsApp +57 311 412 5971.'
+        }},
     ];
 
-    const defaultMsg = 'Solo puedo responder sobre los contenidos y servicios de esta página: desarrollo web a medida, tiendas online, inventarios, UX/UI, APIs, soporte y sesiones Discovery.';
+    const defaultMsg = {
+        es: 'Solo puedo responder sobre los contenidos y servicios de esta página: desarrollo web a medida, tiendas online, inventarios, UX/UI, APIs, soporte y sesiones Discovery.',
+        en: 'I can answer only about this site’s content and services: custom web dev, online stores, inventory, UX/UI, APIs, support, and Discovery sessions.',
+        fr: 'Je peux répondre uniquement sur les contenus et services de ce site : dev web sur mesure, boutiques en ligne, inventaires, UX/UI, APIs, support, et sessions Discovery.',
+        de: 'Ich antworte nur zu Inhalten/Services dieser Seite: individuelle Webentwicklung, Shops, Inventar, UX/UI, APIs, Support und Discovery-Sessions.',
+        pt: 'Posso responder apenas sobre o conteúdo e serviços deste site: desenvolvimento web sob medida, lojas online, inventários, UX/UI, APIs, suporte e sessões Discovery.',
+        it: 'Posso rispondere solo sui contenuti e servizi di questo sito: sviluppo web su misura, e-commerce, inventari, UX/UI, API, supporto e sessioni Discovery.'
+    };
+
+    const detectLang = (q) => {
+        const lower = q;
+        if (/[àâçéèêëîïôûùüÿœ]/.test(lower) || lower.match(/\bbonjour|salut\b/)) return 'fr';
+        if (lower.match(/\bciao\b/)) return 'it';
+        if (lower.match(/\b(ola|olá)\b/)) return 'pt';
+        if (lower.match(/\bhallo\b/)) return 'de';
+        if (lower.match(/\bhello\b|\bhi\b|\bwhat\b|\bhow\b/)) return 'en';
+        return 'es';
+    };
 
     const isRelevant = (q) => faqs.some(f => f.keywords.some(k => q.includes(k)));
-    const findAnswer = (q) => {
+    const findAnswer = (q, lang) => {
         const match = faqs.find(f => f.keywords.some(k => q.includes(k)));
-        return match ? match.answer : defaultMsg;
+        if (!match) return defaultMsg[lang] || defaultMsg.es;
+        return match.answers[lang] || match.answers.es || defaultMsg[lang] || defaultMsg.es;
     };
 
     function handleAsk() {
         const q = (questionInput.value || '').trim().toLowerCase();
         if (!q) return;
-        answerBox.textContent = isRelevant(q) ? findAnswer(q) : defaultMsg;
+        const lang = detectLang(q);
+        answerBox.textContent = isRelevant(q) ? findAnswer(q, lang) : (defaultMsg[lang] || defaultMsg.es);
     }
 
     function openPanel() {
