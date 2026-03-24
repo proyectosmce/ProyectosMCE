@@ -116,14 +116,56 @@
 .assistant-lang {
     display: flex;
     justify-content: flex-end;
+    position: relative;
 }
-.assistant-lang select {
+.assistant-lang select { display: none; }
+.lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     padding: 6px 10px;
     border-radius: 10px;
     border: 1px solid #d4dce7;
     font-size: 0.85rem;
     background: #fff;
     color: #1b2b48;
+    cursor: pointer;
+}
+.lang-toggle img {
+    width: 18px;
+    height: 14px;
+    object-fit: cover;
+    border-radius: 2px;
+}
+.lang-list {
+    position: absolute;
+    right: 0;
+    top: 110%;
+    background: #fff;
+    border: 1px solid #d4dce7;
+    border-radius: 10px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+    padding: 6px;
+    display: none;
+    z-index: 5;
+}
+.lang-list.open { display: block; }
+.lang-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #1b2b48;
+}
+.lang-option:hover { background: #f1f5f9; }
+.lang-option img {
+    width: 18px;
+    height: 14px;
+    object-fit: cover;
+    border-radius: 2px;
 }
 .assistant-input { display: flex; gap: 8px; }
 .assistant-input input {
@@ -336,15 +378,42 @@
     </div>
     <div class="assistant-body">
         <div class="assistant-lang">
-            <select id="assistant-lang">
-                <option value="auto">🌐 Auto</option>
-                <option value="es">🇪🇸 Español</option>
-                <option value="en">🇺🇸 English</option>
-                <option value="fr">🇫🇷 Français</option>
-                <option value="de">🇩🇪 Deutsch</option>
-                <option value="pt">🇧🇷 Português</option>
-                <option value="it">🇮🇹 Italiano</option>
+            <select id="assistant-lang" aria-hidden="true">
+                <option value="auto" selected>Auto</option>
+                <option value="es">ES</option>
+                <option value="en">EN</option>
+                <option value="fr">FR</option>
+                <option value="de">DE</option>
+                <option value="pt">PT</option>
+                <option value="it">IT</option>
             </select>
+            <button id="assistant-lang-toggle" class="lang-toggle" type="button">
+                <img id="assistant-lang-flag" src="https://flagcdn.com/w20/un.png" alt="Auto">
+                <span id="assistant-lang-label">Auto</span>
+            </button>
+            <div class="lang-list" id="assistant-lang-list">
+                <div class="lang-option" data-lang="auto" data-flag="un" data-label="Auto">
+                    <img src="https://flagcdn.com/w20/un.png" alt="Auto"><span>Auto</span>
+                </div>
+                <div class="lang-option" data-lang="es" data-flag="es" data-label="Español">
+                    <img src="https://flagcdn.com/w20/es.png" alt="Español"><span>Español</span>
+                </div>
+                <div class="lang-option" data-lang="en" data-flag="us" data-label="English">
+                    <img src="https://flagcdn.com/w20/us.png" alt="English"><span>English</span>
+                </div>
+                <div class="lang-option" data-lang="fr" data-flag="fr" data-label="Français">
+                    <img src="https://flagcdn.com/w20/fr.png" alt="Français"><span>Français</span>
+                </div>
+                <div class="lang-option" data-lang="de" data-flag="de" data-label="Deutsch">
+                    <img src="https://flagcdn.com/w20/de.png" alt="Deutsch"><span>Deutsch</span>
+                </div>
+                <div class="lang-option" data-lang="pt" data-flag="br" data-label="Português">
+                    <img src="https://flagcdn.com/w20/br.png" alt="Português"><span>Português</span>
+                </div>
+                <div class="lang-option" data-lang="it" data-flag="it" data-label="Italiano">
+                    <img src="https://flagcdn.com/w20/it.png" alt="Italiano"><span>Italiano</span>
+                </div>
+            </div>
         </div>
         <div class="assistant-answer" id="assistant-answer"></div>
         <div class="assistant-input">
@@ -371,6 +440,10 @@
     const questionInput = document.getElementById('assistant-question');
     const answerBox = document.getElementById('assistant-answer');
     const langSelect = document.getElementById('assistant-lang');
+    const langToggle = document.getElementById('assistant-lang-toggle');
+    const langFlag = document.getElementById('assistant-lang-flag');
+    const langLabel = document.getElementById('assistant-lang-label');
+    const langList = document.getElementById('assistant-lang-list');
 
     if (!panel || !toggle || !answerBox || !questionInput) return;
 
@@ -736,11 +809,12 @@
         return match.answers[lang] || match.answers.es || defaultMsg[lang] || defaultMsg.es;
     };
 
-    function setGreeting() {
-        const choice = langSelect.value;
-        const lang = choice === 'auto' ? 'es' : choice;
-        answerBox.innerHTML = linkify(greeting[lang] || greeting.es);
-    }
+    const setLangUI = (lang, flag, label) => {
+        if (langSelect) langSelect.value = lang;
+        if (langFlag) { langFlag.src = `https://flagcdn.com/w20/${flag}.png`; langFlag.alt = label; }
+        if (langLabel) langLabel.textContent = label;
+    };
+    setLangUI('auto', 'un', 'Auto');
 
     function handleAsk() {
         const q = (questionInput.value || '').trim().toLowerCase();
@@ -773,10 +847,25 @@
             handleAsk();
         }
     });
-    langSelect?.addEventListener('change', () => {
-        const choice = langSelect.value;
-        const lang = choice === 'auto' ? 'es' : choice;
-        answerBox.innerHTML = linkify(greeting[lang] || greeting.es);
+    langList?.querySelectorAll('.lang-option').forEach((opt) => {
+        opt.addEventListener('click', () => {
+            const lang = opt.dataset.lang || 'auto';
+            const flag = opt.dataset.flag || 'un';
+            const label = opt.dataset.label || lang.toUpperCase();
+            setLangUI(lang, flag, label);
+            langList.classList.remove('open');
+            const gLang = lang === 'auto' ? 'es' : lang;
+            answerBox.innerHTML = linkify(greeting[gLang] || greeting.es);
+        });
+    });
+    langToggle?.addEventListener('click', () => {
+        langList?.classList.toggle('open');
+    });
+    document.addEventListener('click', (e) => {
+        if (!langList || !langToggle) return;
+        if (!langList.contains(e.target) && !langToggle.contains(e.target)) {
+            langList.classList.remove('open');
+        }
     });
 })();
 </script>
