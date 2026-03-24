@@ -351,6 +351,7 @@
     if (!panel || !toggle) return;
 
     const faqs = [
+        { keywords: ['hola', 'buenas', 'saludo'], answer: 'Hola, ¿cómo estás? ¿En qué puedo ayudarte hoy?' },
         { keywords: ['desarrollo', 'web', 'medida'], answer: 'Creamos software y sitios web a medida, alineados a tus procesos y objetivos.' },
         { keywords: ['tienda', 'ecommerce', 'online'], answer: 'Construimos tiendas online integradas con inventarios, pagos y logística.' },
         { keywords: ['inventario', 'stock', 'bodega'], answer: 'Implementamos sistemas de inventario con control de stock y trazabilidad en tiempo real.' },
