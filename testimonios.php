@@ -372,7 +372,7 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
 <?php if ($testimonialRecaptchaEnabled): ?>
 <script>
 (() => {
-    const placeholders = Array.from(document.querySelectorAll('.g-recaptcha[data-sitekey]'));
+    let placeholders = Array.from(document.querySelectorAll('.g-recaptcha[data-sitekey]'));
     if (!placeholders.length) return;
     function renderAll() {
         if (!window.grecaptcha) return;
@@ -381,6 +381,7 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
             const id = grecaptcha.render(el, { sitekey: el.dataset.sitekey });
             el.dataset.recaptchaId = id;
         });
+        document.querySelectorAll('.recaptcha-old').forEach(old => old.remove());
     }
     function loadRecaptcha(lang) {
         const existing = document.querySelector('script[data-mce-recaptcha]');
@@ -402,13 +403,17 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
     const currentLang = localStorage.getItem('siteLang') || 'es';
     loadRecaptcha(currentLang);
     window.addEventListener('mce-lang-changed', (e) => {
+        const lang = e.detail?.lang || 'es';
+        const fresh = [];
         placeholders.forEach(el => {
-            if (el.dataset.recaptchaId && window.grecaptcha) {
-                try { grecaptcha.reset(el.dataset.recaptchaId); } catch {}
-            }
-            delete el.dataset.recaptchaId;
-            el.innerHTML = '';
+            const clone = document.createElement('div');
+            clone.className = el.className;
+            clone.dataset.sitekey = el.dataset.sitekey;
+            el.insertAdjacentElement('afterend', clone);
+            el.classList.add('recaptcha-old');
+            fresh.push(clone);
         });
+        placeholders = fresh;
         loadRecaptcha(e.detail?.lang || 'es');
     });
 })();
