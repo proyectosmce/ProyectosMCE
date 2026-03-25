@@ -432,14 +432,14 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
     if (!cards.length) return;
 
     // Traducciones específicas por ID (agrega aquí nuevos IDs si los traduces)
+    const joseBodyEs = 'Yo, Jose Delgado dueño de Destello de Oro 18K, Durante este tiempo estuvimos desarrollando un sistema para el control de inventario, y debo decir que el resultado fue excelente. El proceso fue muy profesional: siempre estuvo dispuesto a escuchar mis necesidades, hacer ajustes cuando era necesario y proponer soluciones que realmente optimizaron la forma en que manejo mi negocio.\n\nHoy cuento con un sistema mucho más organizado, práctico y hecho a la medida de lo que necesitaba. Esto me ha permitido tener mayor control y ahorrar tiempo en la gestión diaria.\n\nSi estás pensando en desarrollar software, sistemas a medida o una página web, definitivamente lo recomiendo. Es una persona responsable, comprometida con su trabajo y que realmente busca que el cliente quede satisfecho con el resultado final.\n\nSuperó mis expectativas, lo recomiendo 100 % ¡MUCHAS GRACIAS !';
+
     const testimonialTranslations = {
-        // Ejemplo: ID 1 (Jose Delgado)
-        '1': {
-            es: {
-                name: 'Jose Delgado',
-                project: 'Destello de Oro 18K',
-                body: 'Yo, Jose Delgado dueño de Destello de Oro 18K, Durante este tiempo estuvimos desarrollando un sistema para el control de inventario, y debo decir que el resultado fue excelente. El proceso fue muy profesional: siempre estuvo dispuesto a escuchar mis necesidades, hacer ajustes cuando era necesario y proponer soluciones que realmente optimizaron la forma en que manejo mi negocio.\n\nHoy cuento con un sistema mucho más organizado, práctico y hecho a la medida de lo que necesitaba. Esto me ha permitido tener mayor control y ahorrar tiempo en la gestión diaria.\n\nSi estás pensando en desarrollar software, sistemas a medida o una página web, definitivamente lo recomiendo. Es una persona responsable, comprometida con su trabajo y que realmente busca que el cliente quede satisfecho con el resultado final.\n\nSuperó mis expectativas, lo recomiendo 100 % ¡MUCHAS GRACIAS !'
-            },
+        '1': { es: { name: 'Jose Delgado', project: 'Destello de Oro 18K', body: joseBodyEs } }
+    };
+
+    const translationsByBody = {
+        [joseBodyEs]: {
             en: {
                 name: 'Jose Delgado',
                 project: 'Destello de Oro 18K',
@@ -490,7 +490,8 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
     const apply = (lang) => {
         cards.forEach(card => {
             const id = card.dataset.testimonialId;
-            const tmap = testimonialTranslations[id]?.[lang];
+            const bodyKey = card.dataset.bodyDefault || '';
+            const tmap = testimonialTranslations[id]?.[lang] || translationsByBody[bodyKey]?.[lang];
             const nameEl = card.querySelector('.ts-name');
             const projectEl = card.querySelector('.ts-project');
             const bodyEl = card.querySelector('.ts-body');
