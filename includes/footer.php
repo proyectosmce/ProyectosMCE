@@ -151,22 +151,22 @@
                         <img src="https://flagcdn.com/w20/un.png" alt="Auto"><span>Auto</span>
                     </div>
                     <div class="lang-option" data-lang="es" data-flag="es" data-label="Español">
-                        <img src="https://flagcdn.com/w20/es.png" alt="Español"><span>Español</span>
+                        <img src="https://flagcdn.com/w20/es.png" alt="Español"><span style="color:#c1121f;">Español</span>
                     </div>
                     <div class="lang-option" data-lang="en" data-flag="us" data-label="English">
-                        <img src="https://flagcdn.com/w20/us.png" alt="English"><span>English</span>
+                        <img src="https://flagcdn.com/w20/us.png" alt="English"><span style="color:#0a3161;">English</span>
                     </div>
                     <div class="lang-option" data-lang="fr" data-flag="fr" data-label="Français">
-                        <img src="https://flagcdn.com/w20/fr.png" alt="Français"><span>Français</span>
+                        <img src="https://flagcdn.com/w20/fr.png" alt="Français"><span style="color:#002654;">Français</span>
                     </div>
                     <div class="lang-option" data-lang="de" data-flag="de" data-label="Deutsch">
-                        <img src="https://flagcdn.com/w20/de.png" alt="Deutsch"><span>Deutsch</span>
+                        <img src="https://flagcdn.com/w20/de.png" alt="Deutsch"><span style="color:#000000;">Deutsch</span>
                     </div>
-                <div class="lang-option" data-lang="pt" data-flag="br" data-label="Português">
-                    <img src="https://flagcdn.com/w20/pt.png" alt="Português"><span>Português</span>
+                <div class="lang-option" data-lang="pt" data-flag="pt" data-label="Português">
+                    <img src="https://flagcdn.com/w20/pt.png" alt="Português"><span style="color:#046a38;">Português</span>
                 </div>
                     <div class="lang-option" data-lang="it" data-flag="it" data-label="Italiano">
-                        <img src="https://flagcdn.com/w20/it.png" alt="Italiano"><span>Italiano</span>
+                        <img src="https://flagcdn.com/w20/it.png" alt="Italiano"><span style="color:#009246;">Italiano</span>
                     </div>
                 </div>
             </div>
@@ -2831,5 +2831,6 @@
     </script>
 </body>
 </html>
+
 
 
