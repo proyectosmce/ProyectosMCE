@@ -66,11 +66,11 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
         <div class="grid lg:grid-cols-12 gap-10 items-center">
             <div class="lg:col-span-7 space-y-5">
                 <span class="inline-flex items-center px-3 py-1 text-sm font-semibold bg-white/10 border border-white/20 rounded-full backdrop-blur">
-                    <i class="fas fa-headset mr-2 text-yellow-300"></i> <span class="i18n-ct-badge" data-i18n="ct-badge">Contacto ? Proyectos MCE</span>
+                    <i class="fas fa-headset mr-2 text-yellow-300"></i> <span class="i18n-ct-badge" data-i18n="ct-badge">Contacto · Proyectos MCE</span>
                 </span>
-                <h1 class="text-4xl md:text-5xl font-bold leading-tight i18n-ct-hero-title" data-i18n="ct-hero-title">Agenda un diagn?stico t?cnico</h1>
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight i18n-ct-hero-title" data-i18n="ct-hero-title">Agenda un diagnóstico técnico</h1>
                 <p class="text-lg text-blue-50 max-w-3xl i18n-ct-hero-sub" data-i18n="ct-hero-sub">
-                    Cu?ntanos qu? necesitas automatizar o lanzar. Te respondemos con esfuerzo estimado, riesgos visibles, tecnolog?a recomendada y primeros pasos.
+                    Cuéntanos qué necesitas automatizar o lanzar. Te respondemos con esfuerzo estimado, riesgos visibles, tecnología recomendada y primeros pasos.
                 </p>
                 <div class="flex flex-wrap gap-3">
                     <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-ct-chip1" data-i18n="ct-chip1"><i class="fas fa-bolt mr-2 text-yellow-300"></i><span>Respuesta en &lt; 24h</span></span>
@@ -84,7 +84,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm text-blue-100 i18n-ct-card-title" data-i18n="ct-card-title">Contacta directo</p>
-                            <p class="text-2xl font-semibold text-white i18n-ct-card-sub" data-i18n="ct-card-sub">Equipo t?cnico listo para ayudarte</p>
+                            <p class="text-2xl font-semibold text-white i18n-ct-card-sub" data-i18n="ct-card-sub">Equipo técnico listo para ayudarte</p>
                         </div>
                         <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-300 text-slate-900 font-bold shadow-lg">MCE</span>
                     </div>
@@ -120,7 +120,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                     <div class="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
                         <div>
                             <p class="text-sm text-blue-100 i18n-ct-hours" data-i18n="ct-hours">Horario</p>
-                            <p class="font-semibold i18n-ct-hours-detail" data-i18n="ct-hours-detail">Lunes a Viernes ? 8:00 - 17:00 <br>S?bados ? 9:00 - 13:00</p>
+                            <p class="font-semibold i18n-ct-hours-detail" data-i18n="ct-hours-detail">Lunes a Viernes · 8:00 - 17:00 <br>Sábados · 9:00 - 13:00</p>
                         </div>
                         <i class="fas fa-arrow-right text-yellow-300"></i>
                     </div>
@@ -248,115 +248,14 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                 </div>
 
                 <?php if ($contactRecaptchaEnabled): ?>
-<script>
-(() => {
-    // recaptcha dinámico con idioma
-    let placeholders = Array.from(document.querySelectorAll('.g-recaptcha[data-sitekey]'));
-    const forms = ['contact-form', 'agenda-form'].map(id => document.getElementById(id)).filter(Boolean);
-    if (placeholders.length) {
-        function renderAll() {
-            if (!window.grecaptcha) return;
-            placeholders.forEach(el => {
-                if (el.dataset.recaptchaId) return;
-                const id = grecaptcha.render(el, { sitekey: el.dataset.sitekey });
-                el.dataset.recaptchaId = id;
-            });
-            document.querySelectorAll('.recaptcha-old').forEach(old => old.remove());
-        }
-        function loadRecaptcha(lang) {
-            const existing = document.querySelector('script[data-mce-recaptcha]');
-            if (existing && existing.dataset.lang === lang) {
-                renderAll();
-                return;
-            }
-            if (existing) existing.remove();
-            delete window.grecaptcha;
-            delete window.___grecaptcha_cfg;
-            const s = document.createElement('script');
-            s.src = https://www.google.com/recaptcha/api.js?onload=mceRenderRecaptcha&render=explicit&hl=;
-            s.async = true;
-            s.defer = true;
-            s.dataset.mceRecaptcha = '1';
-            s.dataset.lang = lang;
-            document.head.appendChild(s);
-            window.mceRenderRecaptcha = renderAll;
-        }
-        const currentLang = localStorage.getItem('siteLang') || 'es';
-        loadRecaptcha(currentLang);
-        window.addEventListener('mce-lang-changed', (e) => {
-            const lang = e.detail?.lang || 'es';
-            const fresh = [];
-            placeholders.forEach(el => {
-                const clone = document.createElement('div');
-                clone.className = el.className;
-                clone.dataset.sitekey = el.dataset.sitekey;
-                el.insertAdjacentElement('afterend', clone);
-                el.classList.add('recaptcha-old');
-                fresh.push(clone);
-            });
-            placeholders = fresh;
-            loadRecaptcha(lang);
-        });
-    }
-
-    // Slots disponibles
-    const availableHours = <?php echo json_encode($availableHours, JSON_UNESCAPED_UNICODE); ?>;
-    const bookedSlots = <?php echo json_encode($bookedSlotsByDate, JSON_UNESCAPED_UNICODE); ?>;
-    const horaSelect = document.getElementById('agenda-hora');
-    const fechaInput = document.getElementById('agenda-fecha');
-    const horaMsg = document.getElementById('agenda-hora-msg');
-
-    const renderHours = (dateStr) => {
-        if (!horaSelect || !fechaInput) return;
-        const booked = bookedSlots[dateStr] || [];
-        let options = availableHours.filter(h => !booked.includes(h));
-
-        const todayStr = new Date().toISOString().slice(0, 10);
-        if (dateStr === todayStr) {
-            const now = new Date();
-            const currentHHMM = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-            options = options.filter(h => h > currentHHMM);
-        }
-
-        horaSelect.innerHTML = '';
-        if (options.length === 0) {
-            horaSelect.disabled = true;
-            horaMsg?.classList.remove('hidden');
-            return;
-        }
-        horaSelect.disabled = false;
-        horaMsg?.classList.add('hidden');
-        options.forEach(h => {
-            const opt = document.createElement('option');
-            opt.value = h;
-            opt.textContent = h;
-            horaSelect.appendChild(opt);
-        });
-    };
-
-    if (fechaInput) {
-        fechaInput.addEventListener('change', (e) => renderHours(e.target.value));
-        renderHours(fechaInput.value || fechaInput.getAttribute('min'));
-    }
-
-    forms.forEach((form) => {
-        form.addEventListener('submit', (event) => {
-            if (typeof window.grecaptcha === 'undefined') {
-                event.preventDefault();
-                alert('reCAPTCHA aun no termina de cargar. Intenta nuevamente en unos segundos.');
-                return;
-            }
-            const widgetId = form.querySelector('.g-recaptcha')?.dataset.recaptchaId;
-            const response = widgetId !== undefined ? grecaptcha.getResponse(Number(widgetId)) : '';
-            if (!response) {
-                event.preventDefault();
-                alert('Completa la verificacion reCAPTCHA antes de enviar.');
-            }
-        });
-    });
-})();
-</script>
-<?php endif; ?>
+                <div class="pt-2">
+                    <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars(form_guard_recaptcha_site_key(), ENT_QUOTES, 'UTF-8'); ?>"></div>
+                </div>
+                <?php else: ?>
+                <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 i18n-ct-form-recaptcha-missing" data-i18n="ct-form-recaptcha-missing">
+                    reCAPTCHA es obligatorio, pero no está configurado correctamente en este entorno.
+                </div>
+                <?php endif; ?>
 
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <p class="text-sm text-gray-600 i18n-ct-form-note" data-i18n="ct-form-note">Confirmaremos tu llamada por correo con el enlace de reunión.</p>
@@ -381,9 +280,9 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
             <div>
                 <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide i18n-ct-mail-label" data-i18n="ct-mail-label">Contacto por correo</p>
                 <h2 class="text-3xl font-bold text-slate-900 i18n-ct-mail-title" data-i18n="ct-mail-title">Prefieres escribirnos</h2>
-                <p class="text-gray-600 mt-2">Envíanos detalles y te respondemos por el mismo medio en menos de 24h.</p>
+                <p class="text-gray-600 mt-2 i18n-ct-mail-desc" data-i18n="ct-mail-desc">Envíanos detalles y te respondemos por el mismo medio en menos de 24h.</p>
             </div>
-            <a href="#agenda-llamada" class="inline-flex items-center text-blue-700 font-semibold hover:text-blue-900">
+            <a href="#agenda-llamada" class="inline-flex items-center text-blue-700 font-semibold hover:text-blue-900 i18n-ct-mail-altlink" data-i18n="ct-mail-altlink">
                 <i class="fas fa-phone-alt mr-2"></i> ¿Mejor una llamada? Agenda aquí
             </a>
         </div>
@@ -409,13 +308,13 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                         <input type="email" name="email" required maxlength="120" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-email-ph" placeholder="tucorreo@ejemplo.com">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold">teléfono</label>
+                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-phone" data-i18n="ct-mail-phone">Teléfono</label>
                         <input type="tel" name="telefono" maxlength="25" inputmode="tel" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold">¿Qué servicio te interesa??</label>
+                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-service" data-i18n="ct-mail-service">¿Qué servicio te interesa?</label>
                         <select name="servicio" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                            <option value="">Seleccionar...</option>
+                            <option value="" class="i18n-ct-mail-service-opt0" data-i18n="ct-mail-service-opt0">Seleccionar...</option>
                             <?php
                             $servicios = $conn->query("SELECT titulo FROM servicios ORDER BY orden");
                             while ($s = $servicios->fetch_assoc()) {
@@ -436,120 +335,19 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                 </div>
 
                 <?php if ($contactRecaptchaEnabled): ?>
-<script>
-(() => {
-    // recaptcha dinámico con idioma
-    let placeholders = Array.from(document.querySelectorAll('.g-recaptcha[data-sitekey]'));
-    const forms = ['contact-form', 'agenda-form'].map(id => document.getElementById(id)).filter(Boolean);
-    if (placeholders.length) {
-        function renderAll() {
-            if (!window.grecaptcha) return;
-            placeholders.forEach(el => {
-                if (el.dataset.recaptchaId) return;
-                const id = grecaptcha.render(el, { sitekey: el.dataset.sitekey });
-                el.dataset.recaptchaId = id;
-            });
-            document.querySelectorAll('.recaptcha-old').forEach(old => old.remove());
-        }
-        function loadRecaptcha(lang) {
-            const existing = document.querySelector('script[data-mce-recaptcha]');
-            if (existing && existing.dataset.lang === lang) {
-                renderAll();
-                return;
-            }
-            if (existing) existing.remove();
-            delete window.grecaptcha;
-            delete window.___grecaptcha_cfg;
-            const s = document.createElement('script');
-            s.src = https://www.google.com/recaptcha/api.js?onload=mceRenderRecaptcha&render=explicit&hl=;
-            s.async = true;
-            s.defer = true;
-            s.dataset.mceRecaptcha = '1';
-            s.dataset.lang = lang;
-            document.head.appendChild(s);
-            window.mceRenderRecaptcha = renderAll;
-        }
-        const currentLang = localStorage.getItem('siteLang') || 'es';
-        loadRecaptcha(currentLang);
-        window.addEventListener('mce-lang-changed', (e) => {
-            const lang = e.detail?.lang || 'es';
-            const fresh = [];
-            placeholders.forEach(el => {
-                const clone = document.createElement('div');
-                clone.className = el.className;
-                clone.dataset.sitekey = el.dataset.sitekey;
-                el.insertAdjacentElement('afterend', clone);
-                el.classList.add('recaptcha-old');
-                fresh.push(clone);
-            });
-            placeholders = fresh;
-            loadRecaptcha(lang);
-        });
-    }
-
-    // Slots disponibles
-    const availableHours = <?php echo json_encode(, JSON_UNESCAPED_UNICODE); ?>;
-    const bookedSlots = <?php echo json_encode(, JSON_UNESCAPED_UNICODE); ?>;
-    const horaSelect = document.getElementById('agenda-hora');
-    const fechaInput = document.getElementById('agenda-fecha');
-    const horaMsg = document.getElementById('agenda-hora-msg');
-
-    const renderHours = (dateStr) => {
-        if (!horaSelect || !fechaInput) return;
-        const booked = bookedSlots[dateStr] || [];
-        let options = availableHours.filter(h => !booked.includes(h));
-
-        const todayStr = new Date().toISOString().slice(0, 10);
-        if (dateStr === todayStr) {
-            const now = new Date();
-            const currentHHMM = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-            options = options.filter(h => h > currentHHMM);
-        }
-
-        horaSelect.innerHTML = '';
-        if (options.length === 0) {
-            horaSelect.disabled = true;
-            horaMsg?.classList.remove('hidden');
-            return;
-        }
-        horaSelect.disabled = false;
-        horaMsg?.classList.add('hidden');
-        options.forEach(h => {
-            const opt = document.createElement('option');
-            opt.value = h;
-            opt.textContent = h;
-            horaSelect.appendChild(opt);
-        });
-    };
-
-    if (fechaInput) {
-        fechaInput.addEventListener('change', (e) => renderHours(e.target.value));
-        renderHours(fechaInput.value || fechaInput.getAttribute('min'));
-    }
-
-    forms.forEach((form) => {
-        form.addEventListener('submit', (event) => {
-            if (typeof window.grecaptcha === 'undefined') {
-                event.preventDefault();
-                alert('reCAPTCHA aun no termina de cargar. Intenta nuevamente en unos segundos.');
-                return;
-            }
-            const widgetId = form.querySelector('.g-recaptcha')?.dataset.recaptchaId;
-            const response = widgetId !== undefined ? grecaptcha.getResponse(Number(widgetId)) : '';
-            if (!response) {
-                event.preventDefault();
-                alert('Completa la verificacion reCAPTCHA antes de enviar.');
-            }
-        });
-    });
-})();
-</script>
-<?php endif; ?>
+                <div class="pt-2">
+                    <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars(form_guard_recaptcha_site_key(), ENT_QUOTES, 'UTF-8'); ?>"></div>
+                </div>
+                <?php else: ?>
+                <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 i18n-ct-mail-recaptcha-missing" data-i18n="ct-mail-recaptcha-missing">
+                    reCAPTCHA es obligatorio, pero no está configurado correctamente en este entorno.
+                </div>
+                <?php endif; ?>
 
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <p class="text-sm text-gray-600">Al enviar aceptas ser contactado por nuestro equipo.</p>
+                    <p class="text-sm text-gray-600 i18n-ct-mail-disclaimer" data-i18n="ct-mail-disclaimer">Al enviar aceptas ser contactado por nuestro equipo.</p>
                     <button type="submit" id="contact-submit" <?php echo $contactRecaptchaEnabled ? '' : 'disabled'; ?> class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-slate-900 text-white font-semibold shadow-lg hover:bg-slate-800 transition w-full sm:w-auto disabled:cursor-not-allowed disabled:bg-slate-400">
-                        <i class="fas fa-paper-plane mr-2"></i> Enviar mensaje
+                        <i class="fas fa-paper-plane mr-2"></i> <span class="i18n-ct-mail-submit" data-i18n="ct-mail-submit">Enviar mensaje</span>
                     </button>
                 </div>
             </form>
@@ -557,16 +355,16 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
 
         <div class="lg:col-span-5 order-1 lg:order-2">
             <div class="bg-white rounded-2xl mce-rounded-panel shadow-2xl border border-slate-100 overflow-hidden p-8 space-y-4">
-                <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Informaci?n clave</p>
-                <h3 class="text-2xl font-bold text-slate-900">?Qu? recibes al escribirnos?</h3>
+                <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide i18n-ct-info-label" data-i18n="ct-info-label">Información clave</p>
+                <h3 class="text-2xl font-bold text-slate-900 i18n-ct-info-title" data-i18n="ct-info-title">¿Qué recibes al escribirnos?</h3>
                 <ul class="space-y-3 text-gray-800 mt-3">
-                    <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span><span class="i18n-ct-info-b1" data-i18n="ct-info-b1">Respuesta personalizada con una ruta inicial y esfuerzos aproximados.</span></span></li>
-                    <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span>reunión virtual de discovery para entender procesos y objetivos.</span></li>
-                    <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span>Documento de alcance con los próximos pasos para aprobar o iterar.</span></li>
+                    <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span class="i18n-ct-info-b1" data-i18n="ct-info-b1">Respuesta personalizada con una ruta inicial y esfuerzos aproximados.</span></li>
+                    <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span class="i18n-ct-info-b2" data-i18n="ct-info-b2">Reunión virtual de discovery para entender procesos y objetivos.</span></li>
+                    <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span class="i18n-ct-info-b3" data-i18n="ct-info-b3">Documento de alcance con los próximos pasos para aprobar o iterar.</span></li>
                 </ul>
                 <div class="mt-6 p-4 rounded-xl bg-blue-50 text-blue-800 flex items-start gap-3">
                     <i class="fas fa-info-circle mt-1"></i>
-                    <p class="text-sm">Si necesitas NDA antes de compartir detalles, ind?calo en el mensaje y lo enviamos.</p>
+                    <p class="text-sm i18n-ct-info-nda" data-i18n="ct-info-nda">Si necesitas NDA antes de compartir detalles, indícalo en el mensaje y lo enviamos.</p>
                 </div>
                 <div class="grid sm:grid-cols-2 gap-3">
                     <a href="https://wa.me/573114125971?text=Hola%21%20Quiero%20consultar%20por%20un%20proyecto" target="_blank" rel="noopener" class="inline-flex items-center justify-center px-4 py-3 rounded-xl bg-green-500 text-white font-semibold shadow hover:bg-green-600 transition">
@@ -584,58 +382,55 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
 <?php if ($contactRecaptchaEnabled): ?>
 <script>
 (() => {
-    // recaptcha dinámico con idioma
-    let placeholders = Array.from(document.querySelectorAll('.g-recaptcha[data-sitekey]'));
     const forms = ['contact-form', 'agenda-form'].map(id => document.getElementById(id)).filter(Boolean);
-    if (placeholders.length) {
-        function renderAll() {
-            if (!window.grecaptcha) return;
-            placeholders.forEach(el => {
-                if (el.dataset.recaptchaId) return;
-                const id = grecaptcha.render(el, { sitekey: el.dataset.sitekey });
-                el.dataset.recaptchaId = id;
-            });
-            document.querySelectorAll('.recaptcha-old').forEach(old => old.remove());
-        }
-        function loadRecaptcha(lang) {
-            const existing = document.querySelector('script[data-mce-recaptcha]');
-            if (existing && existing.dataset.lang === lang) {
-                renderAll();
-                return;
-            }
-            if (existing) existing.remove();
-            delete window.grecaptcha;
-            delete window.___grecaptcha_cfg;
-            const s = document.createElement('script');
-            s.src = https://www.google.com/recaptcha/api.js?onload=mceRenderRecaptcha&render=explicit&hl=;
-            s.async = true;
-            s.defer = true;
-            s.dataset.mceRecaptcha = '1';
-            s.dataset.lang = lang;
-            document.head.appendChild(s);
-            window.mceRenderRecaptcha = renderAll;
-        }
-        const currentLang = localStorage.getItem('siteLang') || 'es';
-        loadRecaptcha(currentLang);
-        window.addEventListener('mce-lang-changed', (e) => {
-            const lang = e.detail?.lang || 'es';
-            const fresh = [];
-            placeholders.forEach(el => {
-                const clone = document.createElement('div');
-                clone.className = el.className;
-                clone.dataset.sitekey = el.dataset.sitekey;
-                el.insertAdjacentElement('afterend', clone);
-                el.classList.add('recaptcha-old');
-                fresh.push(clone);
-            });
-            placeholders = fresh;
-            loadRecaptcha(lang);
-        });
-    }
+    let placeholders = Array.from(document.querySelectorAll('.g-recaptcha[data-sitekey]'));
 
-    // Slots disponibles
-    const availableHours = <?php echo json_encode(, JSON_UNESCAPED_UNICODE); ?>;
-    const bookedSlots = <?php echo json_encode(, JSON_UNESCAPED_UNICODE); ?>;
+    function renderAll() {
+        if (!window.grecaptcha) return;
+        placeholders.forEach(el => {
+            if (el.dataset.recaptchaId) return;
+            const id = grecaptcha.render(el, { sitekey: el.dataset.sitekey });
+            el.dataset.recaptchaId = id;
+        });
+        document.querySelectorAll('.recaptcha-old').forEach(old => old.remove());
+    }
+    function loadRecaptcha(lang) {
+        const existing = document.querySelector('script[data-mce-recaptcha]');
+        if (existing && existing.dataset.lang === lang) {
+            renderAll();
+            return;
+        }
+        if (existing) existing.remove();
+        delete window.grecaptcha;
+        delete window.___grecaptcha_cfg;
+        const s = document.createElement('script');
+        s.src = `https://www.google.com/recaptcha/api.js?onload=mceRenderRecaptcha&render=explicit&hl=${lang}`;
+        s.async = true;
+        s.defer = true;
+        s.dataset.mceRecaptcha = '1';
+        s.dataset.lang = lang;
+        document.head.appendChild(s);
+        window.mceRenderRecaptcha = renderAll;
+    }
+    loadRecaptcha(localStorage.getItem('siteLang') || 'es');
+    window.addEventListener('mce-lang-changed', (e) => {
+        const lang = e.detail?.lang || 'es';
+        const fresh = [];
+        placeholders.forEach(el => {
+            const clone = document.createElement('div');
+            clone.className = el.className;
+            clone.dataset.sitekey = el.dataset.sitekey;
+            el.insertAdjacentElement('afterend', clone);
+            el.classList.add('recaptcha-old');
+            fresh.push(clone);
+        });
+        placeholders = fresh;
+        loadRecaptcha(lang);
+    });
+
+    // Horarios de agenda
+    const availableHours = <?php echo json_encode($availableHours, JSON_UNESCAPED_UNICODE); ?>;
+    const bookedSlots = <?php echo json_encode($bookedSlotsByDate, JSON_UNESCAPED_UNICODE); ?>;
     const horaSelect = document.getElementById('agenda-hora');
     const fechaInput = document.getElementById('agenda-fecha');
     const horaMsg = document.getElementById('agenda-hora-msg');
@@ -644,16 +439,14 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
         if (!horaSelect || !fechaInput) return;
         const booked = bookedSlots[dateStr] || [];
         let options = availableHours.filter(h => !booked.includes(h));
-
         const todayStr = new Date().toISOString().slice(0, 10);
         if (dateStr === todayStr) {
             const now = new Date();
             const currentHHMM = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
             options = options.filter(h => h > currentHHMM);
         }
-
         horaSelect.innerHTML = '';
-        if (options.length === 0) {
+        if (!options.length) {
             horaSelect.disabled = true;
             horaMsg?.classList.remove('hidden');
             return;
@@ -667,12 +460,12 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
             horaSelect.appendChild(opt);
         });
     };
-
     if (fechaInput) {
         fechaInput.addEventListener('change', (e) => renderHours(e.target.value));
         renderHours(fechaInput.value || fechaInput.getAttribute('min'));
     }
 
+    // Validación de envío con reCAPTCHA
     forms.forEach((form) => {
         form.addEventListener('submit', (event) => {
             if (typeof window.grecaptcha === 'undefined') {
@@ -684,7 +477,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
             const response = widgetId !== undefined ? grecaptcha.getResponse(Number(widgetId)) : '';
             if (!response) {
                 event.preventDefault();
-                alert('Completa la verificacion reCAPTCHA antes de enviar.');
+                alert('Completa la verificación reCAPTCHA antes de enviar.');
             }
         });
     });
@@ -693,6 +486,10 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
 <?php endif; ?>
 
 <?php include 'includes/footer.php'; ?>
+
+
+
+
 
 
 
