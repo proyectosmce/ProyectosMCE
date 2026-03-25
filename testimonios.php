@@ -137,8 +137,8 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
                 <div class="bg-white/10 border border-white/20 backdrop-blur-xl rounded-2xl p-8 shadow-2xl space-y-5">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-blue-100">Lo que valoran</p>
-                            <p class="text-2xl font-semibold text-white">Claridad, tiempos y soporte cercano</p>
+                            <p class="text-sm text-blue-100 i18n-ts-side-title" data-i18n="ts-side-title">Lo que valoran</p>
+                            <p class="text-2xl font-semibold text-white i18n-ts-side-desc" data-i18n="ts-side-desc">Claridad, tiempos y soporte cercano</p>
                         </div>
                         <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-300 text-slate-900 font-bold shadow-lg">MCE</span>
                     </div>
@@ -146,29 +146,29 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-clock"></i></span>
                             <div>
-                                <p class="font-semibold">Visibilidad constante</p>
-                                <p class="text-sm text-blue-100">Demos en cada sprint, tableros y comunicación directa.</p>
+                                <p class="font-semibold i18n-ts-side-b1-title" data-i18n="ts-side-b1-title">Visibilidad constante</p>
+                                <p class="text-sm text-blue-100 i18n-ts-side-b1-text" data-i18n="ts-side-b1-text">Demos en cada sprint, tableros y comunicación directa.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-shield-alt"></i></span>
                             <div>
-                                <p class="font-semibold">Cuidado de la operación</p>
-                                <p class="text-sm text-blue-100">Backups, roles, permisos y monitoreo activo.</p>
+                                <p class="font-semibold i18n-ts-side-b2-title" data-i18n="ts-side-b2-title">Cuidado de la operación</p>
+                                <p class="text-sm text-blue-100 i18n-ts-side-b2-text" data-i18n="ts-side-b2-text">Backups, roles, permisos y monitoreo activo.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-face-smile"></i></span>
                             <div>
-                                <p class="font-semibold">Experiencias claras</p>
-                                <p class="text-sm text-blue-100">UX/UI pensado para equipos operativos y clientes finales.</p>
+                                <p class="font-semibold i18n-ts-side-b3-title" data-i18n="ts-side-b3-title">Experiencias claras</p>
+                                <p class="text-sm text-blue-100 i18n-ts-side-b3-text" data-i18n="ts-side-b3-text">UX/UI pensado para equipos operativos y clientes finales.</p>
                             </div>
                         </li>
                     </ul>
                     <a href="#form-testimonio" class="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between hover:bg-white/10 transition">
                         <div>
-                            <p class="text-sm text-blue-100">Participa</p>
-                            <p class="font-semibold">Deja tu testimonio y ayuda a otros equipos</p>
+                            <p class="text-sm text-blue-100 i18n-ts-side-cta-label" data-i18n="ts-side-cta-label">Participa</p>
+                            <p class="font-semibold i18n-ts-side-cta-text" data-i18n="ts-side-cta-text">Deja tu testimonio y ayuda a otros equipos</p>
                         </div>
                         <i class="fas fa-arrow-right text-yellow-300"></i>
                     </a>
@@ -199,12 +199,12 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
 
     <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
         <div>
-            <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Experiencias reales</p>
-            <h2 class="text-3xl font-bold text-slate-900">Historias de equipos que confiaron en Proyectos MCE</h2>
-            <p class="text-gray-700 mt-2 max-w-3xl">Lee cómo usamos entregas iterativas, acompañamiento y soporte para llevar sus proyectos a producción.</p>
+            <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide i18n-ts-exp-label" data-i18n="ts-exp-label">Experiencias reales</p>
+            <h2 class="text-3xl font-bold text-slate-900 i18n-ts-exp-title" data-i18n="ts-exp-title">Historias de equipos que confiaron en Proyectos MCE</h2>
+            <p class="text-gray-700 mt-2 max-w-3xl i18n-ts-exp-desc" data-i18n="ts-exp-desc">Lee cómo usamos entregas iterativas, acompañamiento y soporte para llevar sus proyectos a producción.</p>
         </div>
         <a href="#form-testimonio" class="inline-flex items-center px-5 py-3 rounded-xl bg-slate-900 text-white font-semibold shadow-lg hover:bg-slate-800 transition">
-            <i class="fas fa-comments mr-2"></i> Quiero contar mi experiencia
+            <i class="fas fa-comments mr-2"></i> <span class="i18n-ts-exp-btn" data-i18n="ts-exp-btn">Quiero contar mi experiencia</span>
         </a>
     </div>
 
@@ -214,7 +214,7 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
                 No pudimos cargar los testimonios en este momento.
             </div>
         <?php elseif (!$hasTestimonios): ?>
-            <div class="md:col-span-3 bg-white border border-dashed border-gray-300 rounded-xl p-6 text-center text-gray-600">
+            <div class="md:col-span-3 bg-white border border-dashed border-gray-300 rounded-xl p-6 text-center text-gray-600 i18n-ts-empty" data-i18n="ts-empty">
                 Aún no hay testimonios. ¡Sé el primero en dejar el tuyo!
             </div>
         <?php else: ?>
@@ -254,7 +254,7 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
                 <p class="text-gray-700 leading-relaxed text-sm mb-4">"<?php echo nl2br(htmlspecialchars($textoFinal, ENT_QUOTES, 'UTF-8')); ?>"</p>
                 <div class="flex items-center justify-between">
                     <span class="text-xs text-gray-500 flex items-center gap-2">
-                        <i class="fas fa-shield-alt text-blue-500"></i> Testimonio verificado
+                        <i class="fas fa-shield-alt text-blue-500"></i> <span class="i18n-ts-verified" data-i18n="ts-verified">Testimonio verificado</span>
                     </span>
                     <button type="button" class="flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-3 py-1 text-sm font-semibold text-red-600 hover:bg-red-100 transition like-btn" data-like-id="<?php echo (int) $t['id']; ?>">
                         <i class="fas fa-heart"></i>
