@@ -128,7 +128,7 @@
 
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         <?php
-        $result = $conn->query("SELECT * FROM servicios ORDER BY orden");
+        $result = $conn->query("SELECT * FROM servicios WHERE LOWER(titulo) <> 'tiendas online' ORDER BY orden");
         while ($row = $result->fetch_assoc()):
         ?>
         <div class="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden animate-on-scroll">

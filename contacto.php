@@ -204,7 +204,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                         <select name="servicio" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                             <option value="" class="i18n-ct-form-service-opt0" data-i18n="ct-form-service-opt0">Solo llamada de exploración</option>
                             <?php
-                            $servicios = $conn->query("SELECT titulo FROM servicios ORDER BY orden");
+                            $servicios = $conn->query("SELECT titulo FROM servicios WHERE LOWER(titulo) <> 'tiendas online' ORDER BY orden");
                             while ($s = $servicios->fetch_assoc()) {
                                 $serviceTitle = (string) ($s['titulo'] ?? '');
                                 ?>
@@ -316,7 +316,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                         <select name="servicio" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                             <option value="" class="i18n-ct-mail-service-opt0" data-i18n="ct-mail-service-opt0">Seleccionar...</option>
                             <?php
-                            $servicios = $conn->query("SELECT titulo FROM servicios ORDER BY orden");
+                            $servicios = $conn->query("SELECT titulo FROM servicios WHERE LOWER(titulo) <> 'tiendas online' ORDER BY orden");
                             while ($s = $servicios->fetch_assoc()) {
                                 $serviceTitle = (string) ($s['titulo'] ?? '');
                                 ?>

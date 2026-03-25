@@ -76,7 +76,7 @@ if ($citasCanceladasStmt) {
 }
 
 $total_proyectos = $conn->query("SELECT COUNT(*) as total FROM proyectos")->fetch_assoc()['total'];
-$total_servicios = $conn->query("SELECT COUNT(*) as total FROM servicios")->fetch_assoc()['total'];
+$total_servicios = $conn->query("SELECT COUNT(*) as total FROM servicios WHERE LOWER(titulo) <> 'tiendas online'")->fetch_assoc()['total'];
 $mensajes_no_leidos = $conn->query("SELECT COUNT(*) as total FROM mensajes WHERE leido = 0")->fetch_assoc()['total'];
 $total_mensajes = $conn->query("SELECT COUNT(*) as total FROM mensajes")->fetch_assoc()['total'];
 $testimonios_pendientes = getPendingTestimonialsCount($conn);

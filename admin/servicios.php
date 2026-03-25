@@ -57,10 +57,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$whereSql = '';
+$baseFilter = "LOWER(titulo) <> 'tiendas online'";
+$whereSql = " WHERE {$baseFilter}";
 if ($searchTerm !== '') {
     $safeSearch = $conn->real_escape_string($searchTerm);
-    $whereSql = " WHERE titulo LIKE '%{$safeSearch}%' OR descripcion LIKE '%{$safeSearch}%' OR icono LIKE '%{$safeSearch}%'";
+    $whereSql .= " AND (titulo LIKE '%{$safeSearch}%' OR descripcion LIKE '%{$safeSearch}%' OR icono LIKE '%{$safeSearch}%')";
 }
 
 $totalServices = 0;
