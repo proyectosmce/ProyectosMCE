@@ -182,6 +182,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                 <input type="hidden" name="form_token" value="<?php echo htmlspecialchars($contactFormGuard['token'], ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="form_context" value="agenda">
                 <input type="hidden" name="redirect_anchor" value="form-feedback">
+                <input type="hidden" name="lang" id="agenda-lang" value="es">
                 <div style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
                     <label for="agenda_company_website">No llenes este campo</label>
                     <input id="agenda_company_website" type="text" name="company_website" tabindex="-1" autocomplete="off">
@@ -294,6 +295,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                 <input type="hidden" name="form_token" value="<?php echo htmlspecialchars($contactFormGuard['token'], ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="form_context" value="contacto">
                 <input type="hidden" name="redirect_anchor" value="form-feedback">
+                <input type="hidden" name="lang" id="contact-lang" value="es">
                 <div style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
                     <label for="company_website">No llenes este campo</label>
                     <input id="company_website" type="text" name="company_website" tabindex="-1" autocomplete="off">
@@ -378,6 +380,22 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
         </div>
     </div>
 </section>
+
+<script>
+// sincroniza el idioma actual con los formularios para enviarlo al backend
+(function() {
+    const getLang = () => (window.mceCurrentLang || localStorage.getItem('siteLang') || 'es');
+    const setLangInputs = () => {
+        const lang = getLang();
+        const agenda = document.getElementById('agenda-lang');
+        const contact = document.getElementById('contact-lang');
+        if (agenda) agenda.value = lang;
+        if (contact) contact.value = lang;
+    };
+    setLangInputs();
+    window.addEventListener('mce-lang-changed', setLangInputs);
+})();
+</script>
 
 <?php if ($contactRecaptchaEnabled): ?>
 <script>

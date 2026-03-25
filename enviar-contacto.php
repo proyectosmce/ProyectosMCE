@@ -236,6 +236,185 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $servicioMail = html_entity_decode($servicio, ENT_QUOTES, 'UTF-8');
             $mensajeMail = html_entity_decode($mensaje, ENT_QUOTES, 'UTF-8');
 
+    // Idioma seleccionado (enviado desde el front). Fallback: es.
+    $langRaw = strtolower(trim((string)($_POST['lang'] ?? 'es')));
+    $allowedLangs = ['es','en','fr','de','pt','it'];
+    $lang = in_array($langRaw, $allowedLangs, true) ? $langRaw : 'es';
+
+    $brandNames = [
+        'es' => 'Proyectos MCE',
+        'en' => 'MCE Projects',
+        'fr' => 'Projets MCE',
+        'de' => 'MCE Projekte',
+        'pt' => 'Projetos MCE',
+        'it' => 'Progetti MCE',
+    ];
+    $brand = $brandNames[$lang] ?? $brandNames['es'];
+
+    $emailCopyContact = [
+        'es' => [
+            'subject' => "Recibimos tu solicitud en {$brand}",
+            'hero' => "Hola %s, ya recibimos tu solicitud",
+            'heroText' => 'Gracias por escribirnos. Revisaremos tu caso y te responderemos por este mismo medio.',
+            'summaryTitle' => 'Resumen de tu consulta',
+            'messageTitle' => 'Lo que nos compartiste',
+            'nextTitle' => 'Qué sigue ahora',
+            'nextText' => 'Revisaremos la información y te responderemos con los siguientes pasos o una propuesta inicial.',
+            'footerText' => 'Este es un correo automático de confirmación. Puedes responder si quieres agregar más detalles.',
+            'ctaText' => 'Ver portafolio',
+            'plainIntro' => "Recibimos tu solicitud en {$brand}.",
+            'plainNext' => 'Revisaremos la información y te responderemos con los siguientes pasos.'
+        ],
+        'en' => [
+            'subject' => "We received your request at {$brand}",
+            'hero' => "Hi %s, we’ve got your request",
+            'heroText' => 'Thanks for reaching out. We’ll review your case and reply to you by email.',
+            'summaryTitle' => 'Your request summary',
+            'messageTitle' => 'What you shared',
+            'nextTitle' => 'What happens next',
+            'nextText' => 'We’ll review the info and reply with next steps or an initial proposal.',
+            'footerText' => 'This is an automatic confirmation email. Reply here if you want to add more details.',
+            'ctaText' => 'See portfolio',
+            'plainIntro' => "We received your request at {$brand}.",
+            'plainNext' => 'We’ll review the info and reply with next steps.'
+        ],
+        'fr' => [
+            'subject' => "Nous avons bien reçu votre demande chez {$brand}",
+            'hero' => "Bonjour %s, nous avons reçu votre demande",
+            'heroText' => 'Merci de nous avoir écrit. Nous allons étudier votre besoin et vous répondre par email.',
+            'summaryTitle' => 'Résumé de votre demande',
+            'messageTitle' => 'Ce que vous avez partagé',
+            'nextTitle' => 'Prochaine étape',
+            'nextText' => 'Nous analyserons les infos et vous répondrons avec les étapes suivantes ou une proposition initiale.',
+            'footerText' => 'Ceci est un email automatique de confirmation. Répondez si vous souhaitez ajouter des détails.',
+            'ctaText' => 'Voir le portfolio',
+            'plainIntro' => "Nous avons reçu votre demande chez {$brand}.",
+            'plainNext' => 'Nous analyserons les infos et répondrons avec les prochaines étapes.'
+        ],
+        'de' => [
+            'subject' => "Wir haben deine Anfrage bei {$brand} erhalten",
+            'hero' => "Hallo %s, wir haben deine Anfrage erhalten",
+            'heroText' => 'Danke für deine Nachricht. Wir prüfen dein Anliegen und melden uns per E-Mail.',
+            'summaryTitle' => 'Zusammenfassung deiner Anfrage',
+            'messageTitle' => 'Deine Nachricht',
+            'nextTitle' => 'Wie es weitergeht',
+            'nextText' => 'Wir prüfen die Infos und melden uns mit nächsten Schritten oder einem ersten Vorschlag.',
+            'footerText' => 'Dies ist eine automatische Bestätigung. Antworte, wenn du weitere Details hinzufügen möchtest.',
+            'ctaText' => 'Portfolio ansehen',
+            'plainIntro' => "Wir haben deine Anfrage bei {$brand} erhalten.",
+            'plainNext' => 'Wir prüfen die Infos und melden uns mit nächsten Schritten.'
+        ],
+        'pt' => [
+            'subject' => "Recebemos sua solicitação na {$brand}",
+            'hero' => "Olá %s, recebemos sua solicitação",
+            'heroText' => 'Obrigado por escrever. Vamos analisar seu caso e responder por este e-mail.',
+            'summaryTitle' => 'Resumo da sua solicitação',
+            'messageTitle' => 'O que você nos contou',
+            'nextTitle' => 'Próximo passo',
+            'nextText' => 'Vamos revisar as informações e responder com próximos passos ou uma proposta inicial.',
+            'footerText' => 'Este é um e-mail automático de confirmação. Responda se quiser acrescentar mais detalhes.',
+            'ctaText' => 'Ver portfólio',
+            'plainIntro' => "Recebemos sua solicitação na {$brand}.",
+            'plainNext' => 'Vamos revisar as informações e responder com próximos passos.'
+        ],
+        'it' => [
+            'subject' => "Abbiamo ricevuto la tua richiesta su {$brand}",
+            'hero' => "Ciao %s, abbiamo ricevuto la tua richiesta",
+            'heroText' => 'Grazie per averci scritto. Analizzeremo il tuo caso e ti risponderemo via email.',
+            'summaryTitle' => 'Riepilogo della tua richiesta',
+            'messageTitle' => 'Cosa ci hai scritto',
+            'nextTitle' => 'Cosa succede ora',
+            'nextText' => 'Rivedremo le informazioni e ti risponderemo con i prossimi passi o una proposta iniziale.',
+            'footerText' => 'Questo è un email automatica di conferma. Rispondi se vuoi aggiungere altri dettagli.',
+            'ctaText' => 'Vedi portfolio',
+            'plainIntro' => "Abbiamo ricevuto la tua richiesta su {$brand}.",
+            'plainNext' => 'Rivedremo le informazioni e ti risponderemo con i prossimi passi.'
+        ],
+    ];
+
+    $emailCopyAgenda = [
+        'es' => [
+            'subject' => "Confirmamos tu llamada con {$brand}",
+            'hero' => "Hola %s, agenda recibida",
+            'heroText' => 'Revisaremos el horario solicitado y te enviaremos la confirmación con el enlace.',
+            'summaryTitle' => 'Detalle de la llamada',
+            'messageTitle' => 'Notas que nos compartiste',
+            'nextTitle' => 'Qué sigue ahora',
+            'nextText' => 'Validaremos el horario y te responderemos con la confirmación o una alternativa cercana.',
+            'footerText' => 'Este es un correo automático de confirmación de agenda. Puedes responder si necesitas ajustar el horario.',
+            'ctaText' => 'Ver portafolio',
+            'plainIntro' => "Recibimos tu solicitud para agendar una llamada.",
+            'plainNext' => 'Validaremos el horario y te responderemos con la confirmación o una alternativa.'
+        ],
+        'en' => [
+            'subject' => "We’re confirming your call with {$brand}",
+            'hero' => "Hi %s, your call request is in",
+            'heroText' => 'We’ll review the time you chose and send the confirmation with the meeting link.',
+            'summaryTitle' => 'Call details',
+            'messageTitle' => 'Notes you shared',
+            'nextTitle' => 'Next step',
+            'nextText' => 'We’ll validate the slot and reply with confirmation or a nearby option.',
+            'footerText' => 'This is an automatic call confirmation. Reply if you need to adjust the time.',
+            'ctaText' => 'See portfolio',
+            'plainIntro' => "We received your call scheduling request.",
+            'plainNext' => 'We’ll validate the time and reply with confirmation or an alternative.'
+        ],
+        'fr' => [
+            'subject' => "Nous confirmons votre appel avec {$brand}",
+            'hero' => "Bonjour %s, demande d’appel reçue",
+            'heroText' => 'Nous vérifierons l’horaire choisi et enverrons la confirmation avec le lien.',
+            'summaryTitle' => 'Détails de l’appel',
+            'messageTitle' => 'Notes partagées',
+            'nextTitle' => 'Étape suivante',
+            'nextText' => 'Nous validerons le créneau et répondrons avec la confirmation ou une alternative proche.',
+            'footerText' => 'Ceci est un email automatique de confirmation d’appel. Répondez si vous devez ajuster l’horaire.',
+            'ctaText' => 'Voir le portfolio',
+            'plainIntro' => "Nous avons reçu votre demande d’appel.",
+            'plainNext' => 'Nous validerons l’horaire et répondrons avec la confirmation ou une alternative.'
+        ],
+        'de' => [
+            'subject' => "Wir bestätigen deinen Anruf mit {$brand}",
+            'hero' => "Hallo %s, dein Call-Wunsch ist eingegangen",
+            'heroText' => 'Wir prüfen den gewünschten Termin und senden die Bestätigung mit Meeting-Link.',
+            'summaryTitle' => 'Call-Details',
+            'messageTitle' => 'Notizen von dir',
+            'nextTitle' => 'Nächster Schritt',
+            'nextText' => 'Wir validieren den Slot und melden uns mit Bestätigung oder einer Alternative.',
+            'footerText' => 'Dies ist eine automatische Call-Bestätigung. Antworte, falls du die Zeit ändern musst.',
+            'ctaText' => 'Portfolio ansehen',
+            'plainIntro' => "Wir haben deine Anfrage für einen Call erhalten.",
+            'plainNext' => 'Wir prüfen den Slot und melden uns mit Bestätigung oder Alternative.'
+        ],
+        'pt' => [
+            'subject' => "Confirmamos sua ligação com {$brand}",
+            'hero' => "Olá %s, recebemos seu pedido de ligação",
+            'heroText' => 'Vamos revisar o horário escolhido e enviar a confirmação com o link.',
+            'summaryTitle' => 'Detalhes da ligação',
+            'messageTitle' => 'Notas que você compartilhou',
+            'nextTitle' => 'Próximo passo',
+            'nextText' => 'Vamos validar o horário e responder com a confirmação ou uma alternativa próxima.',
+            'footerText' => 'Este é um e-mail automático de confirmação. Responda se precisar ajustar o horário.',
+            'ctaText' => 'Ver portfólio',
+            'plainIntro' => "Recebemos seu pedido para agendar uma ligação.",
+            'plainNext' => 'Vamos validar o horário e responder com a confirmação ou alternativa.'
+        ],
+        'it' => [
+            'subject' => "Confermiamo la tua chiamata con {$brand}",
+            'hero' => "Ciao %s, richiesta di chiamata ricevuta",
+            'heroText' => 'Controlleremo l’orario scelto e ti invieremo la conferma con il link.',
+            'summaryTitle' => 'Dettagli della chiamata',
+            'messageTitle' => 'Note che hai condiviso',
+            'nextTitle' => 'Prossimo passo',
+            'nextText' => 'Valideremo lo slot e ti risponderemo con la conferma o un’alternativa vicina.',
+            'footerText' => 'Questa è una conferma automatica. Rispondi se devi cambiare l’orario.',
+            'ctaText' => 'Vedi portfolio',
+            'plainIntro' => "Abbiamo ricevuto la tua richiesta di chiamata.",
+            'plainNext' => 'Valideremo l’orario e risponderemo con la conferma o un’alternativa.'
+        ],
+    ];
+
+    $copySet = $isAgendaForm ? ($emailCopyAgenda[$lang] ?? $emailCopyAgenda['es']) : ($emailCopyContact[$lang] ?? $emailCopyContact['es']);
+
     $nombreHtml = htmlspecialchars($nombreMail, ENT_QUOTES, 'UTF-8');
     $emailHtml = htmlspecialchars($emailMail, ENT_QUOTES, 'UTF-8');
     $telefonoHtml = htmlspecialchars($telefonoMail !== '' ? $telefonoMail : 'No proporcionado', ENT_QUOTES, 'UTF-8');
@@ -247,85 +426,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $modoLlamadaHtml = htmlspecialchars($modoLlamada === 'video' ? 'Videollamada' : 'Teléfono', ENT_QUOTES, 'UTF-8');
     $enlaceReunionHtml = $enlaceReunion !== '' ? '<a href="' . htmlspecialchars($enlaceReunion, ENT_QUOTES, 'UTF-8') . '" style="color:#2563eb;">' . htmlspecialchars($enlaceReunion, ENT_QUOTES, 'UTF-8') . '</a>' : 'Se compartirá en la confirmación';
 
-            $serviceKey = function_exists('mb_strtolower')
-                ? mb_strtolower($servicioMail, 'UTF-8')
-                : strtolower($servicioMail);
+    $serviceKey = function_exists('mb_strtolower')
+        ? mb_strtolower($servicioMail, 'UTF-8')
+        : strtolower($servicioMail);
 
-            $clientSubject = 'Recibimos tu solicitud en Proyectos MCE';
-            $clientHeroTitle = "Hola {$nombreHtml}, ya recibimos tu solicitud";
-            $clientHeroText = 'Gracias por escribirnos. Tu información quedó registrada correctamente y revisaremos tu caso para responderte por este mismo medio.';
-            $clientSummaryTitle = 'Resumen de tu consulta';
-            $clientMessageTitle = 'Lo que nos compartiste';
-            $clientNextTitle = 'Qué sigue ahora';
-            $clientNextText = 'Revisaremos la información que enviaste y te responderemos con los siguientes pasos, una orientación inicial o una propuesta según el tipo de proyecto.';
-            $clientFooterText = 'Este es un correo automático de confirmación. Si deseas agregar información adicional, puedes responder directamente a este mensaje.';
-            $clientCtaText = 'Ver portafolio';
-            $clientPlainIntro = 'Recibimos tu solicitud en Proyectos MCE y la revisaremos para responderte por este mismo medio.';
-            $clientPlainNext = 'Revisaremos la información que enviaste y te responderemos con los siguientes pasos.';
+    $clientSubject = $copySet['subject'];
+    $clientHeroTitle = sprintf($copySet['hero'], $nombreHtml);
+    $clientHeroText = $copySet['heroText'];
+    $clientSummaryTitle = $copySet['summaryTitle'];
+    $clientMessageTitle = $copySet['messageTitle'];
+    $clientNextTitle = $copySet['nextTitle'];
+    $clientNextText = $copySet['nextText'];
+    $clientFooterText = $copySet['footerText'];
+    $clientCtaText = $copySet['ctaText'];
+    $clientPlainIntro = $copySet['plainIntro'];
+    $clientPlainNext = $copySet['plainNext'];
 
-            if ($isAgendaForm) {
-                $clientSubject = 'Confirmamos tu llamada con Proyectos MCE';
-                $clientHeroTitle = "Hola {$nombreHtml}, agenda recibida";
-                $clientHeroText = 'Recibimos tu solicitud para agendar una llamada. Revisaremos disponibilidad y te enviaremos la confirmaci&oacute;n con el enlace de reuni&oacute;n.';
-                $clientSummaryTitle = 'Detalle de la llamada';
-                $clientMessageTitle = 'Notas que nos compartiste';
-                $clientNextTitle = 'Qu&eacute; sigue ahora';
-                $clientNextText = 'Validaremos el horario y te responderemos con la confirmaci&oacute;n o una alternativa cercana.';
-                $clientFooterText = 'Este es un correo autom&aacute;tico de confirmaci&oacute;n de agenda. Si necesitas ajustar el horario, responde a este mensaje.';
-                $clientCtaText = 'Ver portafolio';
-                $clientPlainIntro = 'Recibimos tu solicitud para agendar una llamada. Confirmaremos el horario y te enviaremos el enlace.';
-                $clientPlainNext = 'Validaremos el horario y te responderemos con la confirmacion o una alternativa cercana.';
-            } elseif (strpos($serviceKey, 'tienda') !== false || strpos($serviceKey, 'e-commerce') !== false || strpos($serviceKey, 'ecommerce') !== false) {
-                $clientSubject = 'Recibimos tu solicitud para tu tienda online';
-                $clientHeroTitle = "Hola {$nombreHtml}, tu solicitud para tienda online ya está en revisión";
-                $clientHeroText = 'Gracias por contarnos sobre tu idea de venta en línea. Revisaremos tu solicitud para orientarte sobre estructura, catálogo, pagos y el siguiente paso más conveniente.';
-                $clientSummaryTitle = 'Resumen de tu tienda online';
-                $clientMessageTitle = 'Detalles que nos compartiste';
-                $clientNextTitle = 'Próximo paso para tu tienda';
-                $clientNextText = 'Vamos a revisar el alcance de tu tienda, el tipo de productos y la forma de cobro que podrías necesitar para responderte con una orientación clara.';
-                $clientFooterText = 'Este correo confirma que tu solicitud para tienda online ya fue recibida. Si deseas agregar productos, referencias o ideas visuales, responde a este mensaje.';
-                $clientCtaText = 'Ver proyectos web';
-                $clientPlainIntro = 'Recibimos tu solicitud para tienda online y vamos a revisarla para responderte con una orientación clara.';
-                $clientPlainNext = 'Revisaremos productos, estructura y necesidades de pago para indicarte el siguiente paso.';
-            } elseif (strpos($serviceKey, 'inventario') !== false) {
-                $clientSubject = 'Recibimos tu solicitud para sistema de inventario';
-                $clientHeroTitle = "Hola {$nombreHtml}, ya recibimos tu solicitud para sistema de inventario";
-                $clientHeroText = 'Gracias por escribirnos. Vamos a revisar tu necesidad para entender mejor el control de stock, ventas, reportes o procesos internos que buscas mejorar.';
-                $clientSummaryTitle = 'Resumen de tu sistema';
-                $clientMessageTitle = 'Necesidades que nos compartiste';
-                $clientNextTitle = 'Próximo paso para tu sistema';
-                $clientNextText = 'Analizaremos los procesos que mencionaste para responderte con una orientación inicial sobre módulos, flujo de trabajo y nivel de personalización.';
-                $clientFooterText = 'Tu solicitud para sistema de inventario ya quedó registrada. Si quieres agregar más detalles sobre tu operación, puedes responder directamente a este correo.';
-                $clientCtaText = 'Ver sistemas publicados';
-                $clientPlainIntro = 'Recibimos tu solicitud para sistema de inventario y revisaremos tus necesidades para responderte con una orientación inicial.';
-                $clientPlainNext = 'Analizaremos tus procesos y te responderemos con una propuesta de enfoque.';
-            } elseif (strpos($serviceKey, 'landing') !== false) {
-                $clientSubject = 'Recibimos tu solicitud para landing page';
-                $clientHeroTitle = "Hola {$nombreHtml}, tu solicitud para landing page ya fue recibida";
-                $clientHeroText = 'Gracias por escribirnos. Revisaremos tu mensaje para entender el objetivo de la página, el tipo de conversión que buscas y cómo enfocar mejor la propuesta.';
-                $clientSummaryTitle = 'Resumen de tu landing';
-                $clientMessageTitle = 'Objetivo que nos compartiste';
-                $clientNextTitle = 'Próximo paso para tu página';
-                $clientNextText = 'Vamos a revisar el enfoque de tu landing, el mensaje principal y la acción esperada para responderte con una guía inicial más aterrizada.';
-                $clientFooterText = 'Tu solicitud para landing page ya quedó registrada. Si deseas enviar referencias visuales o ejemplos, responde directamente a este mensaje.';
-                $clientCtaText = 'Ver trabajos publicados';
-                $clientPlainIntro = 'Recibimos tu solicitud para landing page y revisaremos el objetivo de tu página para responderte con una guía inicial.';
-                $clientPlainNext = 'Revisaremos tu enfoque, mensaje y necesidad de conversión para indicarte el siguiente paso.';
-            } elseif (strpos($serviceKey, 'desarrollo') !== false || strpos($serviceKey, 'medida') !== false || strpos($serviceKey, 'web') !== false || strpos($serviceKey, 'sistema') !== false) {
-                $clientSubject = 'Recibimos tu solicitud de desarrollo web';
-                $clientHeroTitle = "Hola {$nombreHtml}, ya estamos revisando tu solicitud de desarrollo web";
-                $clientHeroText = 'Gracias por escribirnos. Tu mensaje ya quedó registrado y revisaremos el alcance de tu idea para responderte con una orientación inicial más precisa.';
-                $clientSummaryTitle = 'Resumen de tu proyecto';
-                $clientMessageTitle = 'Idea que nos compartiste';
-                $clientNextTitle = 'Próximo paso para tu desarrollo';
-                $clientNextText = 'Vamos a revisar lo que necesitas construir para responderte con una guía inicial sobre enfoque, alcance y siguientes pasos.';
-                $clientFooterText = 'Tu solicitud de desarrollo web ya fue recibida. Si quieres agregar funcionalidades o referencias, puedes responder directamente a este mensaje.';
-                $clientCtaText = 'Explorar portafolio';
-                $clientPlainIntro = 'Recibimos tu solicitud de desarrollo web y vamos a revisar el alcance para responderte con una orientación inicial.';
-                $clientPlainNext = 'Analizaremos tu idea y te responderemos con enfoque, alcance y siguientes pasos.';
-            }
+    $langTag = strtoupper($lang);
 
-            $internalSubject = "Nuevo lead web - {$nombreMail}";
+    $internalSubject = "Nuevo lead web - {$nombreMail} [{$langTag}]";
             $internalHeroTitle = "Nuevo lead registrado: {$nombreHtml}";
             $internalHeroText = 'Llegó una nueva solicitud desde el formulario de contacto. Aquí tienes el resumen para revisar el alcance y responder con contexto.';
             $internalSummaryTitle = 'Resumen del lead';
@@ -338,7 +457,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $internalPlainAction = "Siguiente acción sugerida: responde a {$nombreMail} y valida el alcance inicial.";
 
             if ($isAgendaForm) {
-                $internalSubject = "Nueva agenda de llamada - {$nombreMail}";
+                $internalSubject = "Nueva agenda de llamada - {$nombreMail} [{$langTag}]";
                 $internalHeroTitle = "Solicitud de llamada: {$nombreHtml}";
                 $internalHeroText = 'Se registr&oacute; una agenda de llamada. Revisa horario solicitado y responde con la confirmaci&oacute;n.';
                 $internalSummaryTitle = 'Resumen de la llamada';
@@ -350,7 +469,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $internalPlainIntro = 'Nueva solicitud de llamada recibida.';
                 $internalPlainAction = "Confirma horario y envia enlace a {$nombreMail}.";
             } elseif (strpos($serviceKey, 'tienda') !== false || strpos($serviceKey, 'e-commerce') !== false || strpos($serviceKey, 'ecommerce') !== false) {
-                $internalSubject = "Nuevo lead de tienda online - {$nombreMail}";
+                $internalSubject = "Nuevo lead de tienda online - {$nombreMail} [{$langTag}]";
                 $internalHeroTitle = "Nuevo lead para tienda online: {$nombreHtml}";
                 $internalHeroText = 'El cliente quiere avanzar con una solución de venta en línea. Revisa productos, pagos y alcance comercial antes de responder.';
                 $internalSummaryTitle = 'Resumen del lead e-commerce';
@@ -361,7 +480,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $internalPlainIntro = 'Llegó un nuevo lead interesado en una tienda online.';
                 $internalPlainAction = 'Siguiente acción sugerida: valida catálogo, pagos, envíos y panel administrativo.';
             } elseif (strpos($serviceKey, 'inventario') !== false) {
-                $internalSubject = "Nuevo lead de sistema de inventario - {$nombreMail}";
+                $internalSubject = "Nuevo lead de sistema de inventario - {$nombreMail} [{$langTag}]";
                 $internalHeroTitle = "Nuevo lead para sistema de inventario: {$nombreHtml}";
                 $internalHeroText = 'El mensaje apunta a operación interna, control de stock o reportes. Conviene revisar procesos, roles y puntos críticos antes de responder.';
                 $internalSummaryTitle = 'Resumen del lead operativo';
@@ -372,7 +491,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $internalPlainIntro = 'Llegó un nuevo lead interesado en un sistema de inventario.';
                 $internalPlainAction = 'Siguiente acción sugerida: valida procesos, reportes, usuarios y necesidades operativas.';
             } elseif (strpos($serviceKey, 'landing') !== false) {
-                $internalSubject = "Nuevo lead de landing page - {$nombreMail}";
+                $internalSubject = "Nuevo lead de landing page - {$nombreMail} [{$langTag}]";
                 $internalHeroTitle = "Nuevo lead para landing page: {$nombreHtml}";
                 $internalHeroText = 'El cliente está buscando una página orientada a conversión. Revisa el objetivo comercial, campaña o público antes de responder.';
                 $internalSummaryTitle = 'Resumen del lead de captación';
@@ -383,7 +502,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $internalPlainIntro = 'Llegó un nuevo lead interesado en una landing page.';
                 $internalPlainAction = 'Siguiente acción sugerida: valida objetivo, oferta, campaña y acción de conversión principal.';
             } elseif (strpos($serviceKey, 'desarrollo') !== false || strpos($serviceKey, 'medida') !== false || strpos($serviceKey, 'web') !== false || strpos($serviceKey, 'sistema') !== false) {
-                $internalSubject = "Nuevo lead de desarrollo web - {$nombreMail}";
+                $internalSubject = "Nuevo lead de desarrollo web - {$nombreMail} [{$langTag}]";
                 $internalHeroTitle = "Nuevo lead de desarrollo web: {$nombreHtml}";
                 $internalHeroText = 'El cliente necesita una solución más abierta o personalizada. Revisa alcance, funcionalidades y nivel de complejidad antes de contestar.';
                 $internalSummaryTitle = 'Resumen del proyecto a medida';
