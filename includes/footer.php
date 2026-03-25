@@ -142,7 +142,7 @@
                     <option value="pt">PT</option>
                     <option value="it">IT</option>
                 </select>
-            <button id="assistant-lang-toggle" class="lang-toggle" type="button" style="background:transparent;border-color:transparent;">
+            <button id="assistant-lang-toggle" class="lang-toggle" type="button" style="background:#ffffffd9;color:#0f172a;border-color:#e2e8f0;">
                 <img id="assistant-lang-flag" src="https://flagcdn.com/w20/un.png" alt="Auto">
                 <span id="assistant-lang-label">Auto</span>
             </button>
@@ -2831,6 +2831,7 @@
     </script>
 </body>
 </html>
+
 
 
 

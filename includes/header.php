@@ -139,11 +139,12 @@
             gap: 6px;
             padding: 6px 10px;
             border-radius: 10px;
-            border: 1px solid transparent;
+            border: 1px solid #e2e8f0;
             font-size: 0.85rem;
-            background: transparent;
-            color: inherit;
+            background: #ffffffd9;
+            color: #0f172a;
             cursor: pointer;
+            box-shadow: 0 6px 20px rgba(15,23,42,0.08);
         }
         .lang-toggle img {
             width: 18px;
@@ -155,10 +156,10 @@
             position: absolute;
             right: 0;
             top: 110%;
-            background: transparent;
-            border: 1px solid transparent;
+            background: #ffffffee;
+            border: 1px solid #e2e8f0;
             border-radius: 10px;
-            box-shadow: none;
+            box-shadow: 0 12px 28px rgba(15,23,42,0.16);
             padding: 8px 8px 10px;
             display: none;
             z-index: 5;
@@ -180,7 +181,7 @@
             font-size: 0.85rem;
             color: inherit;
         }
-        .lang-option:hover { background: rgba(255,255,255,0.08); }
+        .lang-option:hover { background: #f1f5f9; }
         .lang-option img {
             width: 18px;
             height: 14px;
@@ -234,7 +235,7 @@
                             <option value="pt">Português</option>
                             <option value="it">Italiano</option>
                         </select>
-                        <button id="site-lang-toggle" class="lang-toggle" type="button" style="background:transparent;color:#fff;border-color:transparent;">
+                        <button id="site-lang-toggle" class="lang-toggle" type="button" style="background:#ffffffd9;color:#0f172a;border-color:#e2e8f0;">
                             <img id="site-lang-flag" src="https://flagcdn.com/w20/es.png" alt="Español">
                             <span id="site-lang-label">Español</span>
                         </button>
@@ -264,7 +265,7 @@
                 <!-- Controles móviles: idioma + menú -->
                 <div class="md:hidden flex items-center gap-3">
                     <div class="relative">
-                        <button id="site-lang-toggle-mobile" class="lang-toggle" type="button" style="background:transparent;border-color:transparent;">
+                        <button id="site-lang-toggle-mobile" class="lang-toggle" type="button" style="background:#ffffffd9;color:#0f172a;border-color:#e2e8f0;">
                             <img id="site-lang-flag-mobile" src="https://flagcdn.com/w20/es.png" alt="Español">
                             <span id="site-lang-label-mobile">Español</span>
                         </button>
@@ -309,4 +310,5 @@
     </nav>
     
     <main class="min-h-screen">
+
 
