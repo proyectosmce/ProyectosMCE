@@ -284,7 +284,7 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1 i18n-ts-form-proj-label" data-i18n="ts-form-proj-label">Selecciona tu proyecto</label>
-                    <input id="t-proyecto-search" type="text" <?php echo $hasProjectOptions ? '' : 'disabled'; ?> class="w-full border border-gray-200 rounded-lg px-4 py-2 mb-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm disabled:bg-gray-100 disabled:text-gray-400 i18n-ts-form-proj-search" data-i18n="ts-form-proj-search" placeholder="Escribe para buscar un proyecto">
+                    <input id="t-proyecto-search" type="text" <?php echo $hasProjectOptions ? '' : 'disabled'; ?> class="w-full border border-gray-200 rounded-lg px-4 py-2 mb-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm disabled:bg-gray-100 disabled:text-gray-400 i18n-ts-form-proj-search" data-i18n="ts-form-proj-search" data-i18n-placeholder="ts-form-proj-search" placeholder="Escribe para buscar un proyecto">
                     <select id="t-proyecto" name="proyecto_id" required <?php echo $hasProjectOptions ? '' : 'disabled'; ?> class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-400">
                         <option value="" class="i18n-ts-form-proj-option" data-i18n="ts-form-proj-option">Elige un proyecto</option>
                         <?php foreach ($projectOptions as $projectOption): ?>
@@ -297,11 +297,11 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1 i18n-ts-form-name-label" data-i18n="ts-form-name-label">Nombre completo</label>
-                    <input id="t-nombre" name="nombre" required type="text" minlength="2" maxlength="100" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 i18n-ts-form-name-ph" data-i18n="ts-form-name-ph" placeholder="Ej. Ana Martínez">
+                    <input id="t-nombre" name="nombre" required type="text" minlength="2" maxlength="100" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 i18n-ts-form-name-ph" data-i18n="ts-form-name-ph" data-i18n-placeholder="ts-form-name-ph" placeholder="Ej. Ana Martínez">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1 i18n-ts-form-msg-label" data-i18n="ts-form-msg-label">Escribe tu experiencia</label>
-                    <textarea id="t-mensaje" name="mensaje" required rows="5" minlength="30" maxlength="1200" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus-border-blue-500 i18n-ts-form-msg-ph" data-i18n="ts-form-msg-ph" placeholder="Cuenta cómo te fue con el proyecto"></textarea>
+                    <textarea id="t-mensaje" name="mensaje" required rows="5" minlength="30" maxlength="1200" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus-border-blue-500 i18n-ts-form-msg-ph" data-i18n="ts-form-msg-ph" data-i18n-placeholder="ts-form-msg-ph" placeholder="Cuenta cómo te fue con el proyecto"></textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1 i18n-ts-form-rating-label" data-i18n="ts-form-rating-label">Calificación (1 = no recomiendo, 5 = sí recomiendo)</label>

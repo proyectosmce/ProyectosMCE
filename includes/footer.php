@@ -2449,6 +2449,11 @@
                     else el.textContent = dict[key];
                 }
             });
+            // Placeholders específicos
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.dataset.i18nPlaceholder;
+                if (dict[key]) el.placeholder = dict[key];
+            });
             // Atributo data-i18n-key (marcado desde mapClass)
             document.querySelectorAll('[data-i18n-key]').forEach(el => {
                 const key = el.dataset.i18nKey;
