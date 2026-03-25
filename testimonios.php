@@ -438,36 +438,6 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
         '1': { es: { name: 'Jose Delgado', project: 'Destello de Oro 18K', body: joseBodyEs } }
     };
 
-    const translationsByBody = {
-        [joseBodyEs]: {
-            en: {
-                name: 'Jose Delgado',
-                project: 'Destello de Oro 18K',
-                body: 'I, Jose Delgado, owner of Destello de Oro 18K, we developed an inventory control system and the result was excellent. The process was very professional: always willing to listen to my needs, make adjustments when needed, and propose solutions that truly optimized how I run my business.\n\nToday I have a much more organized, practical system tailored to what I needed. This has given me greater control and saved time in daily operations.\n\nIf you are thinking of building software, custom systems or a website, I definitely recommend him. He is responsible, committed to his work and truly seeks the client to be satisfied with the final result.\n\nHe exceeded my expectations, I recommend him 100%. THANK YOU VERY MUCH!'
-            },
-            fr: {
-                name: 'Jose Delgado',
-                project: 'Destello de Oro 18K',
-                body: 'Moi, Jose Delgado, propriétaire de Destello de Oro 18K, nous avons développé un système de gestion d’inventaire et le résultat a été excellent. Le processus a été très professionnel : toujours à l’écoute de mes besoins, prêt à ajuster si nécessaire et à proposer des solutions qui ont vraiment optimisé ma façon de gérer l’entreprise.\n\nAujourd’hui, je dispose d’un système beaucoup plus organisé, pratique et sur mesure. Cela m’a permis d’avoir plus de contrôle et de gagner du temps au quotidien.\n\nSi vous envisagez de développer un logiciel, un système sur mesure ou un site web, je le recommande sans hésiter. Responsable, engagé et vraiment soucieux que le client soit satisfait du résultat final.\n\nIl a dépassé mes attentes, je le recommande à 100 %. MERCI !'
-            },
-            de: {
-                name: 'Jose Delgado',
-                project: 'Destello de Oro 18K',
-                body: 'Ich, Jose Delgado, Inhaber von Destello de Oro 18K, wir haben ein Inventurkontrollsystem entwickelt und das Ergebnis war hervorragend. Der Prozess war sehr professionell: stets offen für meine Bedürfnisse, bereit für Anpassungen und mit Lösungen, die meine Geschäftsabläufe wirklich optimiert haben.\n\nHeute habe ich ein viel besser organisiertes, praktisches und maßgeschneidertes System. So habe ich mehr Kontrolle und spare Zeit im Tagesgeschäft.\n\nWenn du Software, ein maßgeschneidertes System oder eine Website entwickeln willst, kann ich ihn auf jeden Fall empfehlen. Verantwortungsbewusst, engagiert und wirklich darauf bedacht, dass der Kunde mit dem Endergebnis zufrieden ist.\n\nEr hat meine Erwartungen übertroffen, ich empfehle ihn zu 100 %. VIELEN DANK!'
-            },
-            pt: {
-                name: 'Jose Delgado',
-                project: 'Destello de Oro 18K',
-                body: 'Eu, Jose Delgado, dono da Destello de Oro 18K, desenvolvemos um sistema de controle de estoque e o resultado foi excelente. O processo foi muito profissional: sempre disposto a ouvir minhas necessidades, fazer ajustes quando necessário e propor soluções que realmente otimizaram a forma como gerencio o negócio.\n\nHoje tenho um sistema muito mais organizado, prático e sob medida. Isso me deu mais controle e economizou tempo na operação diária.\n\nSe você pensa em desenvolver software, sistemas sob medida ou um site, eu recomendo. Ele é responsável, comprometido com o trabalho e realmente busca a satisfação do cliente com o resultado final.\n\nSuperou minhas expectativas, recomendo 100%. MUITO OBRIGADO!'
-            },
-            it: {
-                name: 'Jose Delgado',
-                project: 'Destello de Oro 18K',
-                body: 'Io, Jose Delgado, proprietario di Destello de Oro 18K, abbiamo sviluppato un sistema di controllo inventario e il risultato è stato eccellente. Il processo è stato molto professionale: sempre pronto ad ascoltare le mie esigenze, a fare aggiustamenti quando serviva e a proporre soluzioni che hanno davvero ottimizzato il modo in cui gestisco il business.\n\nOggi ho un sistema molto più organizzato, pratico e su misura per ciò di cui avevo bisogno. Questo mi ha dato più controllo e mi fa risparmiare tempo nella gestione quotidiana.\n\nSe pensi di sviluppare software, sistemi su misura o un sito web, lo raccomando. È responsabile, impegnato nel lavoro e punta davvero a lasciare il cliente soddisfatto del risultato finale.\n\nHa superato le mie aspettative, lo raccomando al 100%. GRAZIE MILLE!'
-            }
-        }
-    };
-
     // Guarda textos originales como fallback
     cards.forEach(card => {
         card.dataset.nameDefault = card.dataset.nameEs || card.querySelector('.ts-name')?.textContent?.trim() || '';
@@ -490,8 +460,7 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
     const apply = (lang) => {
         cards.forEach(card => {
             const id = card.dataset.testimonialId;
-            const bodyKey = card.dataset.bodyDefault || '';
-            const tmap = testimonialTranslations[id]?.[lang] || translationsByBody[bodyKey]?.[lang];
+            const tmap = testimonialTranslations[id]?.[lang];
             const nameEl = card.querySelector('.ts-name');
             const projectEl = card.querySelector('.ts-project');
             const bodyEl = card.querySelector('.ts-body');
