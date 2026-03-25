@@ -179,23 +179,23 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
 </section>
 
 <section id="testimonios" class="max-w-7xl mx-auto px-4 py-12">
-    <?php if ($testimonioOk): ?>
-    <div id="alert-testimonio" class="mb-8 rounded-lg border border-green-200 bg-green-50 text-green-800 px-4 py-3">
-        Gracias. Tu testimonio fue recibido y quedo pendiente de aprobacion.
+<?php if ($testimonioOk): ?>
+    <div id="alert-testimonio" class="mb-8 rounded-lg border border-green-200 bg-green-50 text-green-800 px-4 py-3 i18n-ts-alert-ok" data-i18n="ts-alert-ok">
+        Gracias. Tu testimonio fue recibido y quedó pendiente de aprobación.
     </div>
-    <?php endif; ?>
+<?php endif; ?>
 
-    <?php if ($testimonioError !== ''): ?>
+<?php if ($testimonioError !== ''): ?>
     <div id="alert-testimonio-error" class="mb-8 rounded-lg border border-red-200 bg-red-50 text-red-800 px-4 py-3">
         <?php if ($testimonioError === 'rate'): ?>
-            Has enviado demasiados testimonios en poco tiempo. Espera antes de intentar nuevamente.
+            <span class="i18n-ts-alert-rate" data-i18n="ts-alert-rate">Has enviado demasiados testimonios en poco tiempo. Espera antes de intentar nuevamente.</span>
         <?php elseif ($testimonioError === 'captcha'): ?>
-            Debes completar la verificación reCAPTCHA antes de enviar el testimonio.
+            <span class="i18n-ts-alert-captcha" data-i18n="ts-alert-captcha">Debes completar la verificación reCAPTCHA antes de enviar el testimonio.</span>
         <?php else: ?>
-            No pudimos validar el testimonio. Revisa los datos del formulario e intenta otra vez.
+            <span class="i18n-ts-alert-generic" data-i18n="ts-alert-generic">No pudimos validar el testimonio. Revisa los datos del formulario e intenta otra vez.</span>
         <?php endif; ?>
     </div>
-    <?php endif; ?>
+<?php endif; ?>
 
     <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
         <div>
@@ -267,12 +267,12 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
     </div>
 
     <div class="bg-white rounded-2xl shadow-xl border border-blue-100 p-8" id="form-testimonio">
-        <h3 class="text-2xl font-bold text-gray-900 mb-2">Deja tu testimonio</h3>
+        <h3 class="text-2xl font-bold text-gray-900 mb-2 i18n-ts-form-title" data-i18n="ts-form-title">Deja tu testimonio</h3>
         <div class="mb-6 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg text-sm flex items-start gap-3">
             <span class="inline-flex items-center justify-center w-5 h-5 bg-amber-500 text-white rounded-full text-xs mt-0.5">
                 <i class="fas fa-exclamation"></i>
             </span>
-            <span>Advertencia: si el nombre no coincide con el propietario del proyecto, el testimonio podrá ser eliminado.</span>
+            <span class="i18n-ts-form-warning" data-i18n="ts-form-warning">Advertencia: si el nombre no coincide con el propietario del proyecto, el testimonio podrá ser eliminado.</span>
         </div>
         <form id="testimonio-form" method="POST" action="#testimonios" class="grid md:grid-cols-2 gap-6">
             <input type="hidden" name="action" value="nuevo_testimonio">
@@ -283,28 +283,28 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Selecciona tu proyecto</label>
-                    <input id="t-proyecto-search" type="text" <?php echo $hasProjectOptions ? '' : 'disabled'; ?> class="w-full border border-gray-200 rounded-lg px-4 py-2 mb-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm disabled:bg-gray-100 disabled:text-gray-400" placeholder="Escribe para buscar un proyecto">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1 i18n-ts-form-proj-label" data-i18n="ts-form-proj-label">Selecciona tu proyecto</label>
+                    <input id="t-proyecto-search" type="text" <?php echo $hasProjectOptions ? '' : 'disabled'; ?> class="w-full border border-gray-200 rounded-lg px-4 py-2 mb-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm disabled:bg-gray-100 disabled:text-gray-400 i18n-ts-form-proj-search" data-i18n="ts-form-proj-search" placeholder="Escribe para buscar un proyecto">
                     <select id="t-proyecto" name="proyecto_id" required <?php echo $hasProjectOptions ? '' : 'disabled'; ?> class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-400">
-                        <option value="">Elige un proyecto</option>
+                        <option value="" class="i18n-ts-form-proj-option" data-i18n="ts-form-proj-option">Elige un proyecto</option>
                         <?php foreach ($projectOptions as $projectOption): ?>
                             <option value="<?php echo $projectOption['id']; ?>"><?php echo htmlspecialchars($projectOption['titulo'], ENT_QUOTES, 'UTF-8'); ?></option>
                         <?php endforeach; ?>
                     </select>
                     <?php if (!$hasProjectOptions): ?>
-                        <p class="mt-2 text-sm text-amber-700">No hay proyectos publicados en el portafolio para seleccionar.</p>
+                        <p class="mt-2 text-sm text-amber-700 i18n-ts-form-proj-empty" data-i18n="ts-form-proj-empty">No hay proyectos publicados en el portafolio para seleccionar.</p>
                     <?php endif; ?>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre completo</label>
-                    <input id="t-nombre" name="nombre" required type="text" minlength="2" maxlength="100" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ej. Ana Martínez">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1 i18n-ts-form-name-label" data-i18n="ts-form-name-label">Nombre completo</label>
+                    <input id="t-nombre" name="nombre" required type="text" minlength="2" maxlength="100" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 i18n-ts-form-name-ph" data-i18n="ts-form-name-ph" placeholder="Ej. Ana Martínez">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Escribe tu experiencia</label>
-                    <textarea id="t-mensaje" name="mensaje" required rows="5" minlength="30" maxlength="1200" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Cuenta cómo te fue con el proyecto"></textarea>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1 i18n-ts-form-msg-label" data-i18n="ts-form-msg-label">Escribe tu experiencia</label>
+                    <textarea id="t-mensaje" name="mensaje" required rows="5" minlength="30" maxlength="1200" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus-border-blue-500 i18n-ts-form-msg-ph" data-i18n="ts-form-msg-ph" placeholder="Cuenta cómo te fue con el proyecto"></textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Calificación (1 = no recomiendo, 5 = sí recomiendo)</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1 i18n-ts-form-rating-label" data-i18n="ts-form-rating-label">Calificación (1 = no recomiendo, 5 = sí recomiendo)</label>
                     <div class="flex items-center gap-2" id="rating-group">
                         <?php for ($i = 1; $i <= 5; $i++): ?>
                         <label class="cursor-pointer text-2xl transition text-gray-300" data-star="<?php echo $i; ?>">
@@ -313,11 +313,11 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
                         </label>
                         <?php endfor; ?>
                     </div>
-                    <p id="rating-text" class="text-sm text-green-600 mt-2">5 / 5 (sí recomiendo)</p>
+                    <p id="rating-text" class="text-sm text-green-600 mt-2 i18n-ts-form-rating-text" data-i18n="ts-form-rating-text">5 / 5 (sí recomiendo)</p>
                 </div>
                 <div class="flex gap-3">
-                    <button type="button" id="t-prev-btn" class="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 transition">Ver vista previa</button>
-                    <button type="submit" id="testimonial-submit" <?php echo ($hasProjectOptions && $testimonialRecaptchaEnabled) ? '' : 'disabled'; ?> class="border border-blue-600 text-blue-600 px-5 py-3 rounded-lg hover:bg-blue-50 transition disabled:border-gray-300 disabled:text-gray-400 disabled:bg-gray-100">
+                    <button type="button" id="t-prev-btn" class="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 transition i18n-ts-form-prev" data-i18n="ts-form-prev">Ver vista previa</button>
+                    <button type="submit" id="testimonial-submit" <?php echo ($hasProjectOptions && $testimonialRecaptchaEnabled) ? '' : 'disabled'; ?> class="border border-blue-600 text-blue-600 px-5 py-3 rounded-lg hover:bg-blue-50 transition disabled:border-gray-300 disabled:text-gray-400 disabled:bg-gray-100 i18n-ts-form-submit" data-i18n="ts-form-submit">
                         Enviar testimonio
                     </button>
                 </div>
@@ -327,19 +327,19 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
                         <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars(form_guard_recaptcha_site_key(), ENT_QUOTES, 'UTF-8'); ?>"></div>
                     </div>
                 <?php else: ?>
-                    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+                    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 i18n-ts-form-recaptcha-missing" data-i18n="ts-form-recaptcha-missing">
                         reCAPTCHA es obligatorio, pero no está configurado correctamente en este entorno.
                     </div>
                 <?php endif; ?>
             </div>
             <div class="space-y-3">
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                    <p class="text-sm font-semibold text-gray-700 mb-2">Lo que estás escribiendo</p>
-                    <p id="t-live-raw" class="text-gray-600 whitespace-pre-line min-h-[120px]">Aquí verás tu texto a medida que escribes…</p>
+                    <p class="text-sm font-semibold text-gray-700 mb-2 i18n-ts-live-raw-title" data-i18n="ts-live-raw-title">Lo que estás escribiendo</p>
+                    <p id="t-live-raw" class="text-gray-600 whitespace-pre-line min-h-[120px] i18n-ts-live-raw-text" data-i18n="ts-live-raw-text">Aquí verás tu texto a medida que escribes…</p>
                 </div>
                 <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                    <p class="text-sm font-semibold text-blue-700 mb-2">Así se verá publicado</p>
-                    <p id="t-live-final" class="text-gray-800 leading-relaxed min-h-[120px]">
+                    <p class="text-sm font-semibold text-blue-700 mb-2 i18n-ts-live-final-title" data-i18n="ts-live-final-title">Así se verá publicado</p>
+                    <p id="t-live-final" class="text-gray-800 leading-relaxed min-h-[120px] i18n-ts-live-final-text" data-i18n="ts-live-final-text">
                         Yo, [tu nombre] dueño de [tu proyecto], aquí aparecerá tu testimonio final.
                     </p>
                 </div>
