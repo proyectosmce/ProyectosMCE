@@ -203,7 +203,7 @@
             <div class="lg:col-span-7 space-y-6 text-left">
                 <span class="inline-flex items-center px-3 py-1 text-sm font-semibold bg-white/10 border border-white/20 rounded-full backdrop-blur">
                     <i class="fas fa-sparkles mr-2 text-yellow-300"></i>
-                    Proyectos MCE · Software a medida
+                    <span class="i18n-hero-badge">Proyectos MCE · Software a medida</span>
                 </span>
                 <h1 class="text-4xl md:text-6xl font-bold leading-tight i18n-hero-title" data-i18n="hero-title">
                     Software a medida para que tu operación no se detenga
@@ -293,15 +293,15 @@
                         <li class="flex items-start gap-3">
                             <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-shield-halved"></i></span>
                             <div>
-                                <p class="font-semibold">Cuidado y soporte</p>
-                                <p class="text-sm text-blue-100">Copias de seguridad, monitoreo y ayuda después de lanzar.</p>
+                                <p class="font-semibold i18n-card4-step4-title">Cuidado y soporte</p>
+                                <p class="text-sm text-blue-100 i18n-card4-step4-text">Copias de seguridad, monitoreo y ayuda después de lanzar.</p>
                             </div>
                         </li>
                     </ul>
                     <a href="https://wa.me/573114125971?text=Hola%21%20Quiero%20agendar%20un%20discovery%20con%20MCE" target="_blank" rel="noopener" class="flex items-center justify-between p-4 rounded-xl bg-white/10 border border-white/20 hover:bg-white/15 transition">
                         <div>
-                            <p class="text-sm text-blue-100">Disponibilidad inmediata</p>
-                            <p class="font-semibold">Agenda tu sesión de discovery sin costo</p>
+                            <p class="text-sm text-blue-100 i18n-cta-discovery-label">Disponibilidad inmediata</p>
+                            <p class="font-semibold i18n-cta-discovery-text">Agenda tu sesión de discovery sin costo</p>
                         </div>
                         <i class="fas fa-arrow-right text-yellow-300 text-xl"></i>
                     </a>
@@ -341,7 +341,7 @@
                 </div>
             </div>
             <div class="p-10 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white space-y-5">
-                <h3 class="text-2xl font-bold">Cómo trabajamos</h3>
+                <h3 class="text-2xl font-bold i18n-tl-heading">Cómo trabajamos</h3>
                 <ul class="space-y-4 timeline">
                     <li class="flex items-start gap-3 timeline-item">
                         <span class="timeline-bullet w-8 h-8 rounded-full bg-white/15 flex items-center justify-center font-semibold">1</span>
