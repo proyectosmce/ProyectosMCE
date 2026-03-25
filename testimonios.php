@@ -210,7 +210,7 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
 
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         <?php if ($testError): ?>
-            <div class="md:col-span-3 bg-red-50 border border-red-200 text-red-700 rounded-lg p-4">
+            <div class="md:col-span-3 bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 i18n-ts-alert-load" data-i18n="ts-alert-load">
                 No pudimos cargar los testimonios en este momento.
             </div>
         <?php elseif (!$hasTestimonios): ?>
@@ -352,16 +352,16 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
 <section class="max-w-7xl mx-auto px-4 pb-16">
     <div class="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-800 text-white rounded-2xl mce-rounded-panel p-10 shadow-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div>
-            <p class="text-sm font-semibold text-blue-100 uppercase tracking-wide">Hablemos</p>
-            <h3 class="text-2xl font-bold">¿Quieres aparecer en esta sección?</h3>
-            <p class="text-blue-100 mt-2">Cuéntanos cómo te fue con tu proyecto y te contactamos para publicarlo.</p>
+            <p class="text-sm font-semibold text-blue-100 uppercase tracking-wide i18n-ts-cta-label" data-i18n="ts-cta-label">Hablemos</p>
+            <h3 class="text-2xl font-bold i18n-ts-cta-title" data-i18n="ts-cta-title">¿Quieres aparecer en esta sección?</h3>
+            <p class="text-blue-100 mt-2 i18n-ts-cta-desc" data-i18n="ts-cta-desc">Cuéntanos cómo te fue con tu proyecto y te contactamos para publicarlo.</p>
         </div>
         <div class="flex flex-wrap gap-3">
             <a href="#form-testimonio" class="inline-flex items-center px-5 py-3 rounded-xl bg-white text-slate-900 font-semibold shadow-lg hover:bg-blue-50 transition">
-                <i class="fas fa-paper-plane mr-2"></i> Dejar testimonio
+                <i class="fas fa-paper-plane mr-2"></i> <span class="i18n-ts-cta-btn1" data-i18n="ts-cta-btn1">Dejar testimonio</span>
             </a>
             <a href="<?php echo app_url('contacto.php'); ?>" class="inline-flex items-center px-5 py-3 rounded-xl border border-white/60 text-white font-semibold hover:bg-white/10 transition">
-                <i class="fas fa-comments mr-2"></i> Hablar con el equipo
+                <i class="fas fa-comments mr-2"></i> <span class="i18n-ts-cta-btn2" data-i18n="ts-cta-btn2">Hablar con el equipo</span>
             </a>
         </div>
     </div>
@@ -422,12 +422,17 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
         });
     });
 
+    function tr(key, fallback) {
+        const dict = window.mceTranslations || {};
+        return dict[key] || fallback;
+    }
+
     function updatePreview() {
-        const n = (nombre.value || 'tu nombre').trim();
-        const p = (proyecto.selectedOptions[0]?.text || 'tu proyecto').trim();
-        const msg = mensaje.value.trim() || 'escribe aquí tu experiencia con el proyecto';
-        liveRaw.textContent = mensaje.value || 'Aquí verás tu texto a medida que escribes…';
-        liveFinal.textContent = `Yo, ${n} dueño de ${p}, ${msg}`;
+        const n = (nombre.value || tr('ts-preview-your-name', 'tu nombre')).trim();
+        const p = (proyecto.selectedOptions[0]?.text || tr('ts-preview-your-project', 'tu proyecto')).trim();
+        const msg = mensaje.value.trim() || tr('ts-preview-default-msg', 'escribe aquí tu experiencia con el proyecto');
+        liveRaw.textContent = mensaje.value || tr('ts-live-raw-text', 'Aquí verás tu texto a medida que escribes…');
+        liveFinal.textContent = `${tr('ts-preview-prefix', 'Yo')}, ${n} ${tr('ts-preview-owner-of', 'dueño de')} ${p}, ${msg}`;
     }
 
     nombre.addEventListener('input', updatePreview);
@@ -446,19 +451,19 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
         if (ratingText) {
             ratingText.classList.remove('text-red-600','text-green-600','text-gray-600');
             if (value === 1) {
-                ratingText.textContent = '1 / 5 (no recomiendo)';
+                ratingText.textContent = tr('ts-rating-1', '1 / 5 (no recomiendo)');
                 ratingText.classList.add('text-red-600');
             } else if (value === 2) {
-                ratingText.textContent = '2 / 5 (poco recomendable)';
+                ratingText.textContent = tr('ts-rating-2', '2 / 5 (poco recomendable)');
                 ratingText.classList.add('text-red-600');
             } else if (value === 3) {
-                ratingText.textContent = '3 / 5 (neutral)';
+                ratingText.textContent = tr('ts-rating-3', '3 / 5 (neutral)');
                 ratingText.classList.add('text-gray-600');
             } else if (value === 4) {
-                ratingText.textContent = '4 / 5 (recomiendo)';
+                ratingText.textContent = tr('ts-rating-4', '4 / 5 (recomiendo)');
                 ratingText.classList.add('text-green-600');
             } else if (value === 5) {
-                ratingText.textContent = '5 / 5 (sí recomiendo)';
+                ratingText.textContent = tr('ts-rating-5', '5 / 5 (sí recomiendo)');
                 ratingText.classList.add('text-green-600');
             } else {
                 ratingText.textContent = `${value} / 5`;
