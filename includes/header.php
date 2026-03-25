@@ -208,11 +208,11 @@
                         <span class="mce-logo-border absolute inset-0 rounded-2xl opacity-90 shadow-lg"></span>
                         <span class="absolute inset-[3px] rounded-2xl bg-white"></span>
                         <span class="relative inline-flex items-center justify-center w-10 h-10 rounded-xl overflow-hidden ring-2 ring-white/60 shadow-sm">
-                            <img src="<?php echo app_url('imag/MCE.jpg'); ?>" alt="MCE Proyectos" class="object-cover w-full h-full">
+                            <img src="<?php echo app_url('imag/MCE.jpg'); ?>" alt="Proyectos MCE" class="object-cover w-full h-full" data-i18n="brand-name">
                         </span>
                     </span>
                     <div class="leading-tight">
-                        <span class="block text-xl font-semibold text-slate-900 tracking-tight">MCE Proyectos</span>
+                        <span class="block text-xl font-semibold text-slate-900 tracking-tight" data-i18n="brand-name">Proyectos MCE</span>
                         <span class="block text-[11px] text-slate-500 uppercase tracking-[0.22em]" data-i18n="nav-subtitle">Desarrollo   Web</span>
                     </div>
                 </a>
