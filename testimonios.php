@@ -244,7 +244,7 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
                             else if ($v == 4) { $lbl = 'Recomiendo'; $cls = 'text-green-600'; }
                             else { $lbl = 'Sí recomiendo'; $cls = 'text-green-600'; }
                         ?>
-                        <p class="text-xs font-semibold <?php echo $cls; ?> mt-1"><?php echo $v; ?> / 5 Â· <?php echo $lbl; ?></p>
+                        <p class="text-xs font-semibold <?php echo $cls; ?> mt-1"><?php echo $v; ?> / 5 · <?php echo $lbl; ?></p>
                     </div>
                 </div>
                 <?php
