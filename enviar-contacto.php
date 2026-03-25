@@ -19,7 +19,7 @@ $smtpHost = $SMTP_HOST ?? getenv('SMTP_HOST') ?? 'smtp.gmail.com';
 $smtpPort = (int) ($SMTP_PORT ?? getenv('SMTP_PORT') ?? 587);
 $smtpSecure = strtolower((string) ($SMTP_SECURE ?? getenv('SMTP_SECURE') ?? 'tls'));
 $smtpFromEmail = $SMTP_FROM_EMAIL ?? getenv('SMTP_FROM_EMAIL') ?? $smtpUser;
-$smtpFromName = $SMTP_FROM_NAME ?? getenv('SMTP_FROM_NAME') ?? 'Proyectos MCE';
+    $smtpFromName = $SMTP_FROM_NAME ?? getenv('SMTP_FROM_NAME') ?? 'Proyectos MCE';
 $smtpToEmail = $SMTP_TO_EMAIL ?? getenv('SMTP_TO_EMAIL') ?? $smtpUser;
 $smtpDebug = (string) ($SMTP_DEBUG ?? getenv('SMTP_DEBUG') ?? '0') === '1';
 
@@ -250,6 +250,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'it' => 'Progetti MCE',
     ];
     $brand = $brandNames[$lang] ?? $brandNames['es'];
+    // Sobrescribe el nombre mostrado del remitente con la marca en el idioma seleccionado
+    $smtpFromName = $brand;
 
     $emailCopyContact = [
         'es' => [
@@ -415,16 +417,123 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $copySet = $isAgendaForm ? ($emailCopyAgenda[$lang] ?? $emailCopyAgenda['es']) : ($emailCopyContact[$lang] ?? $emailCopyContact['es']);
 
+    $labelsByLang = [
+        'es' => [
+            'name' => 'Nombre',
+            'email' => 'Correo',
+            'phone' => 'Teléfono',
+            'service' => 'Servicio de interés',
+            'response_channel' => 'Canal de respuesta',
+            'mode' => 'Modalidad',
+            'modePhone' => 'Teléfono',
+            'modeVideo' => 'Videollamada',
+            'date' => 'Fecha solicitada',
+            'time' => 'Hora',
+            'link' => 'Enlace (si aplica)',
+            'linkFallback' => 'Se compartirá en la confirmación',
+            'notProvided' => 'No proporcionado',
+            'notSpecified' => 'No especificado',
+            'notApplicable' => 'No aplica',
+        ],
+        'en' => [
+            'name' => 'Name',
+            'email' => 'Email',
+            'phone' => 'Phone',
+            'service' => 'Service of interest',
+            'response_channel' => 'Reply channel',
+            'mode' => 'Mode',
+            'modePhone' => 'Phone call',
+            'modeVideo' => 'Video call',
+            'date' => 'Requested date',
+            'time' => 'Time',
+            'link' => 'Link (if applies)',
+            'linkFallback' => 'Will be shared in the confirmation',
+            'notProvided' => 'Not provided',
+            'notSpecified' => 'Not specified',
+            'notApplicable' => 'Not applicable',
+        ],
+        'fr' => [
+            'name' => 'Nom',
+            'email' => 'Email',
+            'phone' => 'Téléphone',
+            'service' => "Service d'intérêt",
+            'response_channel' => 'Canal de réponse',
+            'mode' => 'Mode',
+            'modePhone' => 'Appel téléphonique',
+            'modeVideo' => 'Appel vidéo',
+            'date' => 'Date demandée',
+            'time' => 'Heure',
+            'link' => 'Lien (le cas échéant)',
+            'linkFallback' => 'Sera partagé dans la confirmation',
+            'notProvided' => 'Non fourni',
+            'notSpecified' => 'Non précisé',
+            'notApplicable' => 'Non applicable',
+        ],
+        'de' => [
+            'name' => 'Name',
+            'email' => 'E-Mail',
+            'phone' => 'Telefon',
+            'service' => 'Interessierter Service',
+            'response_channel' => 'Antwortkanal',
+            'mode' => 'Modus',
+            'modePhone' => 'Telefonat',
+            'modeVideo' => 'Videoanruf',
+            'date' => 'Wunschtermin',
+            'time' => 'Uhrzeit',
+            'link' => 'Link (falls zutreffend)',
+            'linkFallback' => 'Wird in der Bestätigung geteilt',
+            'notProvided' => 'Nicht angegeben',
+            'notSpecified' => 'Nicht spezifiziert',
+            'notApplicable' => 'Nicht anwendbar',
+        ],
+        'pt' => [
+            'name' => 'Nome',
+            'email' => 'Email',
+            'phone' => 'Telefone',
+            'service' => 'Serviço de interesse',
+            'response_channel' => 'Canal de resposta',
+            'mode' => 'Modalidade',
+            'modePhone' => 'Ligação telefônica',
+            'modeVideo' => 'Videochamada',
+            'date' => 'Data solicitada',
+            'time' => 'Horário',
+            'link' => 'Link (se aplicável)',
+            'linkFallback' => 'Será compartilhado na confirmação',
+            'notProvided' => 'Não informado',
+            'notSpecified' => 'Não especificado',
+            'notApplicable' => 'Não se aplica',
+        ],
+        'it' => [
+            'name' => 'Nome',
+            'email' => 'Email',
+            'phone' => 'Telefono',
+            'service' => 'Servizio di interesse',
+            'response_channel' => 'Canale di risposta',
+            'mode' => 'Modalità',
+            'modePhone' => 'Telefonata',
+            'modeVideo' => 'Videochiamata',
+            'date' => 'Data richiesta',
+            'time' => 'Ora',
+            'link' => 'Link (se applicabile)',
+            'linkFallback' => 'Verrà condiviso nella conferma',
+            'notProvided' => 'Non fornito',
+            'notSpecified' => 'Non specificato',
+            'notApplicable' => 'Non applicabile',
+        ],
+    ];
+
+    $labels = $labelsByLang[$lang] ?? $labelsByLang['es'];
+
     $nombreHtml = htmlspecialchars($nombreMail, ENT_QUOTES, 'UTF-8');
     $emailHtml = htmlspecialchars($emailMail, ENT_QUOTES, 'UTF-8');
-    $telefonoHtml = htmlspecialchars($telefonoMail !== '' ? $telefonoMail : 'No proporcionado', ENT_QUOTES, 'UTF-8');
-    $servicioHtml = htmlspecialchars($servicioMail !== '' ? $servicioMail : 'No especificado', ENT_QUOTES, 'UTF-8');
+    $telefonoHtml = htmlspecialchars($telefonoMail !== '' ? $telefonoMail : $labels['notProvided'], ENT_QUOTES, 'UTF-8');
+    $servicioHtml = htmlspecialchars($servicioMail !== '' ? $servicioMail : $labels['notSpecified'], ENT_QUOTES, 'UTF-8');
     $mensajeHtml = nl2br(htmlspecialchars($mensajeMail, ENT_QUOTES, 'UTF-8'));
-    $fechaCitaHtml = htmlspecialchars($fechaCitaLabel, ENT_QUOTES, 'UTF-8');
-    $horaCitaHtml = htmlspecialchars($horaCitaLabel, ENT_QUOTES, 'UTF-8');
+    $fechaCitaHtml = htmlspecialchars($fechaCitaLabel !== '' ? $fechaCitaLabel : $labels['notApplicable'], ENT_QUOTES, 'UTF-8');
+    $horaCitaHtml = htmlspecialchars($horaCitaLabel !== '' ? $horaCitaLabel : $labels['notApplicable'], ENT_QUOTES, 'UTF-8');
     $portfolioAbsoluteUrl = htmlspecialchars(app_absolute_url('portafolio.php'), ENT_QUOTES, 'UTF-8');
-    $modoLlamadaHtml = htmlspecialchars($modoLlamada === 'video' ? 'Videollamada' : 'Teléfono', ENT_QUOTES, 'UTF-8');
-    $enlaceReunionHtml = $enlaceReunion !== '' ? '<a href="' . htmlspecialchars($enlaceReunion, ENT_QUOTES, 'UTF-8') . '" style="color:#2563eb;">' . htmlspecialchars($enlaceReunion, ENT_QUOTES, 'UTF-8') . '</a>' : 'Se compartirá en la confirmación';
+    $modoLlamadaHtml = htmlspecialchars($modoLlamada === 'video' ? $labels['modeVideo'] : ($isAgendaForm ? $labels['modePhone'] : $labels['notApplicable']), ENT_QUOTES, 'UTF-8');
+    $enlaceReunionHtml = $enlaceReunion !== '' ? '<a href="' . htmlspecialchars($enlaceReunion, ENT_QUOTES, 'UTF-8') . '" style="color:#2563eb;">' . htmlspecialchars($enlaceReunion, ENT_QUOTES, 'UTF-8') . '</a>' : $labels['linkFallback'];
 
     $serviceKey = function_exists('mb_strtolower')
         ? mb_strtolower($servicioMail, 'UTF-8')
@@ -451,7 +560,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $internalMessageTitle = 'Mensaje del cliente';
             $internalActionTitle = 'Siguiente acción sugerida';
             $internalActionText = "Revisa la necesidad inicial y responde a {$nombreHtml} para continuar la conversación.";
-            $internalFooterText = 'Correo interno generado automáticamente desde el formulario de contacto de Proyectos MCE.';
+            $internalFooterText = "Correo interno generado automáticamente desde el formulario de contacto de {$brand}.";
             $internalCtaText = 'Responder al cliente';
             $internalPlainIntro = 'Llegó un nuevo lead desde el formulario web.';
             $internalPlainAction = "Siguiente acción sugerida: responde a {$nombreMail} y valida el alcance inicial.";
@@ -561,7 +670,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:680px; background-color:#ffffff; border-radius:24px; overflow:hidden; box-shadow:0 20px 48px rgba(37, 99, 235, 0.12);">
                     <tr>
                         <td style="background:linear-gradient(135deg, #0f172a 0%, #1d4ed8 48%, #06b6d4 100%); padding:36px;">
-                            <div style="font-size:12px; letter-spacing:0.26em; text-transform:uppercase; color:#bfdbfe; margin-bottom:10px;">Proyectos MCE</div>
+                            <div style="font-size:12px; letter-spacing:0.26em; text-transform:uppercase; color:#bfdbfe; margin-bottom:10px;">{$brand}</div>
                             <div style="font-size:30px; line-height:1.2; font-weight:700; color:#ffffff; margin-bottom:12px;">{$internalHeroTitle}</div>
                             <div style="font-size:15px; line-height:1.7; color:#dbeafe;">
                                 {$internalHeroText}
@@ -576,13 +685,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <tr>
                                         <td width="50%" valign="top" style="padding:0 8px 12px 0;">
                                             <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
-                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Nombre</div>
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">{$labels['name']}</div>
                                                 <div style="font-size:16px; font-weight:700; color:#0f172a;">{$nombreHtml}</div>
                                             </div>
                                         </td>
                                         <td width="50%" valign="top" style="padding:0 0 12px 8px;">
                                             <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
-                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Correo</div>
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">{$labels['email']}</div>
                                                 <div style="font-size:16px; font-weight:700; color:#0f172a;">{$emailHtml}</div>
                                             </div>
                                         </td>
@@ -590,13 +699,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <tr>
                                         <td width="50%" valign="top" style="padding:0 8px 14px 0;">
                                             <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
-                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Teléfono</div>
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">{$labels['phone']}</div>
                                                 <div style="font-size:16px; font-weight:700; color:#0f172a;">{$telefonoHtml}</div>
                                             </div>
                                         </td>
                                         <td width="50%" valign="top" style="padding:0 0 14px 8px;">
                                             <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
-                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Servicio</div>
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">{$labels['service']}</div>
                                                 <div style="font-size:16px; font-weight:700; color:#0f172a;">{$servicioHtml}</div>
                                             </div>
                                         </td>
@@ -604,13 +713,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <tr>
                                         <td width="50%" valign="top" style="padding:0 8px 14px 0;">
                                             <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
-                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Fecha solicitada</div>
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">{$labels['date']}</div>
                                                 <div style="font-size:16px; font-weight:700; color:#0f172a;">{$fechaCitaHtml}</div>
                                             </div>
                                         </td>
                                         <td width="50%" valign="top" style="padding:0 0 14px 8px;">
                                             <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
-                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Hora</div>
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">{$labels['time']}</div>
                                                 <div style="font-size:16px; font-weight:700; color:#0f172a;">{$horaCitaHtml}</div>
                                             </div>
                                         </td>
@@ -618,13 +727,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <tr>
                                         <td width="50%" valign="top" style="padding:0 8px 14px 0;">
                                             <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
-                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Fecha solicitada</div>
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">{$labels['date']}</div>
                                                 <div style="font-size:16px; font-weight:700; color:#0f172a;">{$fechaCitaHtml}</div>
                                             </div>
                                         </td>
                                         <td width="50%" valign="top" style="padding:0 0 14px 8px;">
                                             <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
-                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Hora</div>
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">{$labels['time']}</div>
                                                 <div style="font-size:16px; font-weight:700; color:#0f172a;">{$horaCitaHtml}</div>
                                             </div>
                                         </td>
@@ -663,13 +772,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </html>
 HTML;
             $mail->AltBody = "{$internalPlainIntro}\n\n"
-                . "Nombre: {$nombreMail}\n"
-                . "Correo: {$emailMail}\n"
-                . "Telefono: " . ($telefonoMail !== '' ? $telefonoMail : 'No proporcionado') . "\n"
-                . "Servicio: " . ($servicioMail !== '' ? $servicioMail : 'No especificado') . "\n"
-                . "Fecha solicitada: {$fechaCitaLabel}\n"
-                . "Hora: {$horaCitaLabel}\n\n"
-                . "Mensaje:\n{$mensajeMail}\n\n"
+                . "{$labels['name']}: {$nombreMail}\n"
+                . "{$labels['email']}: {$emailMail}\n"
+                . "{$labels['phone']}: " . ($telefonoMail !== '' ? $telefonoMail : $labels['notProvided']) . "\n"
+                . "{$labels['service']}: " . ($servicioMail !== '' ? $servicioMail : $labels['notSpecified']) . "\n"
+                . "{$labels['date']}: " . ($fechaCitaLabel !== '' ? $fechaCitaLabel : $labels['notApplicable']) . "\n"
+                . "{$labels['time']}: " . ($horaCitaLabel !== '' ? $horaCitaLabel : $labels['notApplicable']) . "\n"
+                . "{$labels['mode']}: " . ($modoLlamada === 'video' ? $labels['modeVideo'] : ($isAgendaForm ? $labels['modePhone'] : $labels['notApplicable'])) . "\n"
+                . "{$labels['link']}: " . ($enlaceReunion !== '' ? $enlaceReunion : $labels['linkFallback']) . "\n\n"
+                . "{$internalMessageTitle}:\n{$mensajeMail}\n\n"
                 . "{$internalPlainAction}";
             
             $mail->send();
@@ -679,7 +790,7 @@ HTML;
                 $mail->clearReplyTos();
 
                 $mail->addAddress($emailMail, $nombreMail);
-                $mail->addReplyTo($smtpUser, 'Proyectos MCE');
+                $mail->addReplyTo($smtpUser, $brand);
                 $mail->Subject = $clientSubject;
                 $mail->Body = <<<HTML
 <!DOCTYPE html>
@@ -696,7 +807,7 @@ HTML;
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:680px; background-color:#ffffff; border-radius:24px; overflow:hidden; box-shadow:0 20px 48px rgba(37, 99, 235, 0.12);">
                     <tr>
                         <td style="background:linear-gradient(135deg, #0f172a 0%, #1d4ed8 48%, #06b6d4 100%); padding:36px;">
-                            <div style="font-size:12px; letter-spacing:0.26em; text-transform:uppercase; color:#bfdbfe; margin-bottom:10px;">Proyectos MCE</div>
+                            <div style="font-size:12px; letter-spacing:0.26em; text-transform:uppercase; color:#bfdbfe; margin-bottom:10px;">{$brand}</div>
                             <div style="font-size:30px; line-height:1.2; font-weight:700; color:#ffffff; margin-bottom:12px;">{$clientHeroTitle}</div>
                             <div style="font-size:15px; line-height:1.7; color:#dbeafe;">
                                 {$clientHeroText}
@@ -711,13 +822,13 @@ HTML;
                                     <tr>
                                         <td width="50%" valign="top" style="padding:0 8px 14px 0;">
                                             <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
-                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Servicio de interés</div>
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">{$labels['service']}</div>
                                                 <div style="font-size:16px; font-weight:700; color:#0f172a;">{$servicioHtml}</div>
                                             </div>
                                         </td>
                                         <td width="50%" valign="top" style="padding:0 0 14px 8px;">
                                             <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
-                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Canal de respuesta</div>
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">{$labels['response_channel']}</div>
                                                 <div style="font-size:16px; font-weight:700; color:#0f172a;">{$emailHtml}</div>
                                             </div>
                                         </td>
@@ -725,13 +836,13 @@ HTML;
                                     <tr>
                                         <td width="50%" valign="top" style="padding:0 8px 14px 0;">
                                             <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
-                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Modalidad</div>
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">{$labels['mode']}</div>
                                                 <div style="font-size:16px; font-weight:700; color:#0f172a;">{$modoLlamadaHtml}</div>
                                             </div>
                                         </td>
                                         <td width="50%" valign="top" style="padding:0 0 14px 8px;">
                                             <div style="background-color:#ffffff; border:1px solid #dbeafe; border-radius:16px; padding:16px;">
-                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">Enlace (si aplica)</div>
+                                                <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:8px;">{$labels['link']}</div>
                                                 <div style="font-size:14px; font-weight:700; color:#0f172a;">{$enlaceReunionHtml}</div>
                                             </div>
                                         </td>
@@ -769,17 +880,17 @@ HTML;
 </body>
 </html>
 HTML;
-                $mail->AltBody = "Hola {$nombreMail},\n\n"
-                    . "{$clientPlainIntro}\n\n"
-                    . "Servicio de interes: " . ($servicioMail !== '' ? $servicioMail : 'No especificado') . "\n"
-                    . "Canal de respuesta: {$emailMail}\n"
-                    . "Modalidad: " . ($modoLlamada === 'video' ? 'Videollamada' : 'Telefono') . "\n"
-                    . "Enlace: " . ($enlaceReunion !== '' ? $enlaceReunion : 'Se compartira en la confirmacion') . "\n"
-                    . "Fecha solicitada: {$fechaCitaLabel}\n"
-                    . "Hora: {$horaCitaLabel}\n\n"
-                    . "Resumen de tu consulta:\n{$mensajeMail}\n\n"
+                $mail->AltBody =
+                    "{$clientPlainIntro}\n\n"
+                    . "{$labels['service']}: " . ($servicioMail !== '' ? $servicioMail : $labels['notSpecified']) . "\n"
+                    . "{$labels['response_channel']}: {$emailMail}\n"
+                    . "{$labels['mode']}: " . ($modoLlamada === 'video' ? $labels['modeVideo'] : ($isAgendaForm ? $labels['modePhone'] : $labels['notApplicable'])) . "\n"
+                    . "{$labels['link']}: " . ($enlaceReunion !== '' ? $enlaceReunion : $labels['linkFallback']) . "\n"
+                    . "{$labels['date']}: " . ($fechaCitaLabel !== '' ? $fechaCitaLabel : $labels['notApplicable']) . "\n"
+                    . "{$labels['time']}: " . ($horaCitaLabel !== '' ? $horaCitaLabel : $labels['notApplicable']) . "\n\n"
+                    . "{$clientSummaryTitle}:\n{$mensajeMail}\n\n"
                     . "{$clientPlainNext}\n\n"
-                    . "Si quieres agregar mas informacion, puedes responder a este correo.";
+                    . "— {$brand}";
 
                 $mail->send();
             } catch (Exception $clientMailException) {
