@@ -234,7 +234,7 @@
                             <option value="pt">Português</option>
                             <option value="it">Italiano</option>
                         </select>
-                        <button id="site-lang-toggle" class="lang-toggle" type="button" style="background:#0b1224;color:#fff;border-color:#334155;">
+                        <button id="site-lang-toggle" class="lang-toggle" type="button" style="background:transparent;color:#fff;border-color:transparent;">
                             <img id="site-lang-flag" src="https://flagcdn.com/w20/es.png" alt="Español">
                             <span id="site-lang-label">Español</span>
                         </button>
@@ -252,7 +252,7 @@
                                 <img src="https://flagcdn.com/w20/de.png" alt="Deutsch"><span>Deutsch</span>
                             </div>
                             <div class="lang-option" data-lang="pt" data-flag="br" data-label="Português">
-                                <img src="https://flagcdn.com/w20/br.png" alt="Português"><span>Português</span>
+                                <img src="https://flagcdn.com/w20/pt.png" alt="Português"><span>Português</span>
                             </div>
                             <div class="lang-option" data-lang="it" data-flag="it" data-label="Italiano">
                                 <img src="https://flagcdn.com/w20/it.png" alt="Italiano"><span>Italiano</span>
@@ -264,7 +264,7 @@
                 <!-- Controles móviles: idioma + menú -->
                 <div class="md:hidden flex items-center gap-3">
                     <div class="relative">
-                        <button id="site-lang-toggle-mobile" class="lang-toggle" type="button">
+                        <button id="site-lang-toggle-mobile" class="lang-toggle" type="button" style="background:transparent;border-color:transparent;">
                             <img id="site-lang-flag-mobile" src="https://flagcdn.com/w20/es.png" alt="Español">
                             <span id="site-lang-label-mobile">Español</span>
                         </button>
@@ -282,7 +282,7 @@
                                 <img src="https://flagcdn.com/w20/de.png" alt="Deutsch"><span>Deutsch</span>
                             </div>
                             <div class="lang-option" data-lang="pt" data-flag="br" data-label="Português">
-                                <img src="https://flagcdn.com/w20/br.png" alt="Português"><span>Português</span>
+                                <img src="https://flagcdn.com/w20/pt.png" alt="Português"><span>Português</span>
                             </div>
                             <div class="lang-option" data-lang="it" data-flag="it" data-label="Italiano">
                                 <img src="https://flagcdn.com/w20/it.png" alt="Italiano"><span>Italiano</span>

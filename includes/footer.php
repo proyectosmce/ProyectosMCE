@@ -142,12 +142,12 @@
                     <option value="pt">PT</option>
                     <option value="it">IT</option>
                 </select>
-                <button id="assistant-lang-toggle" class="lang-toggle" type="button">
-                    <img id="assistant-lang-flag" src="https://flagcdn.com/w20/un.png" alt="Auto">
-                    <span id="assistant-lang-label">Auto</span>
-                </button>
-                <div class="lang-list" id="assistant-lang-list">
-                    <div class="lang-option" data-lang="auto" data-flag="un" data-label="Auto">
+            <button id="assistant-lang-toggle" class="lang-toggle" type="button" style="background:transparent;border-color:transparent;">
+                <img id="assistant-lang-flag" src="https://flagcdn.com/w20/un.png" alt="Auto">
+                <span id="assistant-lang-label">Auto</span>
+            </button>
+            <div class="lang-list" id="assistant-lang-list">
+                <div class="lang-option" data-lang="auto" data-flag="un" data-label="Auto">
                         <img src="https://flagcdn.com/w20/un.png" alt="Auto"><span>Auto</span>
                     </div>
                     <div class="lang-option" data-lang="es" data-flag="es" data-label="Español">
@@ -162,9 +162,9 @@
                     <div class="lang-option" data-lang="de" data-flag="de" data-label="Deutsch">
                         <img src="https://flagcdn.com/w20/de.png" alt="Deutsch"><span>Deutsch</span>
                     </div>
-                    <div class="lang-option" data-lang="pt" data-flag="br" data-label="Português">
-                        <img src="https://flagcdn.com/w20/br.png" alt="Português"><span>Português</span>
-                    </div>
+                <div class="lang-option" data-lang="pt" data-flag="br" data-label="Português">
+                    <img src="https://flagcdn.com/w20/pt.png" alt="Português"><span>Português</span>
+                </div>
                     <div class="lang-option" data-lang="it" data-flag="it" data-label="Italiano">
                         <img src="https://flagcdn.com/w20/it.png" alt="Italiano"><span>Italiano</span>
                     </div>
@@ -2710,7 +2710,7 @@
         };
 
         function setSiteLangUI(lang) {
-            const flagMap = { es:'es', en:'us', fr:'fr', de:'de', pt:'br', it:'it' };
+        const flagMap = { es:'es', en:'us', fr:'fr', de:'de', pt:'pt', it:'it' };
             const labelMap = { es:'Español', en:'English', fr:'Français', de:'Deutsch', pt:'Português', it:'Italiano' };
             const flag = flagMap[lang] || 'es';
             const label = labelMap[lang] || 'Español';
