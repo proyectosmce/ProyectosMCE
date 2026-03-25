@@ -129,7 +129,14 @@
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         <?php
         $result = $conn->query("SELECT * FROM servicios WHERE LOWER(titulo) <> 'tiendas online' ORDER BY orden");
+        $i18nMap = [
+            'desarrollo web a medida' => 'srv-card1',
+            'sistemas de inventario'  => 'srv-card2',
+            'landing pages'           => 'srv-card3',
+        ];
         while ($row = $result->fetch_assoc()):
+            $slug = strtolower(trim($row['titulo'] ?? ''));
+            $i18nKey = $i18nMap[$slug] ?? null;
         ?>
         <div class="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden animate-on-scroll">
             <!-- Barra decorativa superior -->
@@ -141,8 +148,12 @@
             </div>
             
             <!-- Contenido -->
-            <h3 class="text-2xl font-bold mb-3 group-hover:text-blue-600 transition"><?php echo $row['titulo']; ?></h3>
-            <p class="text-gray-600 mb-4 line-clamp-2"><?php echo $row['descripcion']; ?></p>
+            <h3 class="text-2xl font-bold mb-3 group-hover:text-blue-600 transition <?php echo $i18nKey ? 'i18n-' . $i18nKey . '-title' : ''; ?>" <?php echo $i18nKey ? 'data-i18n="'.$i18nKey.'-title"' : ''; ?>>
+                <?php echo $row['titulo']; ?>
+            </h3>
+            <p class="text-gray-600 mb-4 line-clamp-2 <?php echo $i18nKey ? 'i18n-' . $i18nKey . '-desc' : ''; ?>" <?php echo $i18nKey ? 'data-i18n="'.$i18nKey.'-desc"' : ''; ?>>
+                <?php echo $row['descripcion']; ?>
+            </p>
             
             <!-- Precio y CTA -->
             <div class="flex justify-between items-center mb-4">
