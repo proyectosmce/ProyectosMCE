@@ -201,7 +201,7 @@ $featuredProject = $projects[0] ?? null;
     $featuredUrl = $featuredProject['public_url'];
     $featuredHasLink = $featuredUrl !== '#';
     $featuredIsExternal = $featuredHasLink && isExternalProjectUrl($featuredUrl);
-    $featuredDescription = trim((string) ($featuredProject['descripcion'] ?? '')) ?: 'Proyecto destacado del portafolio de Proyectos MCE.';
+    $featuredDescription = trim((string) ($featuredProject['descripcion'] ?? '')) ?: 'Proyecto destacado del portafolio.';
     $featuredClient = trim((string) ($featuredProject['cliente'] ?? '')) ?: 'Cliente privado';
     $featuredDate = null;
     if (!empty($featuredProject['fecha_completado'])) {
@@ -320,7 +320,7 @@ $featuredProject = $projects[0] ?? null;
             $isExternal = $hasLink && isExternalProjectUrl($projectUrl);
             $description = trim((string) ($project['descripcion'] ?? ''));
             if ($description === '') {
-                $description = 'Proyecto publicado en el portafolio de Proyectos MCE.';
+                $description = 'Proyecto publicado en el portafolio.';
             }
             if (function_exists('mb_strimwidth')) {
                 $descriptionPreview = mb_strimwidth($description, 0, 110, '...');
