@@ -2466,6 +2466,9 @@
                 if (key && dict[key]) el.innerHTML = dict[key];
             });
             localStorage.setItem('siteLang', lang);
+            if (typeof window !== 'undefined' && window.dispatchEvent) {
+                window.dispatchEvent(new CustomEvent('mce-lang-changed', { detail: { lang } }));
+            }
         }
 
         initSiteLang();

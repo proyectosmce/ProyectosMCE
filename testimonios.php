@@ -367,11 +367,53 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
     </div>
 </section>
 
-<?php if ($testimonialRecaptchaEnabled): ?>
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-<?php endif; ?>
-
 <?php include 'includes/footer.php'; ?>
+
+<?php if ($testimonialRecaptchaEnabled): ?>
+<script>
+(() => {
+    const placeholders = Array.from(document.querySelectorAll('.g-recaptcha[data-sitekey]'));
+    if (!placeholders.length) return;
+    function renderAll() {
+        if (!window.grecaptcha) return;
+        placeholders.forEach((el) => {
+            if (el.dataset.recaptchaId) return;
+            const id = grecaptcha.render(el, { sitekey: el.dataset.sitekey });
+            el.dataset.recaptchaId = id;
+        });
+    }
+    function loadRecaptcha(lang) {
+        const existing = document.querySelector('script[data-mce-recaptcha]');
+        if (existing && existing.dataset.lang === lang) {
+            renderAll();
+            return;
+        }
+        if (existing) existing.remove();
+        window.grecaptcha = undefined;
+        const s = document.createElement('script');
+        s.src = `https://www.google.com/recaptcha/api.js?onload=mceRenderRecaptcha&render=explicit&hl=${lang}`;
+        s.async = true;
+        s.defer = true;
+        s.dataset.mceRecaptcha = '1';
+        s.dataset.lang = lang;
+        document.head.appendChild(s);
+        window.mceRenderRecaptcha = renderAll;
+    }
+    const currentLang = localStorage.getItem('siteLang') || 'es';
+    loadRecaptcha(currentLang);
+    window.addEventListener('mce-lang-changed', (e) => {
+        placeholders.forEach(el => {
+            if (el.dataset.recaptchaId && window.grecaptcha) {
+                try { grecaptcha.reset(el.dataset.recaptchaId); } catch {}
+            }
+            delete el.dataset.recaptchaId;
+            el.innerHTML = '';
+        });
+        loadRecaptcha(e.detail?.lang || 'es');
+    });
+})();
+</script>
+<?php endif; ?>
 
 <script>
 (() => {
