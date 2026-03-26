@@ -306,7 +306,6 @@ function render_html(array $payment): void
             </div>
             <div class="invoice-meta">
                 <div class="pill">Factura #<?php echo htmlspecialchars($invoice, ENT_QUOTES, 'UTF-8'); ?></div>
-                <p style="margin:8px 0 0;color:#bfdbfe;font-size:12px;">Fecha: <?php echo htmlspecialchars($fecha, ENT_QUOTES, 'UTF-8'); ?></p>
             </div>
         </div>
 
@@ -326,19 +325,39 @@ function render_html(array $payment): void
             <thead>
                 <tr>
                     <th>Concepto</th>
-                    <th>Método</th>
-                    <th>Estado</th>
-                    <th style="text-align:right;">Monto</th>
+                    <th style="text-align:right;">Cantidad</th>
+                    <th style="text-align:right;">Valor</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td><?php echo htmlspecialchars($payment['concepto'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php echo htmlspecialchars($payment['metodo'] ?: '-', ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php echo htmlspecialchars($payment['estado'] ?: '-', ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td style="text-align:right;">1</td>
                     <td style="text-align:right;" class="total"><?php echo htmlspecialchars($monto, ENT_QUOTES, 'UTF-8'); ?></td>
                 </tr>
+                <tr>
+                    <td>Forma de pago · <?php echo htmlspecialchars($forma, ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($payment['metodo'] ?? '-', ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td style="text-align:right;">—</td>
+                    <td style="text-align:right;">—</td>
+                </tr>
+                <tr>
+                    <td>Recargo cuotas (18%)</td>
+                    <td style="text-align:right;">—</td>
+                    <td style="text-align:right;"><?php echo htmlspecialchars($recargoFmt, ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
+                <tr>
+                    <td>Diferido</td>
+                    <td style="text-align:right;"><?php echo (int)$totalCuotas; ?></td>
+                    <td style="text-align:right;"><?php echo htmlspecialchars($valorCuotaFmt, ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
             </tbody>
+            <tfoot>
+                <tr style="background:#bfdbfe;font-weight:800;">
+                    <td>Total</td>
+                    <td style="text-align:right;">—</td>
+                    <td style="text-align:right;"><?php echo htmlspecialchars($totalRecargoFmt, ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
+            </tfoot>
         </table>
 
         <div style="margin-top:16px; border:1px solid #e2e8f0; border-radius:14px; overflow:hidden;">
