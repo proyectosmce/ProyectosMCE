@@ -264,7 +264,11 @@ function render_html(array $payment): void
     $totalRecargoFmt = payment_format_amount($totalConRecargo, (string) $payment['moneda']);
     $valorCuotaFmt = $totalCuotas > 0 ? payment_format_amount($valorCuota, (string) $payment['moneda']) : 'N/A';
     $montoBaseFmt = payment_format_amount($montoBase, (string) $payment['moneda']);
+    $impuesto = $montoBase * 0.19;
+    $impuestoFmt = payment_format_amount($impuesto, (string) $payment['moneda']);
+    $totalContadoFmt = payment_format_amount($montoBase + $impuesto, (string) $payment['moneda']);
     $notas = nl2br(htmlspecialchars(trim((string) ($payment['notas'] ?? '')), ENT_QUOTES, 'UTF-8'));
+    $esCuotas = ($totalCuotas > 1) || (strtolower((string) ($payment['forma_pago'] ?? '')) === 'cuotas');
     $logoUrl = app_url('imag/MCE.jpg');
     ?>
 <!DOCTYPE html>
@@ -321,75 +325,105 @@ function render_html(array $payment): void
             </div>
         </div>
 
-        <table>
-            <thead>
+        <?php if ($esCuotas): ?>
+          <table>
+              <thead>
+                  <tr>
+                      <th>Concepto</th>
+                      <th>Método</th>
+                      <th>Estado</th>
+                      <th style="text-align:right;">Monto</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td><?php echo htmlspecialchars($payment['concepto'], ENT_QUOTES, 'UTF-8'); ?></td>
+                      <td><?php echo htmlspecialchars($payment['metodo'] ?: $forma, ENT_QUOTES, 'UTF-8'); ?></td>
+                      <td><?php echo htmlspecialchars($payment['estado'] ?: 'Parcial', ENT_QUOTES, 'UTF-8'); ?></td>
+                      <td style="text-align:right;" class="total"><?php echo htmlspecialchars($monto, ENT_QUOTES, 'UTF-8'); ?></td>
+                  </tr>
+              </tbody>
+          </table>
+          <div style="margin-top:12px; border:1px solid #e2e8f0; border-radius:14px; overflow:hidden;">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                <tr style="background:#f8fafc;">
+                    <td style="padding:12px 14px; font-size:13px; color:#475569;">Valor general (sin recargo)</td>
+                    <td style="padding:12px 14px; font-size:15px; font-weight:700; color:#0f172a; text-align:right;"><?php echo htmlspecialchars($montoBaseFmt, ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
                 <tr>
-                    <th>Concepto</th>
-                    <th style="text-align:right;">Cantidad</th>
-                    <th style="text-align:right;">Valor</th>
+                    <td style="padding:12px 14px; font-size:13px; color:#475569;">Recargo cuotas (18%)</td>
+                    <td style="padding:12px 14px; font-size:15px; font-weight:700; color:#0f172a; text-align:right;"><?php echo htmlspecialchars($recargoFmt, ENT_QUOTES, 'UTF-8'); ?></td>
                 </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><?php echo htmlspecialchars($payment['concepto'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td style="text-align:right;">1</td>
-                    <td style="text-align:right;" class="total"><?php echo htmlspecialchars($monto, ENT_QUOTES, 'UTF-8'); ?></td>
+                <tr style="background:#f8fafc;">
+                    <td style="padding:12px 14px; font-size:13px; color:#475569;">Valor total (con recargo)</td>
+                    <td style="padding:12px 14px; font-size:16px; font-weight:800; color:#0f172a; text-align:right;"><?php echo htmlspecialchars($totalRecargoFmt, ENT_QUOTES, 'UTF-8'); ?></td>
                 </tr>
                 <tr>
-                    <td>Forma de pago · <?php echo htmlspecialchars($forma, ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($payment['metodo'] ?? '-', ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td style="text-align:right;">—</td>
-                    <td style="text-align:right;">—</td>
+                    <td style="padding:12px 14px; font-size:13px; color:#475569;">Diferido</td>
+                    <td style="padding:12px 14px; font-size:15px; font-weight:700; color:#0f172a; text-align:right;"><?php echo (int)$totalCuotas; ?> cuotas de <?php echo htmlspecialchars($valorCuotaFmt, ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
+                <tr style="background:#f8fafc;">
+                    <td style="padding:12px 14px; font-size:13px; color:#475569;">Estado de cuotas</td>
+                    <td style="padding:12px 14px; font-size:14px; font-weight:700; color:#0f172a; text-align:right;"><?php echo htmlspecialchars($cuotasResumen, ENT_QUOTES, 'UTF-8'); ?></td>
                 </tr>
                 <tr>
-                    <td>Recargo cuotas (18%)</td>
-                    <td style="text-align:right;">—</td>
-                    <td style="text-align:right;"><?php echo htmlspecialchars($recargoFmt, ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td style="padding:12px 14px; font-size:13px; color:#475569;">Próxima cuota</td>
+                    <td style="padding:12px 14px; font-size:14px; font-weight:700; color:#0f172a; text-align:right;"><?php echo htmlspecialchars($proxima, ENT_QUOTES, 'UTF-8'); ?></td>
                 </tr>
-                <tr>
-                    <td>Diferido</td>
-                    <td style="text-align:right;"><?php echo (int)$totalCuotas; ?></td>
-                    <td style="text-align:right;"><?php echo htmlspecialchars($valorCuotaFmt, ENT_QUOTES, 'UTF-8'); ?></td>
-                </tr>
-            </tbody>
-            <tfoot>
-                <tr style="background:#bfdbfe;font-weight:800;">
-                    <td>Total</td>
-                    <td style="text-align:right;">—</td>
-                    <td style="text-align:right;"><?php echo htmlspecialchars($totalRecargoFmt, ENT_QUOTES, 'UTF-8'); ?></td>
-                </tr>
-            </tfoot>
-        </table>
+            </table>
+          </div>
+        <?php else: ?>
+          <table>
+              <thead>
+                  <tr>
+                      <th>Concepto</th>
+                      <th style="text-align:right;">Cantidad</th>
+                      <th style="text-align:right;">Valor</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr><td><?php echo htmlspecialchars($payment['concepto'], ENT_QUOTES, 'UTF-8'); ?></td><td style="text-align:right;">1</td><td style="text-align:right;"><?php echo htmlspecialchars($montoBaseFmt, ENT_QUOTES, 'UTF-8'); ?></td></tr>
+              </tbody>
+              <tfoot>
+                  <tr><td colspan="2" style="text-align:right; color:#475569;">Subtotal</td><td style="text-align:right;"><?php echo htmlspecialchars($montoBaseFmt, ENT_QUOTES, 'UTF-8'); ?></td></tr>
+                  <tr><td colspan="2" style="text-align:right; color:#475569;">Impuestos (19%)</td><td style="text-align:right;"><?php echo htmlspecialchars($impuestoFmt, ENT_QUOTES, 'UTF-8'); ?></td></tr>
+                  <tr style="background:#bfdbfe;font-weight:800;"><td colspan="2">Total</td><td style="text-align:right;"><?php echo htmlspecialchars($totalContadoFmt, ENT_QUOTES, 'UTF-8'); ?></td></tr>
+              </tfoot>
+          </table>
+        <?php endif; ?>
 
+        <?php if ($esCuotas): ?>
         <div style="margin-top:16px; border:1px solid #e2e8f0; border-radius:14px; overflow:hidden;">
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
                 <tr style="background:#f8fafc;">
                     <td style="padding:12px 14px; font-size:13px; color:#475569;">Valor general (sin recargo)</td>
-                    <td style="padding:12px 14px; font-size:15px; font-weight:700; color:#0f172a;"><?php echo htmlspecialchars($montoBaseFmt, ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td style="padding:12px 14px; font-size:15px; font-weight:700; color:#0f172a; text-align:right;"><?php echo htmlspecialchars($montoBaseFmt, ENT_QUOTES, 'UTF-8'); ?></td>
                 </tr>
                 <tr>
                     <td style="padding:12px 14px; font-size:13px; color:#475569;">Recargo cuotas (18%)</td>
-                    <td style="padding:12px 14px; font-size:15px; font-weight:700; color:#0f172a;"><?php echo htmlspecialchars($recargoFmt, ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td style="padding:12px 14px; font-size:15px; font-weight:700; color:#0f172a; text-align:right;"><?php echo htmlspecialchars($recargoFmt, ENT_QUOTES, 'UTF-8'); ?></td>
                 </tr>
                 <tr style="background:#f8fafc;">
                     <td style="padding:12px 14px; font-size:13px; color:#475569;">Valor total (con recargo)</td>
-                    <td style="padding:12px 14px; font-size:16px; font-weight:800; color:#0f172a;"><?php echo htmlspecialchars($totalRecargoFmt, ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td style="padding:12px 14px; font-size:16px; font-weight:800; color:#0f172a; text-align:right;"><?php echo htmlspecialchars($totalRecargoFmt, ENT_QUOTES, 'UTF-8'); ?></td>
                 </tr>
                 <?php if ($totalCuotas > 0): ?>
                 <tr>
                     <td style="padding:12px 14px; font-size:13px; color:#475569;">Diferido</td>
-                    <td style="padding:12px 14px; font-size:15px; font-weight:700; color:#0f172a;"><?php echo (int)$totalCuotas; ?> cuotas de <?php echo htmlspecialchars($valorCuotaFmt, ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td style="padding:12px 14px; font-size:15px; font-weight:700; color:#0f172a; text-align:right;"><?php echo (int)$totalCuotas; ?> cuotas de <?php echo htmlspecialchars($valorCuotaFmt, ENT_QUOTES, 'UTF-8'); ?></td>
                 </tr>
                 <?php endif; ?>
                 <tr style="background:#f8fafc;">
                     <td style="padding:12px 14px; font-size:13px; color:#475569;">Estado de cuotas</td>
-                    <td style="padding:12px 14px; font-size:14px; font-weight:700; color:#0f172a;"><?php echo htmlspecialchars($cuotasResumen, ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td style="padding:12px 14px; font-size:14px; font-weight:700; color:#0f172a; text-align:right;"><?php echo htmlspecialchars($cuotasResumen, ENT_QUOTES, 'UTF-8'); ?></td>
                 </tr>
                 <tr>
                     <td style="padding:12px 14px; font-size:13px; color:#475569;">Próxima cuota</td>
-                    <td style="padding:12px 14px; font-size:14px; font-weight:700; color:#0f172a;"><?php echo htmlspecialchars($proxima, ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td style="padding:12px 14px; font-size:14px; font-weight:700; color:#0f172a; text-align:right;"><?php echo htmlspecialchars($proxima, ENT_QUOTES, 'UTF-8'); ?></td>
                 </tr>
             </table>
         </div>
+        <?php endif; ?>
 
         <div style="border:1px solid #e2e8f0; border-radius:12px; padding:14px 16px; background:#f8fafc; color:#0f172a; font-size:14px; line-height:1.6; margin-top:14px;">
           Transferencia a Bancolombia · Cuenta corriente 123-456789 · Pago neto 15 días.
