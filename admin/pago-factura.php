@@ -438,6 +438,7 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
         $concepto = htmlspecialchars($payment['concepto'], ENT_QUOTES, 'UTF-8');
         $monto = payment_format_amount((float) $payment['monto'], (string) $payment['moneda']);
         $fecha = date('d/m/Y', strtotime($payment['fecha_pago']));
+        $project = htmlspecialchars($payment['proyecto_titulo'] ?? 'Proyecto sin título', ENT_QUOTES, 'UTF-8');
         $forma = htmlspecialchars(forma_pago_label($payment['forma_pago'] ?? 'contado'), ENT_QUOTES, 'UTF-8');
         $proxima = !empty($payment['proxima_cuota']) ? date('d/m/Y', strtotime($payment['proxima_cuota'])) : '—';
         $cuotasResumen = cuotas_resumen($payment['cuotas_totales'] ?? null, $payment['cuotas_pendientes'] ?? null);
@@ -456,6 +457,12 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
         $notasRaw = trim((string) ($payment['notas'] ?? ''));
         $notasHtml = $notasRaw !== '' ? nl2br(htmlspecialchars($notasRaw, ENT_QUOTES, 'UTF-8')) : '<em>Sin notas adicionales</em>';
         $pdfBinary = class_exists('FPDF') ? build_pdf($payment) : '';
+        $logoUrl = app_url('imag/MCE.jpg');
+        $estado = htmlspecialchars($payment['estado'] ?? 'Pendiente', ENT_QUOTES, 'UTF-8');
+        $estadoLower = strtolower($payment['estado'] ?? '');
+        $isPaid = in_array($estadoLower, ['pagado', 'paid', 'completado'], true);
+        $estadoColor = $isPaid ? '#15803d' : '#b45309';
+        $estadoBg = $isPaid ? '#ecfdf3' : '#fff7ed';
 
         $mail->Body = <<<HTML
 <!DOCTYPE html>
@@ -466,89 +473,106 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
   <title>Factura {$invoice}</title>
 </head>
 <body style="margin:0;padding:24px;background:#f8fafc;font-family:'Segoe UI',Arial,sans-serif;color:#0f172a;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:760px;margin:0 auto;background:#fff;border:1px solid #e2e8f0;border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,0.08);overflow:hidden;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:820px;margin:0 auto;background:#fff;border:1px solid #e2e8f0;border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,0.08);overflow:hidden;">
     <tr>
       <td style="padding:0;">
         <div style="background:#0f172a;padding:20px 22px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;">
           <div style="display:flex;align-items:center;gap:12px;">
             <img src="{$logoUrl}" alt="MCE" style="width:56px;height:56px;border-radius:12px;object-fit:cover;box-shadow:0 8px 18px rgba(0,0,0,0.25);">
             <div>
-              <div style="font-size:18px;font-weight:700;letter-spacing:0.2px;">Proyectos MCE</div>
-              <div style="font-size:12px;color:#bfdbfe;letter-spacing:0.16em;text-transform:uppercase;">Factura electrónica</div>
+              <div style="font-size:18px;font-weight:700;letter-spacing:0.2px;">PROYECTOS MCE</div>
+              <div style="font-size:12px;color:#bfdbfe;letter-spacing:0.16em;text-transform:uppercase;">Desarrollo Web & MAS</div>
             </div>
           </div>
-          <span style="padding:8px 12px;border-radius:12px;background:#eef2ff;color:#2563eb;font-weight:700;font-size:12px;letter-spacing:0.04em;">{$invoice}</span>
+          <span style="padding:8px 12px;border-radius:12px;background:#eef2ff;color:#2563eb;font-weight:700;font-size:12px;letter-spacing:0.04em;">Factura {$invoice}</span>
         </div>
       </td>
     </tr>
 
     <tr>
       <td style="padding:22px 22px 10px;">
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
-          <tr>
-            <td style="padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;">
-              <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#475569;margin-bottom:6px;">Cliente</div>
-              <div style="font-size:16px;font-weight:700;">{$cliente}</div>
-              <div style="color:#64748b;font-size:13px;margin-top:2px;">Proyecto: {$project}</div>
-            </td>
-            <td style="width:10px;"></td>
-            <td style="padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;">
-              <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#475569;margin-bottom:6px;">Fechas</div>
-              <div style="font-size:14px;"><strong>Pago:</strong> {$fecha}</div>
-              <div style="font-size:14px;"><strong>Próxima cuota:</strong> {$proxima}</div>
-            </td>
-          </tr>
-        </table>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:6px;">
+          <span style="display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;font-weight:700;font-size:12px;letter-spacing:0.04em;background:{$estadoBg};color:{$estadoColor};">
+            {$estado}
+          </span>
+          <span style="padding:6px 10px;border-radius:10px;background:#f1f5f9;color:#0f172a;font-size:12px;">Fecha pago: {$fecha}</span>
+          <span style="padding:6px 10px;border-radius:10px;background:#f1f5f9;color:#0f172a;font-size:12px;">Método: {$metodo}</span>
+          <span style="padding:6px 10px;border-radius:10px;background:#f1f5f9;color:#0f172a;font-size:12px;">Ref: {$ref}</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-start;">
+          <div style="flex:1 1 60%;min-width:260px;">
+            <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#475569;margin-bottom:6px;">Cliente</div>
+            <div style="font-size:16px;font-weight:700;">{$cliente}</div>
+            <div style="color:#64748b;font-size:13px;margin-top:2px;">Proyecto: {$project}</div>
+            <div style="color:#64748b;font-size:13px;margin-top:2px;">Servicios de interés: {$concepto}</div>
+            <div style="color:#64748b;font-size:13px;margin-top:2px;">Canal de respuesta: Correo</div>
+          </div>
+          <div style="flex:0 0 180px;min-width:180px;">
+            <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#475569;margin-bottom:6px;">Periodo</div>
+            <div style="font-size:16px;font-weight:700;">{$fecha}</div>
+            <div style="color:#64748b;font-size:13px;margin-top:2px;">Vence: {$proxima}</div>
+          </div>
+        </div>
       </td>
     </tr>
 
     <tr>
       <td style="padding:10px 22px 8px;">
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
-          <tr style="background:#f1f5f9;">
-            <td style="padding:12px;font-weight:700;font-size:13px;color:#0f172a;">Concepto</td>
-            <td style="padding:12px;font-weight:700;font-size:13px;color:#0f172a;">Detalle</td>
-            <td style="padding:12px;text-align:right;font-weight:700;font-size:13px;color:#0f172a;">Monto</td>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin-top:6px;font-size:14px;color:#0f172a;">
+          <tr style="background:#f1f5f9;font-weight:700;">
+            <td style="padding:12px;">Concepto</td>
+            <td style="padding:12px;text-align:right;">Cantidad</td>
+            <td style="padding:12px;text-align:right;">Valor</td>
           </tr>
           <tr>
-            <td style="padding:12px;border-bottom:1px solid #e2e8f0;color:#334155;">Servicio</td>
-            <td style="padding:12px;border-bottom:1px solid #e2e8f0;color:#0f172a;font-weight:700;">{$concepto}</td>
+            <td style="padding:12px;border-bottom:1px solid #e2e8f0;font-weight:700;color:#0f172a;">{$concepto}</td>
+            <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;color:#0f172a;">1</td>
             <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:700;color:#0f172a;">{$monto}</td>
           </tr>
           <tr>
-            <td style="padding:12px;border-bottom:1px solid #e2e8f0;color:#334155;">Forma de pago</td>
-            <td style="padding:12px;border-bottom:1px solid #e2e8f0;color:#0f172a;">{$forma} · {$metodo}</td>
+            <td style="padding:12px;border-bottom:1px solid #e2e8f0;color:#334155;">Forma de pago · {$forma} · {$metodo}</td>
+            <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;color:#0f172a;">—</td>
             <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;color:#0f172a;">—</td>
           </tr>
           <tr>
             <td style="padding:12px;border-bottom:1px solid #e2e8f0;color:#334155;">Recargo cuotas (18%)</td>
-            <td style="padding:12px;border-bottom:1px solid #e2e8f0;color:#0f172a;">Aplicado por financiamiento</td>
+            <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;color:#0f172a;">—</td>
             <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:700;color:#0f172a;">{$recargoFmt}</td>
           </tr>
           <tr>
             <td style="padding:12px;border-bottom:1px solid #e2e8f0;color:#334155;">Diferido</td>
-            <td style="padding:12px;border-bottom:1px solid #e2e8f0;color:#0f172a;">{$totalCuotas} cuotas de {$valorCuotaFmt}</td>
-            <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;color:#0f172a;">—</td>
+            <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;color:#0f172a;">{$totalCuotas}</td>
+            <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;color:#0f172a;">{$valorCuotaFmt}</td>
           </tr>
-          <tr style="background:#0f172a;color:#fff;">
-            <td style="padding:12px;font-weight:700;">Total con recargo</td>
-            <td style="padding:12px;font-weight:700;">Referencia: {$ref}</td>
-            <td style="padding:12px;text-align:right;font-size:18px;font-weight:800;">{$totalRecargoFmt}</td>
+          <tr style="background:#bfdbfe;font-weight:800;">
+            <td style="padding:12px;">Total</td>
+            <td style="padding:12px;text-align:right;">—</td>
+            <td style="padding:12px;text-align:right;">{$totalRecargoFmt}</td>
           </tr>
         </table>
       </td>
     </tr>
 
     <tr>
-      <td style="padding:8px 22px 18px;">
+      <td style="padding:12px 22px 18px;">
         <div style="border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;background:#f8fafc;color:#0f172a;font-size:14px;line-height:1.6;">
           <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:6px;">Notas</div>
           {$notasHtml}
         </div>
-        <div style="margin-top:14px;padding:12px 14px;border-radius:12px;border:1px solid #e2e8f0;background:#fff7ed;color:#92400e;font-size:13px;">
+        <div style="margin-top:12px;padding:12px 14px;border-radius:12px;border:1px solid #e2e8f0;background:#fff7ed;color:#92400e;font-size:13px;">
           Gracias por tu pago. Si necesitas soporte o un ajuste en la factura, escríbenos a <strong>proyectosmceaa@gmail.com</strong> o <strong>+57 311 412 59 71</strong>.
         </div>
-        <p style="margin:14px 0 0;font-size:12px;color:#94a3b8;text-align:center;">Este mensaje se generó automáticamente. Si no solicitaste esta factura, contáctanos.</p>
+        <div style="display:flex;gap:16px;align-items:center;margin-top:12px;flex-wrap:wrap;">
+          <div style="width:120px;height:120px;border:1px dashed #e2e8f0;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;background:#fff;">QR / Link de pago</div>
+          <div style="font-size:13px;color:#475569;line-height:1.5;">
+            - Términos: pago neto 15 días, soporte operativo incluido en el primer mes.<br>
+            - Si requieres NDA o nota de crédito, solicita al equipo de soporte.<br>
+            - Pago preferido: transferencia Bancolombia. Alternativa: tarjeta vía pasarela.
+          </div>
+        </div>
+        <p style="color:#475569;font-size:13px;margin-top:12px;">Estado de cuotas: {$cuotasResumen}</p>
+        <p style="color:#475569;font-size:13px;margin:4px 0 0;">Próxima cuota: {$proxima}</p>
+        <p style="color:#475569;font-size:13px;margin:4px 0 0;">Referencia: {$ref}</p>
       </td>
     </tr>
   </table>

@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Factura · MCE (Azul)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    :root { --slate:#0f172a; --blue:#2563eb; --border:#e2e8f0; --muted:#6b7280; }
+    * { box-sizing: border-box; }
+    body { margin:0; padding:32px 16px; font-family:'Segoe UI', Roboto, Arial, sans-serif; background:#f8fafc; color:#0f172a; display:flex; justify-content:center; }
+    .card { width:min(860px,100%); background:#fff; border:1px solid var(--border); border-radius:16px; box-shadow:0 10px 30px rgba(15,23,42,0.08); overflow:hidden; }
+    .header { background:var(--slate); color:#fff; padding:20px 22px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .brand { display:flex; align-items:center; gap:12px; }
+    .brand img { width:56px; height:56px; border-radius:12px; object-fit:cover; box-shadow:0 8px 18px rgba(0,0,0,0.25); }
+    .brand .name { font-weight:700; font-size:18px; letter-spacing:0.2px; }
+    .brand .sub { color:#bfdbfe; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; }
+    .badge { padding:8px 12px; border-radius:12px; background:#eef2ff; color:var(--blue); font-weight:700; font-size:12px; letter-spacing:0.04em; }
+    .body { padding:20px 24px 22px; }
+    .meta { display:flex; flex-wrap:wrap; gap:16px; margin:14px 0 4px; align-items:center; }
+    .status { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:12px; font-weight:700; font-size:12px; letter-spacing:0.04em; }
+    .status.paid { background:#ecfdf3; color:#15803d; }
+    .status.pending { background:#fff7ed; color:#b45309; }
+    .pill { padding:6px 10px; border-radius:10px; background:#f1f5f9; color:#0f172a; font-size:12px; }
+    .row { display:flex; justify-content:space-between; gap:24px; align-items:flex-start; }
+    .block { border:none; background:transparent; padding:0; }
+    .label { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#475569; margin-bottom:4px; }
+    .value-strong { font-size:16px; font-weight:700; }
+    .muted { color:var(--muted); font-size:13px; }
+    table { width:100%; border-collapse:collapse; margin-top:16px; font-size:14px; }
+    th, td { padding:12px; text-align:left; }
+    th { background:#f1f5f9; font-weight:700; color:#0f172a; }
+    tr:nth-child(even) td { background:#f8fafc; }
+    .right { text-align:right; }
+    .total-row { background:#bfdbfe; color:#0f172a; font-weight:800; font-size:18px; }
+    .notes { border:1px solid var(--border); border-radius:12px; padding:14px 16px; background:#f8fafc; color:#0f172a; font-size:14px; line-height:1.6; margin-top:14px; }
+    .alert { margin-top:14px; padding:12px 14px; border-radius:12px; border:1px solid var(--border); background:#fff7ed; color:#92400e; font-size:13px; }
+    .qr-row { display:flex; gap:16px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+    .qr-box { width:120px; height:120px; border:1px dashed var(--border); border-radius:12px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px; background:#fff; }
+    .terms { margin-top:2px; font-size:13px; color:#475569; line-height:1.5; }
+  </style>
+</head>
+<body>
+  <section class="card">
+    <div class="header">
+      <div class="brand">
+        <img src="MCE.jpg" alt="MCE">
+        <div>
+          <div class="name">PROYECTOS MCE</div>
+          <div class="sub">Desarrollo Web & MAS</div>
+        </div>
+      </div>
+      <span class="badge">Factura #INV-1024</span>
+    </div>
+
+    <div class="body">
+      <div class="meta">
+        <span class="status paid"><i class="fa fa-check-circle"></i> Pagado</span>
+        <span class="pill">Fecha pago: 26/03/2026</span>
+        <span class="pill">Método: Transferencia</span>
+        <span class="pill">Ref: TRX-8891</span>
+      </div>
+
+      <div class="row">
+        <div class="block" style="flex:1 1 60%;">
+          <div class="label">Cliente</div>
+          <div class="value-strong">Retail Andina</div>
+          <div class="muted">NIT 800.555.111-0</div>
+          <div class="muted">ops@retailandina.com</div>
+          <div class="muted">Servicios de interés: Inventarios · Soporte</div>
+          <div class="muted">Canal de respuesta: Email</div>
+        </div>
+        <div class="block" style="flex:0 0 160px; text-align:left; margin-left:-16px;">
+          <div class="label">Periodo</div>
+          <div class="value-strong">Mar 2026</div>
+          <div class="muted">Vence: 10/04/2026</div>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Concepto</th><th class="right">Cantidad</th><th class="right">Valor</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Discovery + Arquitectura</td><td class="right">1</td><td class="right">$1,200</td></tr>
+          <tr><td>Desarrollo módulo inventarios</td><td class="right">1</td><td class="right">$4,800</td></tr>
+          <tr><td>Soporte y monitoreo (mes)</td><td class="right">1</td><td class="right">$600</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><td colspan="2" class="right muted">Subtotal</td><td class="right">$6,600</td></tr>
+          <tr><td colspan="2" class="right muted">Impuestos (19%)</td><td class="right">$1,254</td></tr>
+          <tr class="total-row"><td colspan="2">Total</td><td class="right">$7,854</td></tr>
+        </tfoot>
+      </table>
+
+      <div class="notes">
+        Transferencia a Bancolombia · Cuenta corriente 123-456789 · Pago neto 15 días.
+      </div>
+      <div class="alert">
+        Gracias por tu pago. Si necesitas soporte o un ajuste en la factura, escríbenos a <strong>proyectosmceaa@gmail.com</strong> o <strong>+57 311 412 59 71</strong>.
+      </div>
+      <div class="qr-row">
+        <div class="qr-box">QR / Link de pago</div>
+        <div class="terms">
+          - Términos: pago neto 15 días, soporte operativo incluido en el primer mes.<br>
+          - Si requieres NDA o nota de crédito, solicita al equipo de soporte.<br>
+          - Pago preferido: transferencia Bancolombia. Alternativa: tarjeta vía pasarela.
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
