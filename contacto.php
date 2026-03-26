@@ -246,7 +246,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-obj" data-i18n="ct-form-obj">Objetivo de la llamada *</label>
-                        <textarea name="mensaje" rows="4" required minlength="10" maxlength="2000" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-obj-ph" placeholder="Cuéntanos en breve qué necesitas revisar en la llamada."></textarea>
+                        <textarea name="mensaje" rows="8" required minlength="10" maxlength="2000" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" style="min-height:200px;" data-i18n-placeholder="ct-form-obj-ph" placeholder="Cuéntanos en breve qué necesitas revisar en la llamada."></textarea>
                     </div>
                 </div>
 
@@ -334,7 +334,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-msg" data-i18n="ct-mail-msg">Mensaje *</label>
-                        <textarea name="mensaje" rows="5" required minlength="20" maxlength="2000" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus-border-blue-600" data-i18n-placeholder="ct-mail-msg-ph" placeholder="Cuéntanos los detalles y cómo podemos ayudarte."></textarea>
+                        <textarea name="mensaje" rows="8" required minlength="20" maxlength="2000" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus-border-blue-600" style="min-height:200px;" data-i18n-placeholder="ct-mail-msg-ph" placeholder="Cuéntanos los detalles y cómo podemos ayudarte."></textarea>
                     </div>
                 </div>
 

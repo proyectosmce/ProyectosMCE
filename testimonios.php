@@ -306,7 +306,7 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1 i18n-ts-form-msg-label" data-i18n="ts-form-msg-label">Escribe tu experiencia</label>
-                    <textarea id="t-mensaje" name="mensaje" required rows="5" minlength="30" maxlength="1200" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus-border-blue-500 i18n-ts-form-msg-ph" data-i18n="ts-form-msg-ph" data-i18n-placeholder="ts-form-msg-ph" placeholder="Cuenta cómo te fue con el proyecto"></textarea>
+                    <textarea id="t-mensaje" name="mensaje" required rows="8" minlength="30" maxlength="1200" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus-border-blue-500 i18n-ts-form-msg-ph" data-i18n="ts-form-msg-ph" data-i18n-placeholder="ts-form-msg-ph" placeholder="Cuenta cómo te fue con el proyecto" style="min-height:200px;"></textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1 i18n-ts-form-rating-label" data-i18n="ts-form-rating-label">Calificación (1 = no recomiendo, 5 = sí recomiendo)</label>
