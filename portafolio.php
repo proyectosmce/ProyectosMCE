@@ -48,7 +48,9 @@ $featuredProject = $projects[0] ?? null;
                             <p class="text-sm text-blue-100 i18n-pf-what" data-i18n="pf-what">Qué verás</p>
                             <p class="text-2xl font-semibold text-white i18n-pf-what-title" data-i18n="pf-what-title">Casos listos para inspirar tu proyecto</p>
                         </div>
-                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-300 text-slate-900 font-bold shadow-lg">MCE</span>
+                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-300 shadow-lg overflow-hidden">
+                            <img src="<?php echo app_url('imag/MCE.jpg'); ?>" alt="MCE" class="w-full h-full object-cover">
+                        </span>
                     </div>
                     <ul class="space-y-3 text-blue-50">
                         <li class="flex items-start gap-3">

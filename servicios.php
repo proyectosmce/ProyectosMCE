@@ -61,7 +61,9 @@
                             <p class="text-sm text-blue-100 i18n-srv-side-label" data-i18n="srv-side-label">Qué obtienes</p>
                             <p class="text-2xl font-semibold text-white i18n-srv-side-title" data-i18n="srv-side-title">Paquetes completos, sin sorpresas</p>
                         </div>
-                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-300 text-slate-900 font-bold shadow-lg">MCE</span>
+                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-300 shadow-lg overflow-hidden">
+                            <img src="<?php echo app_url('imag/MCE.jpg'); ?>" alt="MCE" class="w-full h-full object-cover">
+                        </span>
                     </div>
                     <ul class="space-y-3 text-blue-50">
                         <li class="flex items-start gap-3">
