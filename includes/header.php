@@ -1,9 +1,13 @@
-﻿<!DOCTYPE html>
-<html lang="es">
+﻿<?php
+$pageSlug = basename($_SERVER["PHP_SELF"], ".php");
+$titleKey = "meta-title-" . $pageSlug;
+?>
+<!DOCTYPE html>
+<html lang="es" data-page-key="<?php echo htmlspecialchars($titleKey, ENT_QUOTES, 'UTF-8'); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proyectos MCE Soluciones Digitales</title>
+    <title data-i18n="<?php echo htmlspecialchars($titleKey, ENT_QUOTES, 'UTF-8'); ?>">Proyectos MCE | Soluciones Digitales</title>
     <?php
     $faviconFile = dirname(__DIR__) . '/favicon.ico';
     $faviconPngFile = dirname(__DIR__) . '/favicon.png';

@@ -584,6 +584,11 @@
                 'nav-testimonials': 'Testimonios',
                 'nav-contact': 'Contacto',
                 'nav-subtitle': 'Desarrollo   Web',
+                'meta-title-index': 'Proyectos MCE | Soluciones Digitales',
+                'meta-title-servicios': 'Servicios · Proyectos MCE',
+                'meta-title-portafolio': 'Portafolio · Proyectos MCE',
+                'meta-title-testimonios': 'Testimonios · Proyectos MCE',
+                'meta-title-contacto': 'Contacto · Proyectos MCE',
                 'brand-name': 'Proyectos MCE',
                 'hero-title': 'Software a medida para que tu operación no se detenga',
                 'hero-sub': 'Planificamos, diseñamos y desarrollamos plataformas web que soportan ventas, inventarios y atención al cliente con control total y visibilidad.',
@@ -911,6 +916,11 @@
                 'nav-testimonials': 'Testimonials',
                 'nav-contact': 'Contact',
                 'nav-subtitle': 'Web Development',
+                'meta-title-index': 'MCE Projects | Custom Software',
+                'meta-title-servicios': 'Services · MCE Projects',
+                'meta-title-portafolio': 'Portfolio · MCE Projects',
+                'meta-title-testimonios': 'Testimonials · MCE Projects',
+                'meta-title-contacto': 'Contact · MCE Projects',
                 'brand-name': 'MCE Projects',
                 'hero-title': 'Custom software so your operation never stops',
                 'hero-sub': 'We plan, design and build web platforms that support sales, inventory and customer care with full control and visibility.',
@@ -1238,6 +1248,11 @@
                 'nav-testimonials': 'Témoignages',
                 'nav-contact': 'Contact',
                 'nav-subtitle': 'Développement Web',
+                'meta-title-index': 'Projets MCE | Logiciels sur mesure',
+                'meta-title-servicios': 'Services · Projets MCE',
+                'meta-title-portafolio': 'Portfolio · Projets MCE',
+                'meta-title-testimonios': 'Témoignages · Projets MCE',
+                'meta-title-contacto': 'Contact · Projets MCE',
                 'brand-name': 'Projets MCE',
                 'hero-title': 'Logiciel sur mesure pour que votre opération ne s’arrête pas',
                 'hero-sub': 'Nous planifions, concevons et développons des plateformes web pour ventes, inventaires et service client avec contrôle total et visibilité.',
@@ -1565,6 +1580,11 @@
                 'nav-testimonials': 'Referenzen',
                 'nav-contact': 'Kontakt',
                 'nav-subtitle': 'Webentwicklung',
+                'meta-title-index': 'MCE Projekte | Individuelle Software',
+                'meta-title-servicios': 'Leistungen · MCE Projekte',
+                'meta-title-portafolio': 'Portfolio · MCE Projekte',
+                'meta-title-testimonios': 'Referenzen · MCE Projekte',
+                'meta-title-contacto': 'Kontakt · MCE Projekte',
                 'brand-name': 'MCE Projekte',
                 'hero-title': 'Individuelle Software, damit dein Betrieb nicht stoppt',
                 'hero-sub': 'Wir planen, designen und bauen Webplattformen für Vertrieb, Lager und Kundenservice mit vollem Überblick.',
@@ -1892,6 +1912,11 @@
                 'nav-testimonials': 'Depoimentos',
                 'nav-contact': 'Contato',
                 'nav-subtitle': 'Desenvolvimento Web',
+                'meta-title-index': 'Projetos MCE | Software sob medida',
+                'meta-title-servicios': 'Serviços · Projetos MCE',
+                'meta-title-portafolio': 'Portfólio · Projetos MCE',
+                'meta-title-testimonios': 'Depoimentos · Projetos MCE',
+                'meta-title-contacto': 'Contato · Projetos MCE',
                 'brand-name': 'Projetos MCE',
                 'hero-title': 'Software sob medida para sua operação não parar',
                 'hero-sub': 'Planejamos, desenhamos e desenvolvemos plataformas web que suportam vendas, estoques e atendimento com controle total e visibilidade.',
@@ -2219,6 +2244,11 @@
                 'nav-testimonials': 'Testimonianze',
                 'nav-contact': 'Contatti',
                 'nav-subtitle': 'Sviluppo Web',
+                'meta-title-index': 'Progetti MCE | Software su misura',
+                'meta-title-servicios': 'Servizi · Progetti MCE',
+                'meta-title-portafolio': 'Portfolio · Progetti MCE',
+                'meta-title-testimonios': 'Testimonianze · Progetti MCE',
+                'meta-title-contacto': 'Contatto · Progetti MCE',
                 'brand-name': 'Progetti MCE',
                 'hero-title': 'Software su misura perché la tua operazione non si fermi',
                 'hero-sub': 'Pianifichiamo, progettiamo e sviluppiamo piattaforme web per vendite, inventari e customer care con controllo totale e visibilità.',
@@ -2845,12 +2875,17 @@
             // Atributo data-i18n
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.dataset.i18n;
-                if (dict[key]) {
-                    const span = el.querySelector('span');
-                    if (span) span.textContent = dict[key];
-                    else el.textContent = dict[key];
-                }
-            });
+            if (dict[key]) {
+                const span = el.querySelector('span');
+                if (span) span.textContent = dict[key];
+                else el.textContent = dict[key];
+            }
+        });
+            // Título de la pestaña
+            const pageKey = document.documentElement?.dataset?.pageKey;
+            if (pageKey && dict[pageKey]) {
+                document.title = dict[pageKey];
+            }
             // Placeholders específicos
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
                 const key = el.dataset.i18nPlaceholder;
