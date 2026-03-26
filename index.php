@@ -266,7 +266,7 @@
                             <p class="text-sm text-blue-100 i18n-card4-label" data-i18n="card4-label">Hoja de ruta MCE</p>
                             <p class="text-2xl font-semibold text-white i18n-card4-title" data-i18n="card4-title">Tu proyecto, con control total</p>
                         </div>
-                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-lg overflow-hidden">
+                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-lg overflow-hidden mce-photo-badge">
                             <img src="<?php echo app_url('imag/MCE.jpg'); ?>" alt="MCE" class="w-full h-full object-cover">
                         </span>
                     </div>

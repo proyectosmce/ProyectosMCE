@@ -80,6 +80,58 @@ $titleKey = "meta-title-" . $pageSlug;
         .float-btn.assistant.paused img.bot-img {
             animation-play-state: paused;
         }
+        /* Efecto profesional para badgets de foto MCE */
+        .mce-photo-badge {
+            position: relative;
+            overflow: hidden;
+            border-radius: 9999px;
+            box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.18);
+            animation: mceHalo 4s ease-in-out infinite;
+            isolation: isolate;
+        }
+        .mce-photo-badge::before {
+            content: "";
+            position: absolute;
+            inset: -3px;
+            background: conic-gradient(from 45deg, #0ea5e9 0%, #22d3ee 50%, #0ea5e9 100%);
+            animation: mceSpin 18s linear infinite;
+            z-index: -1;
+            mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 1px));
+            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 1px));
+        }
+        .mce-photo-badge::after {
+            content: "";
+            position: absolute;
+            top: -60%;
+            left: -80%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
+            transform: rotate(15deg) translateX(-50%);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .mce-photo-badge:hover::after {
+            opacity: 1;
+            animation: mceShine 0.65s ease forwards;
+        }
+        @keyframes mceSpin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes mceHalo {
+            0%,100% { box-shadow: 0 0 0 0 rgba(14,165,233,0.18), 0 8px 18px rgba(15,23,42,0.18); }
+            50%     { box-shadow: 0 0 0 4px rgba(14,165,233,0.10), 0 10px 22px rgba(15,23,42,0.22); }
+        }
+        @keyframes mceShine {
+            from { transform: rotate(15deg) translateX(-60%); opacity: 0.15; }
+            to   { transform: rotate(15deg) translateX(80%);  opacity: 0; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .mce-photo-badge { animation: none; }
+            .mce-photo-badge::before { animation: none; }
+            .mce-photo-badge:hover::after { animation: none; opacity: 0; }
+        }
         @keyframes botWaveCycle {
             0%,70%   { transform: rotate(0deg); }
             80%      { transform: rotate(10deg); }

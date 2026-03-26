@@ -30,7 +30,7 @@
             <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
                 <!-- Col 1: Logo y descripción -->
                 <div class="space-y-3">
-                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 border border-white/15 overflow-hidden">
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 border border-white/15 overflow-hidden mce-photo-badge">
                         <img src="<?php echo app_url('imag/MCE.jpg'); ?>" alt="MCE" class="w-full h-full object-cover">
                     </div>
                     <h3 class="text-xl font-bold" data-i18n="brand-name">Proyectos MCE</h3>
