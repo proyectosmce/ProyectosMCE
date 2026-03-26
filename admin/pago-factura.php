@@ -265,6 +265,7 @@ function render_html(array $payment): void
     $valorCuotaFmt = $totalCuotas > 0 ? payment_format_amount($valorCuota, (string) $payment['moneda']) : 'N/A';
     $montoBaseFmt = payment_format_amount($montoBase, (string) $payment['moneda']);
     $notas = nl2br(htmlspecialchars(trim((string) ($payment['notas'] ?? '')), ENT_QUOTES, 'UTF-8'));
+    $logoUrl = app_url('imag/MCE.jpg');
     ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -295,9 +296,12 @@ function render_html(array $payment): void
 <body>
     <div class="card">
         <div class="header">
-        <div class="brand">
-                <h1>Proyectos MCE</h1>
-                <p>Software a medida · proyectosmceaa@gmail.com · +57 311 412 59 71</p>
+            <div class="brand" style="display:flex;align-items:center;gap:10px;">
+                <img src="<?php echo htmlspecialchars($logoUrl, ENT_QUOTES, 'UTF-8'); ?>" alt="MCE" style="width:52px;height:52px;border-radius:12px;object-fit:cover;box-shadow:0 6px 14px rgba(0,0,0,0.18);">
+                <div>
+                    <h1 style="margin:0;font-size:20px;letter-spacing:0.3px;">Proyectos MCE</h1>
+                    <p style="margin:4px 0 0;font-size:12px;color:#cbd5e1;">Software a medida · proyectosmceaa@gmail.com · +57 311 412 59 71</p>
+                </div>
             </div>
             <div class="invoice-meta">
                 <div class="pill">Factura <?php echo htmlspecialchars($invoice, ENT_QUOTES, 'UTF-8'); ?></div>
