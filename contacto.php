@@ -535,21 +535,18 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
 <?php endif; ?>
 
 <script>
-// Prefill mensaje según servicio elegido en el idioma activo
+// Prefill mensaje según servicio o CTA (plan / agenda) en el idioma activo
 (() => {
     const qs = new URLSearchParams(window.location.search);
     const rawService = qs.get('servicio');
-    if (!rawService) return;
+    const ctaKey = (qs.get('cta') || '').trim().toLowerCase();
+    if (!rawService && !ctaKey) return;
 
     const normalize = (str) => (str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
     const lang = (window.mceCurrentLang || localStorage.getItem('siteLang') || 'es');
-    const slug = normalize(rawService);
 
-    /**
-     * Plantillas por idioma → servicio normalizado
-     * Se usa un fallback a español si falta alguna traducción puntual.
-     */
-    const tpl = {
+    // Plantillas por servicio
+    const tplService = {
         es: {
             'desarrollo web a medida': 'Hola, quiero un desarrollo web a medida.\n\nObjetivo principal:\nPúblico objetivo:\nFunciones clave:\nIntegraciones (APIs/pagos):\nPlazo ideal y presupuesto aproximado:',
             'sistemas de inventario': 'Hola, necesito un sistema de inventario.\n\nNúmero de productos/SKUs:\nPuntos de venta o canales:\nAlertas y reportes deseados:\nIntegraciones con contabilidad/tiendas:\nPlazo ideal y presupuesto aproximado:',
@@ -588,25 +585,58 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
         }
     };
 
-    const messageTemplate = tpl[lang]?.[slug] || tpl.es?.[slug];
+    // Plantillas por CTA
+    const tplCta = {
+        plan: {
+            es: 'Hola, quiero armar mi plan de proyecto.\n\nTipo de proyecto (web/app):\nObjetivo principal:\nAlcance deseado y entregables:\nPlazo ideal y presupuesto aproximado:\nPreferencia de comunicación:',
+            en: 'Hi, I want to build a project plan.\n\nProject type (web/app):\nMain goal:\nDesired scope and deliverables:\nIdeal timeline and rough budget:\nPreferred communication channel:',
+            de: 'Hallo, ich möchte meinen Projektplan erstellen.\n\nProjekttyp (Web/App):\nHauptziel:\nGewünschter Umfang und Deliverables:\nWunschtermin und grobes Budget:\nBevorzugter Kommunikationskanal:',
+            fr: 'Bonjour, je veux élaborer mon plan de projet.\n\nType de projet (web/app) :\nObjectif principal :\nPérimètre souhaité et livrables :\nDélai idéal et budget estimé :\nCanal de communication préféré :',
+            pt: 'Olá, quero montar meu plano de projeto.\n\nTipo de projeto (web/app):\nObjetivo principal:\nEscopo desejado e entregáveis:\nPrazo ideal e orçamento aproximado:\nCanal de comunicação preferido:',
+            it: 'Ciao, voglio creare il mio piano di progetto.\n\nTipo di progetto (web/app):\nObiettivo principale:\nAmbito desiderato e deliverable:\nTempistica ideale e budget indicativo:\nCanale di comunicazione preferito:'
+        },
+        agenda: {
+            es: 'Hola, quiero agendar una llamada de asesoría.\n\nTema que deseo revisar:\nFecha y hora preferidas:\nMedio (teléfono o videollamada):\n¿Necesito compartir algún enlace o documento?:',
+            en: 'Hi, I want to schedule a consulting call.\n\nTopic to discuss:\nPreferred date and time:\nChannel (phone or video):\nAny link or document to share?:',
+            de: 'Hallo, ich möchte ein Beratungsgespräch buchen.\n\nThema:\nBevorzugtes Datum und Uhrzeit:\nKanal (Telefon oder Video):\nMuss ich einen Link/Dokument teilen?:',
+            fr: 'Bonjour, je veux planifier un appel de conseil.\n\nSujet à aborder :\nDate et heure préférées :\nCanal (téléphone ou visio) :\nLien ou document à partager ? :',
+            pt: 'Olá, quero agendar uma chamada de consultoria.\n\nTema para conversar:\nData e hora preferidas:\nCanal (telefone ou vídeo):\nAlgum link ou documento para compartilhar?:',
+            it: 'Ciao, voglio programmare una call di consulenza.\n\nArgomento da trattare:\nData e ora preferite:\nCanale (telefono o video):\nDevo condividere un link o documento?:'
+        }
+    };
+
+    let messageTemplate = null;
+    let targetForms = ['contact-form', 'agenda-form'];
+    let selectedServiceSlug = null;
+
+    if (rawService) {
+        const slug = normalize(rawService);
+        selectedServiceSlug = slug;
+        messageTemplate = tplService[lang]?.[slug] || tplService.es?.[slug];
+    } else if (ctaKey && tplCta[ctaKey]) {
+        messageTemplate = tplCta[ctaKey][lang] || tplCta[ctaKey].es;
+        targetForms = ctaKey === 'plan' ? ['contact-form'] : ['agenda-form'];
+    }
+
     if (!messageTemplate) return;
 
     const fillField = (formId) => {
         const form = document.getElementById(formId);
         if (!form) return;
-        const msg = form.querySelector('textarea[name="mensaje"]');
+        const msg = form.querySelector('textarea[name=\"mensaje\"]');
         if (msg && !msg.value.trim()) {
             msg.value = messageTemplate;
         }
-        const select = form.querySelector('select[name="servicio"]');
-        if (select) {
-            const target = Array.from(select.options).find(opt => normalize(opt.textContent) === slug || normalize(opt.value) === slug);
-            if (target) select.value = target.value;
+        if (selectedServiceSlug) {
+            const select = form.querySelector('select[name=\"servicio\"]');
+            if (select) {
+                const target = Array.from(select.options).find(opt => normalize(opt.textContent) === selectedServiceSlug || normalize(opt.value) === selectedServiceSlug);
+                if (target) select.value = target.value;
+            }
         }
     };
 
-    fillField('contact-form');
-    fillField('agenda-form');
+    targetForms.forEach(fillField);
 })();
 </script>
 

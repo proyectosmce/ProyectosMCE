@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
-                    <a href="<?php echo app_url('contacto.php'); ?>#agenda-llamada" class="inline-flex items-center justify-center bg-yellow-300 text-slate-900 px-8 py-4 rounded-xl font-semibold shadow-lg shadow-yellow-900/20 hover:bg-yellow-200 transition mce-call-ringing i18n-srv-btn-call" data-i18n="srv-btn-call">
+                    <a href="<?php echo app_url('contacto.php'); ?>?cta=agenda#agenda-llamada" class="inline-flex items-center justify-center bg-yellow-300 text-slate-900 px-8 py-4 rounded-xl font-semibold shadow-lg shadow-yellow-900/20 hover:bg-yellow-200 transition mce-call-ringing i18n-srv-btn-call" data-i18n="srv-btn-call">
                         <span class="call-ico-wrap mr-2 text-slate-900">
                             <i class="fas fa-phone-alt"></i>
                             <span class="call-ring call-ring--1"></span>
@@ -183,7 +183,7 @@
             <p class="text-blue-100 mt-2 i18n-srv-next-desc" data-i18n="srv-next-desc">Respondemos en menos de 24 horas con un plan de acción y tiempos estimados.</p>
         </div>
         <div class="flex flex-wrap gap-3">
-            <a href="<?php echo app_url('contacto.php'); ?>#agenda-llamada" class="inline-flex items-center px-5 py-3 rounded-xl bg-white text-slate-900 font-semibold shadow-lg hover:bg-blue-50 transition mce-call-ringing">
+            <a href="<?php echo app_url('contacto.php'); ?>?cta=agenda#agenda-llamada" class="inline-flex items-center px-5 py-3 rounded-xl bg-white text-slate-900 font-semibold shadow-lg hover:bg-blue-50 transition mce-call-ringing">
                 <span class="call-ico-wrap mr-2 text-slate-900">
                     <i class="fas fa-phone-alt"></i>
                     <span class="call-ring call-ring--1"></span>

@@ -10,7 +10,7 @@
                     <p class="text-lg md:text-xl font-semibold"><span class="i18n-ft-cta-desc" data-i18n="ft-cta-desc">Transformamos tus ideas en software listo para usar.</span></p>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <a href="<?php echo app_url('contacto.php'); ?>#agenda-llamada" class="inline-flex items-center px-4 py-3 rounded-lg bg-white text-slate-900 font-semibold shadow hover:bg-blue-50 transition mce-call-ringing">
+                    <a href="<?php echo app_url('contacto.php'); ?>?cta=agenda#agenda-llamada" class="inline-flex items-center px-4 py-3 rounded-lg bg-white text-slate-900 font-semibold shadow hover:bg-blue-50 transition mce-call-ringing">
                         <span class="call-ico-wrap mr-2 text-slate-900">
                             <i class="fas fa-phone-alt"></i>
                             <span class="call-ring call-ring--1"></span>
@@ -112,7 +112,7 @@
     </a>
 
     <!-- Botón flotante extra para llamada (desktop) -->
-    <a href="<?php echo app_url('contacto.php'); ?>#agenda-llamada"
+    <a href="<?php echo app_url('contacto.php'); ?>?cta=agenda#agenda-llamada"
        class="mce-call-float mce-call-ringing">
         <span class="call-ico-wrap mr-2 text-slate-900">
             <i class="fas fa-phone-alt"></i>

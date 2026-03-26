@@ -228,7 +228,7 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3 pt-2">
-                    <a href="<?php echo app_url('contacto.php'); ?>" class="inline-flex items-center justify-center border-2 border-white text-white px-6 py-3 rounded-xl font-semibold text-sm md:text-base hover:bg-white hover:text-slate-900 transition i18n-btn-plan whitespace-nowrap" data-i18n="btn-plan">
+                    <a href="<?php echo app_url('contacto.php'); ?>?cta=plan#contacto-form" class="inline-flex items-center justify-center border-2 border-white text-white px-6 py-3 rounded-xl font-semibold text-sm md:text-base hover:bg-white hover:text-slate-900 transition i18n-btn-plan whitespace-nowrap" data-i18n="btn-plan">
                         <i class="fas fa-rocket mr-2"></i> Armar mi plan
                     </a>
                     <a href="<?php echo app_url('portafolio.php'); ?>" class="inline-flex items-center justify-center border-2 border-white text-white px-6 py-3 rounded-xl font-semibold text-sm md:text-base hover:bg-white hover:text-slate-900 transition i18n-btn-portfolio whitespace-nowrap" data-i18n="btn-portfolio">

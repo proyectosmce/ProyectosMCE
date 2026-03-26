@@ -165,7 +165,7 @@ $featuredProject = $projects[0] ?? null;
                     <a href="<?php echo app_url('destello-oro.php'); ?>" class="inline-flex items-center px-5 py-3 rounded-xl bg-slate-900 text-white font-semibold shadow-lg hover:bg-slate-800 transition">
                         <i class="fas fa-play mr-2"></i> <span class="i18n-pf-case-btn-full" data-i18n="pf-case-btn-full">Ver caso completo</span>
                     </a>
-                    <a href="<?php echo app_url('contacto.php'); ?>#agenda-llamada" class="inline-flex items-center px-5 py-3 rounded-xl border border-slate-900 text-slate-900 font-semibold hover:bg-slate-900 hover:text-white transition">
+                    <a href="<?php echo app_url('contacto.php'); ?>?cta=agenda#agenda-llamada" class="inline-flex items-center px-5 py-3 rounded-xl border border-slate-900 text-slate-900 font-semibold hover:bg-slate-900 hover:text-white transition">
                         <i class="fas fa-phone-alt mr-2"></i> <span class="i18n-pf-case-btn-call" data-i18n="pf-case-btn-call">Agenda una llamada</span>
                     </a>
                 </div>
@@ -388,7 +388,7 @@ $featuredProject = $projects[0] ?? null;
             <p class="text-blue-100 mt-2 i18n-pf-cta2-desc" data-i18n="pf-cta2-desc">Agenda una llamada y en 24 horas preparamos un recorrido de referencia.</p>
         </div>
         <div class="flex flex-wrap gap-3">
-            <a href="<?php echo app_url('contacto.php'); ?>#agenda-llamada" class="inline-flex items-center px-5 py-3 rounded-xl bg-white text-slate-900 font-semibold shadow-lg hover:bg-blue-50 transition mce-call-ringing">
+            <a href="<?php echo app_url('contacto.php'); ?>?cta=agenda#agenda-llamada" class="inline-flex items-center px-5 py-3 rounded-xl bg-white text-slate-900 font-semibold shadow-lg hover:bg-blue-50 transition mce-call-ringing">
                 <span class="call-ico-wrap mr-2 text-slate-900">
                     <i class="fas fa-phone-alt"></i>
                     <span class="call-ring call-ring--1"></span>
