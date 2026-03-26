@@ -399,54 +399,10 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
 })();
 </script>
 
-<?php if ($contactRecaptchaEnabled): ?>
 <script>
+// Horarios y validación de formularios (reCAPTCHA se maneja en assets/js/mce-recaptcha.js)
 (() => {
     const forms = ['contact-form', 'agenda-form'].map(id => document.getElementById(id)).filter(Boolean);
-    let placeholders = Array.from(document.querySelectorAll('.g-recaptcha[data-sitekey]'));
-
-    function renderAll() {
-        if (!window.grecaptcha) return;
-        placeholders.forEach(el => {
-            if (el.dataset.recaptchaId) return;
-            const id = grecaptcha.render(el, { sitekey: el.dataset.sitekey });
-            el.dataset.recaptchaId = id;
-        });
-        document.querySelectorAll('.recaptcha-old').forEach(old => old.remove());
-    }
-    function loadRecaptcha(lang) {
-        const existing = document.querySelector('script[data-mce-recaptcha]');
-        if (existing && existing.dataset.lang === lang) {
-            renderAll();
-            return;
-        }
-        if (existing) existing.remove();
-        delete window.grecaptcha;
-        delete window.___grecaptcha_cfg;
-        const s = document.createElement('script');
-        s.src = `https://www.google.com/recaptcha/api.js?onload=mceRenderRecaptcha&render=explicit&hl=${lang}`;
-        s.async = true;
-        s.defer = true;
-        s.dataset.mceRecaptcha = '1';
-        s.dataset.lang = lang;
-        document.head.appendChild(s);
-        window.mceRenderRecaptcha = renderAll;
-    }
-    loadRecaptcha(localStorage.getItem('siteLang') || 'es');
-    window.addEventListener('mce-lang-changed', (e) => {
-        const lang = e.detail?.lang || 'es';
-        const fresh = [];
-        placeholders.forEach(el => {
-            const clone = document.createElement('div');
-            clone.className = el.className;
-            clone.dataset.sitekey = el.dataset.sitekey;
-            el.insertAdjacentElement('afterend', clone);
-            el.classList.add('recaptcha-old');
-            fresh.push(clone);
-        });
-        placeholders = fresh;
-        loadRecaptcha(lang);
-    });
 
     // Horarios de agenda
     const availableHours = <?php echo json_encode($availableHours, JSON_UNESCAPED_UNICODE); ?>;
@@ -485,23 +441,6 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
         renderHours(fechaInput.value || fechaInput.getAttribute('min'));
     }
 
-    // Validación de envío con reCAPTCHA
-    forms.forEach((form) => {
-        form.addEventListener('submit', (event) => {
-            if (typeof window.grecaptcha === 'undefined') {
-                event.preventDefault();
-                alert('reCAPTCHA aun no termina de cargar. Intenta nuevamente en unos segundos.');
-                return;
-            }
-            const widgetId = form.querySelector('.g-recaptcha')?.dataset.recaptchaId;
-            const response = widgetId !== undefined ? grecaptcha.getResponse(Number(widgetId)) : '';
-            if (!response) {
-                event.preventDefault();
-                alert('Completa la verificación reCAPTCHA antes de enviar.');
-            }
-        });
-    });
-
     // Mensajes de validación en el idioma seleccionado
     const attachValidationMessages = () => {
         forms.forEach((form) => {
@@ -532,7 +471,6 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
     window.addEventListener('mce-lang-changed', attachValidationMessages);
 })();
 </script>
-<?php endif; ?>
 
 <script>
 // Prefill mensaje según servicio o CTA (plan / agenda) en el idioma activo

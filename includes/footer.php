@@ -2913,6 +2913,11 @@
         initSiteLang();
     })();
     </script>
+    <?php
+        $recaptchaJsPath = dirname(__DIR__) . '/assets/js/mce-recaptcha.js';
+        $recaptchaJsUrl  = app_url('assets/js/mce-recaptcha.js') . '?v=' . (is_file($recaptchaJsPath) ? filemtime($recaptchaJsPath) : time());
+    ?>
+    <script src="<?php echo $recaptchaJsUrl; ?>"></script>
 </body>
 </html>
 
