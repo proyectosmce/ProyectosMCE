@@ -30,10 +30,12 @@
             <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
                 <!-- Col 1: Logo y descripción -->
                 <div class="space-y-3">
-                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 border border-white/15 overflow-hidden mce-photo-badge">
-                        <img src="<?php echo app_url('imag/MCE.jpg'); ?>" alt="MCE" class="w-full h-full object-cover">
+                    <div class="flex items-center gap-3">
+                        <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/10 border border-white/15 overflow-hidden mce-photo-badge">
+                            <img src="<?php echo app_url('imag/MCE.jpg'); ?>" alt="MCE" class="w-full h-full object-cover">
+                        </div>
+                        <h3 class="text-xl font-bold" data-i18n="brand-name">Proyectos MCE</h3>
                     </div>
-                    <h3 class="text-xl font-bold" data-i18n="brand-name">Proyectos MCE</h3>
                     <p class="text-gray-300 leading-relaxed"><span class="i18n-ft-about-desc" data-i18n="ft-about-desc">Software a medida, sitios web y automatizaciones hechas con foco en tu operación diaria.</span></p>
                     <a href="<?php echo app_url('portafolio.php'); ?>" class="inline-flex items-center text-blue-200 hover:text-white font-semibold">
                         <span><span class="i18n-ft-about-link" data-i18n="ft-about-link">Ver casos en vivo</span></span>
