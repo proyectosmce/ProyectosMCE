@@ -22,9 +22,56 @@ $titleKey = "meta-title-" . $pageSlug;
     ?>
 
     <?php include __DIR__ . '/metas.php'; ?>
+
+    <!-- Tipografías personalizadas -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap">
     
-    <!-- Tailwind CSS via CDN (rapido y profesional) -->
+    <!-- Tailwind CSS via CDN (configurable) -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                container: {
+                    center: true,
+                    padding: '1rem',
+                },
+                extend: {
+                    colors: {
+                        brand: {
+                            primary: '#7C3AED',
+                            accent: '#22C55E',
+                            dark: '#0D0A1A',
+                            ink: '#0B0816',
+                            light: '#F7F5FF',
+                        },
+                        surface: {
+                            base: '#0F0A1F',
+                            muted: '#130F2E',
+                        },
+                    },
+                    fontFamily: {
+                        display: ['"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        xl: '1.1rem',
+                        '2xl': '1.6rem',
+                        '3xl': '2.4rem',
+                    },
+                    boxShadow: {
+                        glow: '0 22px 60px rgba(124, 58, 237, 0.28)',
+                        soft: '0 12px 42px rgba(10, 8, 22, 0.28)',
+                    },
+                    backgroundImage: {
+                        'hero-mesh':
+                            'radial-gradient(circle at 20% 20%, rgba(124,58,237,0.25), transparent 25%), radial-gradient(circle at 80% 30%, rgba(34,197,94,0.22), transparent 30%), radial-gradient(circle at 50% 80%, rgba(124,58,237,0.18), transparent 28%)',
+                    },
+                },
+            },
+        };
+    </script>
     
     <!-- Font Awesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -284,11 +331,11 @@ $titleKey = "meta-title-" . $pageSlug;
                 
                 <!-- Menú desktop -->
                 <div class="hidden md:flex space-x-8 items-center">
-                    <a data-i18n="nav-home" href="<?php echo app_url(); ?>" class="inline-flex items-center gap-2 text-gray-700 hover:text-blue-600 transition <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'font-bold text-blue-600' : ''; ?>"><i class="fas fa-home text-blue-500/80"></i><span>Inicio</span></a>
-                    <a data-i18n="nav-services" href="<?php echo app_url('servicios.php'); ?>" class="inline-flex items-center gap-2 text-gray-700 hover:text-blue-600 transition <?php echo basename($_SERVER['PHP_SELF']) == 'servicios.php' ? 'font-bold text-blue-600' : ''; ?>"><i class="fas fa-layer-group text-blue-500/80"></i><span>Servicios</span></a>
-                    <a data-i18n="nav-portfolio" href="<?php echo app_url('portafolio.php'); ?>" class="inline-flex items-center gap-2 text-gray-700 hover:text-blue-600 transition <?php echo basename($_SERVER['PHP_SELF']) == 'portafolio.php' ? 'font-bold text-blue-600' : ''; ?>"><i class="fas fa-briefcase text-blue-500/80"></i><span>Portafolio</span></a>
-                    <a data-i18n="nav-testimonials" href="<?php echo app_url('testimonios.php'); ?>" class="inline-flex items-center gap-2 text-gray-700 hover:text-blue-600 transition <?php echo basename($_SERVER['PHP_SELF']) == 'testimonios.php' ? 'font-bold text-blue-600' : ''; ?>"><i class="fas fa-comments text-blue-500/80"></i><span>Testimonios</span></a>
-                    <a data-i18n="nav-contact" href="<?php echo app_url('contacto.php'); ?>" class="inline-flex items-center gap-2 text-gray-700 hover:text-blue-600 transition <?php echo basename($_SERVER['PHP_SELF']) == 'contacto.php' ? 'font-bold text-blue-600' : ''; ?>"><i class="fas fa-envelope-open-text text-blue-500/80"></i><span>Contacto</span></a>
+                    <a data-i18n="nav-home" href="<?php echo app_url(); ?>" class="inline-flex items-center gap-2 text-gray-700 hover:text-brand-primary transition <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'font-bold text-brand-primary' : ''; ?>"><i class="fas fa-home text-brand-primary/80"></i><span>Inicio</span></a>
+                    <a data-i18n="nav-services" href="<?php echo app_url('servicios.php'); ?>" class="inline-flex items-center gap-2 text-gray-700 hover:text-brand-primary transition <?php echo basename($_SERVER['PHP_SELF']) == 'servicios.php' ? 'font-bold text-brand-primary' : ''; ?>"><i class="fas fa-layer-group text-brand-primary/80"></i><span>Servicios</span></a>
+                    <a data-i18n="nav-portfolio" href="<?php echo app_url('portafolio.php'); ?>" class="inline-flex items-center gap-2 text-gray-700 hover:text-brand-primary transition <?php echo basename($_SERVER['PHP_SELF']) == 'portafolio.php' ? 'font-bold text-brand-primary' : ''; ?>"><i class="fas fa-briefcase text-brand-primary/80"></i><span>Portafolio</span></a>
+                    <a data-i18n="nav-testimonials" href="<?php echo app_url('testimonios.php'); ?>" class="inline-flex items-center gap-2 text-gray-700 hover:text-brand-primary transition <?php echo basename($_SERVER['PHP_SELF']) == 'testimonios.php' ? 'font-bold text-brand-primary' : ''; ?>"><i class="fas fa-comments text-brand-primary/80"></i><span>Testimonios</span></a>
+                    <a data-i18n="nav-contact" href="<?php echo app_url('contacto.php'); ?>" class="inline-flex items-center gap-2 text-gray-700 hover:text-brand-primary transition <?php echo basename($_SERVER['PHP_SELF']) == 'contacto.php' ? 'font-bold text-brand-primary' : ''; ?>"><i class="fas fa-envelope-open-text text-brand-primary/80"></i><span>Contacto</span></a>
                     
                     <!-- Selector de idioma en desktop, justo después de Contacto -->
                     <div class="relative">
@@ -375,5 +422,7 @@ $titleKey = "meta-title-" . $pageSlug;
     </nav>
     
     <main class="min-h-screen">
+
+
 
 
