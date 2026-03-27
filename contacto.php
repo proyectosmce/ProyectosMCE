@@ -1,4 +1,4 @@
-ï»¿<?php require_once 'includes/config.php'; ?>
+<?php require_once 'includes/config.php'; ?>
 <?php require_once 'includes/form-guard.php'; ?>
 <?php
 $contactFormGuard = form_guard_issue('contacto');
@@ -57,63 +57,63 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
 <?php include 'includes/header.php'; ?>
 
 <!-- Hero Contacto -->
-<section class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white mce-rounded-hero">
-    <div class="absolute inset-0 bg-grid-white/10"></div>
-    <div class="absolute -top-24 -left-16 w-72 h-72 bg-blue-500/30 blur-3xl rounded-full"></div>
-    <div class="absolute -bottom-24 -right-10 w-80 h-80 bg-purple-500/25 blur-3xl rounded-full"></div>
+<section class="relative overflow-hidden bg-gradient-to-br from-brand-ink via-[#120c2c] to-brand-dark text-white mce-rounded-hero">
+    <div class="absolute inset-0 bg-hero-mesh opacity-80"></div>
+    <div class="absolute -top-24 -left-16 w-72 h-72 bg-brand-primary/25 blur-3xl rounded-full"></div>
+    <div class="absolute -bottom-24 -right-10 w-80 h-80 bg-brand-accent/20 blur-3xl rounded-full"></div>
 
     <div class="relative max-w-7xl mx-auto px-4 py-20 lg:py-24">
         <div class="grid lg:grid-cols-12 gap-10 items-center">
             <div class="lg:col-span-7 space-y-5">
                 <span class="inline-flex items-center px-3 py-1 text-sm font-semibold bg-white/10 border border-white/20 rounded-full backdrop-blur">
-                    <i class="fas fa-headset mr-2 text-yellow-300"></i> <span class="i18n-ct-badge" data-i18n="ct-badge">Contacto Â· Proyectos MCE</span>
+                    <i class="fas fa-headset mr-2 text-brand-accent"></i> <span class="i18n-ct-badge" data-i18n="ct-badge">Contacto · Proyectos MCE</span>
                 </span>
-                <h1 class="text-4xl md:text-5xl font-bold leading-tight i18n-ct-hero-title" data-i18n="ct-hero-title">Agenda un diagnÃ³stico tÃ©cnico</h1>
-                <p class="text-lg text-blue-50 max-w-3xl i18n-ct-hero-sub" data-i18n="ct-hero-sub">
-                    CuÃ©ntanos quÃ© necesitas automatizar o lanzar. Te respondemos con esfuerzo estimado, riesgos visibles, tecnologÃ­a recomendada y primeros pasos.
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight i18n-ct-hero-title" data-i18n="ct-hero-title">Agenda un diagnóstico técnico</h1>
+                <p class="text-lg text-white/80 max-w-3xl i18n-ct-hero-sub" data-i18n="ct-hero-sub">
+                    Cuéntanos qué necesitas automatizar o lanzar. Te respondemos con esfuerzo estimado, riesgos visibles, tecnología recomendada y primeros pasos.
                 </p>
                 <div class="flex flex-wrap gap-3">
-                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-ct-chip1" data-i18n="ct-chip1"><i class="fas fa-bolt mr-2 text-yellow-300"></i><span>Respuesta en &lt; 24h</span></span>
-                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-ct-chip2" data-i18n="ct-chip2"><i class="fas fa-diagram-project mr-2 text-yellow-300"></i><span>Discovery + propuesta</span></span>
-                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-ct-chip3" data-i18n="ct-chip3"><i class="fas fa-lock mr-2 text-yellow-300"></i><span>Confidencialidad garantizada</span></span>
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-ct-chip1" data-i18n="ct-chip1"><i class="fas fa-bolt mr-2 text-brand-accent"></i><span>Respuesta en &lt; 24h</span></span>
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-ct-chip2" data-i18n="ct-chip2"><i class="fas fa-diagram-project mr-2 text-brand-accent"></i><span>Discovery + propuesta</span></span>
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-ct-chip3" data-i18n="ct-chip3"><i class="fas fa-lock mr-2 text-brand-accent"></i><span>Confidencialidad garantizada</span></span>
                 </div>
             </div>
 
             <div class="lg:col-span-5">
-                <div class="bg-white/10 border border-white/20 backdrop-blur-xl rounded-2xl p-8 shadow-2xl space-y-5">
+                <div class="relative overflow-hidden rounded-3xl bg-white/10 ring-1 ring-white/15 backdrop-blur-2xl p-8 shadow-glow space-y-5">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-blue-100 i18n-ct-card-title" data-i18n="ct-card-title">Contacta directo</p>
-                            <p class="text-2xl font-semibold text-white i18n-ct-card-sub" data-i18n="ct-card-sub">Equipo tÃ©cnico listo para ayudarte</p>
+                            <p class="text-sm text-white/70 i18n-ct-card-title" data-i18n="ct-card-title">Contacta directo</p>
+                            <p class="text-2xl font-semibold text-white i18n-ct-card-sub" data-i18n="ct-card-sub">Equipo técnico listo para ayudarte</p>
                         </div>
-                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-300 shadow-lg overflow-hidden mce-photo-badge">
+                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-lg overflow-hidden mce-photo-badge">
                             <img src="<?php echo app_url('imag/MCE.jpg'); ?>" alt="MCE" class="w-full h-full object-cover">
                         </span>
                     </div>
-                    <ul class="space-y-3 text-blue-50">
+                    <ul class="space-y-3 text-white/80">
                         <li class="flex items-start gap-3">
-                            <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-phone"></i></span>
+                            <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-brand-accent"><i class="fas fa-phone"></i></span>
                             <div>
-                                <p class="font-semibold i18n-ct-phone" data-i18n="ct-phone">telÃ©fono</p>
-                                <p class="text-sm text-blue-100">
+                                <p class="font-semibold i18n-ct-phone" data-i18n="ct-phone">teléfono</p>
+                                <p class="text-sm text-white/70">
                                     <a class="hover:underline" href="tel:+573114125971">+57 311 412 59 71</a>
                                 </p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
-                            <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-envelope"></i></span>
+                            <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-brand-accent"><i class="fas fa-envelope"></i></span>
                             <div>
                                 <p class="font-semibold i18n-ct-mail" data-i18n="ct-mail">Correo</p>
-                                <p class="text-sm text-blue-100">
+                                <p class="text-sm text-white/70">
                                     <a class="hover:underline" href="mailto:proyectosmceaa@gmail.com">proyectosmceaa@gmail.com</a>
                                 </p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
-                            <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fab fa-whatsapp"></i></span>
+                            <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-brand-accent"><i class="fab fa-whatsapp"></i></span>
                             <div>
                                 <p class="font-semibold i18n-ct-wa" data-i18n="ct-wa">WhatsApp</p>
-                                <p class="text-sm text-blue-100">
+                                <p class="text-sm text-white/70">
                                     <a class="hover:underline" href="https://wa.me/573114125971?text=Hola%21%20Quiero%20consultar%20por%20un%20proyecto" target="_blank" rel="noopener">wa.me/573114125971</a>
                                 </p>
                             </div>
@@ -121,10 +121,10 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                     </ul>
                     <div class="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-blue-100 i18n-ct-hours" data-i18n="ct-hours">Horario</p>
-                            <p class="font-semibold i18n-ct-hours-detail" data-i18n="ct-hours-detail">Lunes a Viernes Â· 8:00 - 17:00 <br>SÃ¡bados Â· 9:00 - 13:00</p>
+                            <p class="text-sm text-white/70 i18n-ct-hours" data-i18n="ct-hours">Horario</p>
+                            <p class="font-semibold i18n-ct-hours-detail" data-i18n="ct-hours-detail">Lunes a Viernes · 8:00 - 17:00 <br>Sábados · 9:00 - 13:00</p>
                         </div>
-                        <i class="fas fa-arrow-right text-yellow-300"></i>
+                        <i class="fas fa-arrow-right text-brand-accent"></i>
                     </div>
                 </div>
             </div>
@@ -147,17 +147,17 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
     <?php if (isset($_GET['error'])): ?>
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
             <?php if ($_GET['error'] == 4): ?>
-                <span class="i18n-ct-error-4" data-i18n="ct-error-4">El formulario se guardÃ³, pero falta configurar el correo del sitio. IntÃ©ntalo mÃ¡s tarde.</span>
+                <span class="i18n-ct-error-4" data-i18n="ct-error-4">El formulario se guardó, pero falta configurar el correo del sitio. Inténtalo más tarde.</span>
             <?php elseif ($_GET['error'] == 5): ?>
-                <span class="i18n-ct-error-5" data-i18n="ct-error-5">El formulario se guardÃ³, pero no se pudo conectar con el servicio de correo. Revisa SMTP_USER, SMTP_PASS y la App Password.</span>
+                <span class="i18n-ct-error-5" data-i18n="ct-error-5">El formulario se guardó, pero no se pudo conectar con el servicio de correo. Revisa SMTP_USER, SMTP_PASS y la App Password.</span>
             <?php elseif ($_GET['error'] == 6): ?>
-                <span class="i18n-ct-error-6" data-i18n="ct-error-6">No pudimos validar el envÃ­o. Revisa los datos e intenta nuevamente.</span>
+                <span class="i18n-ct-error-6" data-i18n="ct-error-6">No pudimos validar el envío. Revisa los datos e intenta nuevamente.</span>
             <?php elseif ($_GET['error'] == 7): ?>
                 <span class="i18n-ct-error-7" data-i18n="ct-error-7">Has enviado demasiados mensajes en poco tiempo. Espera unos minutos antes de intentar otra vez.</span>
             <?php elseif ($_GET['error'] == 8): ?>
-                <span class="i18n-ct-error-8" data-i18n="ct-error-8">Debes completar la verificaciÃ³n reCAPTCHA antes de enviar el formulario.</span>
+                <span class="i18n-ct-error-8" data-i18n="ct-error-8">Debes completar la verificación reCAPTCHA antes de enviar el formulario.</span>
             <?php elseif ($_GET['error'] == 9): ?>
-                <span class="i18n-ct-error-9" data-i18n="ct-error-9">El horario elegido ya no estÃ¡ disponible. Por favor elige otra hora.</span>
+                <span class="i18n-ct-error-9" data-i18n="ct-error-9">El horario elegido ya no está disponible. Por favor elige otra hora.</span>
             <?php else: ?>
                 <span class="i18n-ct-error-default" data-i18n="ct-error-default">Hubo un error. Por favor intenta nuevamente.</span>
             <?php endif; ?>
@@ -168,14 +168,14 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
 <!-- Agenda de llamada -->
 <section id="agenda-llamada" class="max-w-7xl mx-auto px-4 mt-10 lg:mt-14">
     <div class="grid lg:grid-cols-12 gap-8 items-start">
-        <div class="lg:col-span-5 space-y-4 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white rounded-2xl shadow-2xl p-8 border border-white/10">
-            <p class="text-sm font-semibold text-blue-100 uppercase tracking-wide i18n-ct-call-label" data-i18n="ct-call-label">Coordina tu llamada</p>
+        <div class="lg:col-span-5 space-y-4 bg-gradient-to-br from-brand-ink via-[#120c2c] to-brand-dark text-white rounded-2xl shadow-2xl p-8 border border-white/10">
+            <p class="text-sm font-semibold text-white/70 uppercase tracking-wide i18n-ct-call-label" data-i18n="ct-call-label">Coordina tu llamada</p>
             <h2 class="text-3xl font-bold leading-tight i18n-ct-call-title" data-i18n="ct-call-title">Elige fecha y hora para hablar</h2>
-            <p class="text-blue-50 i18n-ct-call-desc" data-i18n="ct-call-desc">Agendamos una llamada corta para revisar tu necesidad y darte siguientes pasos. Confirmamos por correo con el enlace de la reuniÃ³n.</p>
-            <ul class="space-y-3 text-blue-100">
-                <li class="flex items-start gap-3"><span class="mt-1 text-yellow-300"><i class="fas fa-clock"></i></span><span class="i18n-ct-call-b1" data-i18n="ct-call-b1">DuraciÃ³n estimada: 20 minutos.</span></li>
-                <li class="flex items-start gap-3"><span class="mt-1 text-yellow-300"><i class="fas fa-video"></i></span><span class="i18n-ct-call-b2" data-i18n="ct-call-b2">Formato: videollamada o telÃ©fono, segÃºn prefieras.</span></li>
-                <li class="flex items-start gap-3"><span class="mt-1 text-yellow-300"><i class="fas fa-bolt"></i></span><span class="i18n-ct-call-b3" data-i18n="ct-call-b3">ConfirmaciÃ³n rÃ¡pida con link y agenda en tu correo.</span></li>
+            <p class="text-white/80 i18n-ct-call-desc" data-i18n="ct-call-desc">Agendamos una llamada corta para revisar tu necesidad y darte siguientes pasos. Confirmamos por correo con el enlace de la reunión.</p>
+            <ul class="space-y-3 text-white/70">
+                <li class="flex items-start gap-3"><span class="mt-1 text-brand-accent"><i class="fas fa-clock"></i></span><span class="i18n-ct-call-b1" data-i18n="ct-call-b1">Duración estimada: 20 minutos.</span></li>
+                <li class="flex items-start gap-3"><span class="mt-1 text-brand-accent"><i class="fas fa-video"></i></span><span class="i18n-ct-call-b2" data-i18n="ct-call-b2">Formato: videollamada o teléfono, según prefieras.</span></li>
+                <li class="flex items-start gap-3"><span class="mt-1 text-brand-accent"><i class="fas fa-bolt"></i></span><span class="i18n-ct-call-b3" data-i18n="ct-call-b3">Confirmación rápida con link y agenda en tu correo.</span></li>
             </ul>
         </div>
 
@@ -199,13 +199,13 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                         <input type="email" name="email" required maxlength="120" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-email-ph" placeholder="tucorreo@ejemplo.com">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-phone" data-i18n="ct-form-phone">telÃ©fono</label>
+                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-phone" data-i18n="ct-form-phone">teléfono</label>
                         <input type="tel" name="telefono" maxlength="25" inputmode="tel" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-phone-ph" placeholder="Opcional">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-service" data-i18n="ct-form-service">Servicio de interÃ©s (opcional)</label>
+                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-service" data-i18n="ct-form-service">Servicio de interés (opcional)</label>
                         <select name="servicio" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                            <option value="" class="i18n-ct-form-service-opt0" data-i18n="ct-form-service-opt0">Solo llamada de exploraciÃ³n</option>
+                            <option value="" class="i18n-ct-form-service-opt0" data-i18n="ct-form-service-opt0">Solo llamada de exploración</option>
                             <?php
                             $servicios = $conn->query("SELECT titulo FROM servicios WHERE LOWER(titulo) <> 'tiendas online' ORDER BY orden");
                             while ($s = $servicios->fetch_assoc()) {
@@ -232,7 +232,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                         <p id="agenda-hora-msg" class="text-sm text-red-600 mt-1 hidden i18n-ct-form-time-msg" data-i18n="ct-form-time-msg">No hay horarios disponibles para esta fecha.</p>
                     </div>
                     <div class="md:col-span-2">
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-pref" data-i18n="ct-form-pref">Â¿Prefieres videollamada o telÃ©fono?</label>
+                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-pref" data-i18n="ct-form-pref">¿Prefieres videollamada o teléfono?</label>
                         <div class="flex flex-wrap gap-4">
                             <label class="inline-flex items-center gap-2 text-sm font-semibold text-gray-700">
                                 <input type="radio" name="modo_llamada" value="video" class="h-4 w-4 text-blue-600" checked>
@@ -240,13 +240,13 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                             </label>
                             <label class="inline-flex items-center gap-2 text-sm font-semibold text-gray-700">
                                 <input type="radio" name="modo_llamada" value="telefono" class="h-4 w-4 text-blue-600">
-                                <span class="i18n-ct-form-pref-phone" data-i18n="ct-form-pref-phone">Solo llamada telefÃ³nica</span>
+                                <span class="i18n-ct-form-pref-phone" data-i18n="ct-form-pref-phone">Solo llamada telefónica</span>
                             </label>
                         </div>
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-obj" data-i18n="ct-form-obj">Objetivo de la llamada *</label>
-                        <textarea name="mensaje" rows="8" required minlength="10" maxlength="2000" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" style="min-height:200px;" data-i18n-placeholder="ct-form-obj-ph" placeholder="CuÃ©ntanos en breve quÃ© necesitas revisar en la llamada."></textarea>
+                        <textarea name="mensaje" rows="8" required minlength="10" maxlength="2000" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" style="min-height:200px;" data-i18n-placeholder="ct-form-obj-ph" placeholder="Cuéntanos en breve qué necesitas revisar en la llamada."></textarea>
                     </div>
                 </div>
 
@@ -256,12 +256,12 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                 </div>
                 <?php else: ?>
                 <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 i18n-ct-form-recaptcha-missing" data-i18n="ct-form-recaptcha-missing">
-                    reCAPTCHA es obligatorio, pero no estÃ¡ configurado correctamente en este entorno.
+                    reCAPTCHA es obligatorio, pero no está configurado correctamente en este entorno.
                 </div>
                 <?php endif; ?>
 
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <p class="text-sm text-gray-600 i18n-ct-form-note" data-i18n="ct-form-note">Confirmaremos tu llamada por correo con el enlace de reuniÃ³n.</p>
+                    <p class="text-sm text-gray-600 i18n-ct-form-note" data-i18n="ct-form-note">Confirmaremos tu llamada por correo con el enlace de reunión.</p>
                     <button type="submit" id="agenda-submit" <?php echo $contactRecaptchaEnabled ? '' : 'disabled'; ?> class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-slate-900 text-white font-semibold shadow-lg hover:bg-slate-800 transition w-full sm:w-auto disabled:cursor-not-allowed disabled:bg-slate-400 i18n-ct-form-submit" data-i18n="ct-form-submit">
                         <i class="fas fa-calendar-check mr-2"></i> <span class="i18n-ct-form-submit" data-i18n="ct-form-submit">Confirmar llamada</span>
                     </button>
@@ -283,10 +283,10 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
             <div>
                 <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide i18n-ct-mail-label" data-i18n="ct-mail-label">Contacto por correo</p>
                 <h2 class="text-3xl font-bold text-slate-900 i18n-ct-mail-title" data-i18n="ct-mail-title">Prefieres escribirnos</h2>
-                <p class="text-gray-600 mt-2 i18n-ct-mail-desc" data-i18n="ct-mail-desc">EnvÃ­anos detalles y te respondemos por el mismo medio en menos de 24h.</p>
+                <p class="text-gray-600 mt-2 i18n-ct-mail-desc" data-i18n="ct-mail-desc">Envíanos detalles y te respondemos por el mismo medio en menos de 24h.</p>
             </div>
             <a href="#agenda-llamada" class="inline-flex items-center text-blue-700 font-semibold hover:text-blue-900 i18n-ct-mail-altlink" data-i18n="ct-mail-altlink">
-                <i class="fas fa-phone-alt mr-2"></i> Â¿Mejor una llamada? Agenda aquÃ­
+                <i class="fas fa-phone-alt mr-2"></i> ¿Mejor una llamada? Agenda aquí
             </a>
         </div>
     </div>
@@ -312,11 +312,11 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                         <input type="email" name="email" required maxlength="120" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-email-ph" placeholder="tucorreo@ejemplo.com">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-phone" data-i18n="ct-mail-phone">TelÃ©fono</label>
+                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-phone" data-i18n="ct-mail-phone">Teléfono</label>
                         <input type="tel" name="telefono" maxlength="25" inputmode="tel" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-service" data-i18n="ct-mail-service">Â¿QuÃ© servicio te interesa?</label>
+                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-service" data-i18n="ct-mail-service">¿Qué servicio te interesa?</label>
                         <select name="servicio" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                             <option value="" class="i18n-ct-mail-service-opt0" data-i18n="ct-mail-service-opt0">Seleccionar...</option>
                             <?php
@@ -334,7 +334,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-msg" data-i18n="ct-mail-msg">Mensaje *</label>
-                        <textarea name="mensaje" rows="8" required minlength="20" maxlength="2000" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus-border-blue-600" style="min-height:200px;" data-i18n-placeholder="ct-mail-msg-ph" placeholder="CuÃ©ntanos los detalles y cÃ³mo podemos ayudarte."></textarea>
+                        <textarea name="mensaje" rows="8" required minlength="20" maxlength="2000" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus-border-blue-600" style="min-height:200px;" data-i18n-placeholder="ct-mail-msg-ph" placeholder="Cuéntanos los detalles y cómo podemos ayudarte."></textarea>
                     </div>
                 </div>
 
@@ -344,7 +344,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                 </div>
                 <?php else: ?>
                 <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 i18n-ct-mail-recaptcha-missing" data-i18n="ct-mail-recaptcha-missing">
-                    reCAPTCHA es obligatorio, pero no estÃ¡ configurado correctamente en este entorno.
+                    reCAPTCHA es obligatorio, pero no está configurado correctamente en este entorno.
                 </div>
                 <?php endif; ?>
 
@@ -359,16 +359,16 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
 
         <div class="lg:col-span-5 order-1 lg:order-2">
             <div class="bg-white rounded-2xl mce-rounded-panel shadow-2xl border border-slate-100 overflow-hidden p-8 space-y-4">
-                <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide i18n-ct-info-label" data-i18n="ct-info-label">InformaciÃ³n clave</p>
-                <h3 class="text-2xl font-bold text-slate-900 i18n-ct-info-title" data-i18n="ct-info-title">Â¿QuÃ© recibes al escribirnos?</h3>
+                <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide i18n-ct-info-label" data-i18n="ct-info-label">Información clave</p>
+                <h3 class="text-2xl font-bold text-slate-900 i18n-ct-info-title" data-i18n="ct-info-title">¿Qué recibes al escribirnos?</h3>
                 <ul class="space-y-3 text-gray-800 mt-3">
                     <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span class="i18n-ct-info-b1" data-i18n="ct-info-b1">Respuesta personalizada con una ruta inicial y esfuerzos aproximados.</span></li>
-                    <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span class="i18n-ct-info-b2" data-i18n="ct-info-b2">ReuniÃ³n virtual de discovery para entender procesos y objetivos.</span></li>
-                    <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span class="i18n-ct-info-b3" data-i18n="ct-info-b3">Documento de alcance con los prÃ³ximos pasos para aprobar o iterar.</span></li>
+                    <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span class="i18n-ct-info-b2" data-i18n="ct-info-b2">Reunión virtual de discovery para entender procesos y objetivos.</span></li>
+                    <li class="flex items-start gap-3"><span class="text-blue-600 mt-1"><i class="fas fa-check-circle"></i></span><span class="i18n-ct-info-b3" data-i18n="ct-info-b3">Documento de alcance con los próximos pasos para aprobar o iterar.</span></li>
                 </ul>
                 <div class="mt-6 p-4 rounded-xl bg-blue-50 text-blue-800 flex items-start gap-3">
                     <i class="fas fa-info-circle mt-1"></i>
-                    <p class="text-sm i18n-ct-info-nda" data-i18n="ct-info-nda">Si necesitas NDA antes de compartir detalles, indÃ­calo en el mensaje y lo enviamos.</p>
+                    <p class="text-sm i18n-ct-info-nda" data-i18n="ct-info-nda">Si necesitas NDA antes de compartir detalles, indícalo en el mensaje y lo enviamos.</p>
                 </div>
                 <div class="grid sm:grid-cols-2 gap-3">
                     <a href="https://wa.me/573114125971?text=Hola%21%20Quiero%20consultar%20por%20un%20proyecto" target="_blank" rel="noopener" class="inline-flex items-center justify-center px-4 py-3 rounded-xl bg-green-500 text-white font-semibold shadow hover:bg-green-600 transition">
@@ -400,7 +400,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
 </script>
 
 <script>
-// Horarios y validaciÃ³n de formularios (reCAPTCHA se maneja en assets/js/mce-recaptcha.js)
+// Horarios y validación de formularios (reCAPTCHA se maneja en assets/js/mce-recaptcha.js)
 (() => {
     const forms = ['contact-form', 'agenda-form'].map(id => document.getElementById(id)).filter(Boolean);
 
@@ -441,7 +441,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
         renderHours(fechaInput.value || fechaInput.getAttribute('min'));
     }
 
-    // Mensajes de validaciÃ³n en el idioma seleccionado
+    // Mensajes de validación en el idioma seleccionado
     const attachValidationMessages = () => {
         forms.forEach((form) => {
             form?.querySelectorAll('input, textarea, select').forEach((el) => {
@@ -473,7 +473,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
 </script>
 
 <script>
-// Prefill mensaje segÃºn servicio o CTA (plan / agenda) en el idioma activo
+// Prefill mensaje según servicio o CTA (plan / agenda) en el idioma activo
 (() => {
     const qs = new URLSearchParams(window.location.search);
     const rawService = qs.get('servicio');
@@ -486,10 +486,10 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
     // Plantillas por servicio
     const tplService = {
         es: {
-            'desarrollo web a medida': 'Hola, quiero un desarrollo web a medida.\n\nObjetivo principal:\nPÃºblico objetivo:\nFunciones clave:\nIntegraciones (APIs/pagos):\nPlazo ideal y presupuesto aproximado:',
-            'sistemas de inventario': 'Hola, necesito un sistema de inventario.\n\nNÃºmero de productos/SKUs:\nPuntos de venta o canales:\nAlertas y reportes deseados:\nIntegraciones con contabilidad/tiendas:\nPlazo ideal y presupuesto aproximado:',
-            'landing pages': 'Hola, necesito una landing page.\n\nObjetivo de la campaÃ±a (leads/ventas):\nPÃºblico y propuesta de valor:\nSecciones requeridas:\nIntegraciones (formularios/CRM/pagos):\nFecha de lanzamiento y presupuesto:',
-            'mantenimiento web': 'Hola, busco mantenimiento web.\n\nTipo de sitio y tecnologÃ­a:\nAlcance (monitoreo, soporte, mejoras):\nFrecuencia de actualizaciones:\nAccesos disponibles (hosting/Git):\nPresupuesto mensual o por horas:'
+            'desarrollo web a medida': 'Hola, quiero un desarrollo web a medida.\n\nObjetivo principal:\nPúblico objetivo:\nFunciones clave:\nIntegraciones (APIs/pagos):\nPlazo ideal y presupuesto aproximado:',
+            'sistemas de inventario': 'Hola, necesito un sistema de inventario.\n\nNúmero de productos/SKUs:\nPuntos de venta o canales:\nAlertas y reportes deseados:\nIntegraciones con contabilidad/tiendas:\nPlazo ideal y presupuesto aproximado:',
+            'landing pages': 'Hola, necesito una landing page.\n\nObjetivo de la campaña (leads/ventas):\nPúblico y propuesta de valor:\nSecciones requeridas:\nIntegraciones (formularios/CRM/pagos):\nFecha de lanzamiento y presupuesto:',
+            'mantenimiento web': 'Hola, busco mantenimiento web.\n\nTipo de sitio y tecnología:\nAlcance (monitoreo, soporte, mejoras):\nFrecuencia de actualizaciones:\nAccesos disponibles (hosting/Git):\nPresupuesto mensual o por horas:'
         },
         en: {
             'desarrollo web a medida': 'Hi, I need a custom web development project.\n\nMain goal:\nTarget audience:\nKey features:\nIntegrations (APIs/payments):\nIdeal timeline and budget:',
@@ -498,26 +498,26 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
             'mantenimiento web': 'Hi, I need website maintenance.\n\nSite type and tech stack:\nScope (monitoring, support, improvements):\nUpdate frequency:\nAccess available (hosting/Git):\nMonthly or hourly budget:'
         },
         de: {
-            'desarrollo web a medida': 'Hallo, ich brauche eine maÃŸgeschneiderte Webentwicklung.\n\nHauptziel:\nZielgruppe:\nSchlÃ¼sselfunktionen:\nIntegrationen (APIs/Zahlungen):\nGewÃ¼nschter Zeitplan und Budget:',
-            'sistemas de inventario': 'Hallo, ich benÃ¶tige ein Warenwirtschaftssystem.\n\nAnzahl Produkte/SKUs:\nVertriebskanÃ¤le oder POS:\nGewÃ¼nschte Alarme und Berichte:\nIntegrationen mit Buchhaltung/Shops:\nGewÃ¼nschter Zeitplan und Budget:',
-            'landing pages': 'Hallo, ich brauche eine Landing Page.\n\nKampagnenziel (Leads/VerkÃ¤ufe):\nZielgruppe und Value Proposition:\nBenÃ¶tigte Abschnitte:\nIntegrationen (Formulare/CRM/Zahlungen):\nLaunch-Datum und Budget:',
-            'mantenimiento web': 'Hallo, ich suche Website-Wartung.\n\nSeitentyp und Tech-Stack:\nUmfang (Monitoring, Support, Verbesserungen):\nUpdate-HÃ¤ufigkeit:\nZugÃ¤nge vorhanden (Hosting/Git):\nMonats- oder Stundensatz:'
+            'desarrollo web a medida': 'Hallo, ich brauche eine maßgeschneiderte Webentwicklung.\n\nHauptziel:\nZielgruppe:\nSchlüsselfunktionen:\nIntegrationen (APIs/Zahlungen):\nGewünschter Zeitplan und Budget:',
+            'sistemas de inventario': 'Hallo, ich benötige ein Warenwirtschaftssystem.\n\nAnzahl Produkte/SKUs:\nVertriebskanäle oder POS:\nGewünschte Alarme und Berichte:\nIntegrationen mit Buchhaltung/Shops:\nGewünschter Zeitplan und Budget:',
+            'landing pages': 'Hallo, ich brauche eine Landing Page.\n\nKampagnenziel (Leads/Verkäufe):\nZielgruppe und Value Proposition:\nBenötigte Abschnitte:\nIntegrationen (Formulare/CRM/Zahlungen):\nLaunch-Datum und Budget:',
+            'mantenimiento web': 'Hallo, ich suche Website-Wartung.\n\nSeitentyp und Tech-Stack:\nUmfang (Monitoring, Support, Verbesserungen):\nUpdate-Häufigkeit:\nZugänge vorhanden (Hosting/Git):\nMonats- oder Stundensatz:'
         },
         fr: {
-            'desarrollo web a medida': 'Bonjour, je souhaite un dÃ©veloppement web sur mesure.\n\nObjectif principal :\nAudience cible :\nFonctionnalitÃ©s clÃ©s :\nIntÃ©grations (APIs/paiements) :\nDÃ©lai idÃ©al et budget :',
-            'sistemas de inventario': 'Bonjour, jâ€™ai besoin dâ€™un systÃ¨me dâ€™inventaire.\n\nNombre de produits/SKU :\nCanaux de vente ou PDV :\nAlertes et rapports souhaitÃ©s :\nIntÃ©grations avec comptabilitÃ©/boutiques :\nDÃ©lai idÃ©al et budget :',
-            'landing pages': 'Bonjour, jâ€™ai besoin dâ€™une landing page.\n\nObjectif de la campagne (leads/ventes) :\nAudience et proposition de valeur :\nSections requises :\nIntÃ©grations (formulaires/CRM/paiements) :\nDate de lancement et budget :',
-            'mantenimiento web': 'Bonjour, je cherche de la maintenance web.\n\nType de site et techno :\nPortÃ©e (monitoring, support, amÃ©liorations) :\nFrÃ©quence des mises Ã  jour :\nAccÃ¨s disponibles (hÃ©bergement/Git) :\nBudget mensuel ou horaire :'
+            'desarrollo web a medida': 'Bonjour, je souhaite un développement web sur mesure.\n\nObjectif principal :\nAudience cible :\nFonctionnalités clés :\nIntégrations (APIs/paiements) :\nDélai idéal et budget :',
+            'sistemas de inventario': 'Bonjour, j’ai besoin d’un système d’inventaire.\n\nNombre de produits/SKU :\nCanaux de vente ou PDV :\nAlertes et rapports souhaités :\nIntégrations avec comptabilité/boutiques :\nDélai idéal et budget :',
+            'landing pages': 'Bonjour, j’ai besoin d’une landing page.\n\nObjectif de la campagne (leads/ventes) :\nAudience et proposition de valeur :\nSections requises :\nIntégrations (formulaires/CRM/paiements) :\nDate de lancement et budget :',
+            'mantenimiento web': 'Bonjour, je cherche de la maintenance web.\n\nType de site et techno :\nPortée (monitoring, support, améliorations) :\nFréquence des mises à jour :\nAccès disponibles (hébergement/Git) :\nBudget mensuel ou horaire :'
         },
         pt: {
-            'desarrollo web a medida': 'OlÃ¡, preciso de um desenvolvimento web sob medida.\n\nObjetivo principal:\nPÃºblico-alvo:\nFuncionalidades-chave:\nIntegraÃ§Ãµes (APIs/pagamentos):\nPrazo ideal e orÃ§amento:',
-            'sistemas de inventario': 'OlÃ¡, preciso de um sistema de inventÃ¡rio.\n\nQuantidade de produtos/SKUs:\nCanais de venda ou PDV:\nAlertas e relatÃ³rios desejados:\nIntegraÃ§Ãµes com contabilidade/lojas:\nPrazo ideal e orÃ§amento:',
-            'landing pages': 'OlÃ¡, preciso de uma landing page.\n\nObjetivo da campanha (leads/vendas):\nPÃºblico e proposta de valor:\nSeÃ§Ãµes necessÃ¡rias:\nIntegraÃ§Ãµes (formulÃ¡rios/CRM/pagamentos):\nData de lanÃ§amento e orÃ§amento:',
-            'mantenimiento web': 'OlÃ¡, preciso de manutenÃ§Ã£o web.\n\nTipo de site e stack:\nEscopo (monitoramento, suporte, melhorias):\nFrequÃªncia de atualizaÃ§Ãµes:\nAcessos disponÃ­veis (hosting/Git):\nOrÃ§amento mensal ou por hora:'
+            'desarrollo web a medida': 'Olá, preciso de um desenvolvimento web sob medida.\n\nObjetivo principal:\nPúblico-alvo:\nFuncionalidades-chave:\nIntegrações (APIs/pagamentos):\nPrazo ideal e orçamento:',
+            'sistemas de inventario': 'Olá, preciso de um sistema de inventário.\n\nQuantidade de produtos/SKUs:\nCanais de venda ou PDV:\nAlertas e relatórios desejados:\nIntegrações com contabilidade/lojas:\nPrazo ideal e orçamento:',
+            'landing pages': 'Olá, preciso de uma landing page.\n\nObjetivo da campanha (leads/vendas):\nPúblico e proposta de valor:\nSeções necessárias:\nIntegrações (formulários/CRM/pagamentos):\nData de lançamento e orçamento:',
+            'mantenimiento web': 'Olá, preciso de manutenção web.\n\nTipo de site e stack:\nEscopo (monitoramento, suporte, melhorias):\nFrequência de atualizações:\nAcessos disponíveis (hosting/Git):\nOrçamento mensal ou por hora:'
         },
         it: {
-            'desarrollo web a medida': 'Ciao, ho bisogno di uno sviluppo web su misura.\n\nObiettivo principale:\nPubblico di riferimento:\nFunzionalitÃ  chiave:\nIntegrazioni (API/pagamenti):\nTempistica ideale e budget:',
-            'sistemas de inventario': 'Ciao, mi serve un sistema di inventario.\n\nNumero di prodotti/SKU:\nCanali di vendita o POS:\nAvvisi e report desiderati:\nIntegrazioni con contabilitÃ /negozi:\nTempistica ideale e budget:',
+            'desarrollo web a medida': 'Ciao, ho bisogno di uno sviluppo web su misura.\n\nObiettivo principale:\nPubblico di riferimento:\nFunzionalità chiave:\nIntegrazioni (API/pagamenti):\nTempistica ideale e budget:',
+            'sistemas de inventario': 'Ciao, mi serve un sistema di inventario.\n\nNumero di prodotti/SKU:\nCanali di vendita o POS:\nAvvisi e report desiderati:\nIntegrazioni con contabilità/negozi:\nTempistica ideale e budget:',
             'landing pages': 'Ciao, mi serve una landing page.\n\nObiettivo della campagna (lead/vendite):\nPubblico e proposta di valore:\nSezioni richieste:\nIntegrazioni (moduli/CRM/pagamenti):\nData di lancio e budget:',
             'mantenimiento web': 'Ciao, cerco manutenzione web.\n\nTipo di sito e stack:\nAmbito (monitoraggio, supporto, miglioramenti):\nFrequenza degli aggiornamenti:\nAccessi disponibili (hosting/Git):\nBudget mensile o a ore:'
         }
@@ -526,19 +526,19 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
     // Plantillas por CTA
     const tplCta = {
         plan: {
-            es: 'Hola, quiero armar mi plan de proyecto.\n\nTipo de proyecto (web/app):\nObjetivo principal:\nAlcance deseado y entregables:\nPlazo ideal y presupuesto aproximado:\nPreferencia de comunicaciÃ³n:',
+            es: 'Hola, quiero armar mi plan de proyecto.\n\nTipo de proyecto (web/app):\nObjetivo principal:\nAlcance deseado y entregables:\nPlazo ideal y presupuesto aproximado:\nPreferencia de comunicación:',
             en: 'Hi, I want to build a project plan.\n\nProject type (web/app):\nMain goal:\nDesired scope and deliverables:\nIdeal timeline and rough budget:\nPreferred communication channel:',
-            de: 'Hallo, ich mÃ¶chte meinen Projektplan erstellen.\n\nProjekttyp (Web/App):\nHauptziel:\nGewÃ¼nschter Umfang und Deliverables:\nWunschtermin und grobes Budget:\nBevorzugter Kommunikationskanal:',
-            fr: 'Bonjour, je veux Ã©laborer mon plan de projet.\n\nType de projet (web/app) :\nObjectif principal :\nPÃ©rimÃ¨tre souhaitÃ© et livrables :\nDÃ©lai idÃ©al et budget estimÃ© :\nCanal de communication prÃ©fÃ©rÃ© :',
-            pt: 'OlÃ¡, quero montar meu plano de projeto.\n\nTipo de projeto (web/app):\nObjetivo principal:\nEscopo desejado e entregÃ¡veis:\nPrazo ideal e orÃ§amento aproximado:\nCanal de comunicaÃ§Ã£o preferido:',
+            de: 'Hallo, ich möchte meinen Projektplan erstellen.\n\nProjekttyp (Web/App):\nHauptziel:\nGewünschter Umfang und Deliverables:\nWunschtermin und grobes Budget:\nBevorzugter Kommunikationskanal:',
+            fr: 'Bonjour, je veux élaborer mon plan de projet.\n\nType de projet (web/app) :\nObjectif principal :\nPérimètre souhaité et livrables :\nDélai idéal et budget estimé :\nCanal de communication préféré :',
+            pt: 'Olá, quero montar meu plano de projeto.\n\nTipo de projeto (web/app):\nObjetivo principal:\nEscopo desejado e entregáveis:\nPrazo ideal e orçamento aproximado:\nCanal de comunicação preferido:',
             it: 'Ciao, voglio creare il mio piano di progetto.\n\nTipo di progetto (web/app):\nObiettivo principale:\nAmbito desiderato e deliverable:\nTempistica ideale e budget indicativo:\nCanale di comunicazione preferito:'
         },
         agenda: {
-            es: 'Hola, quiero agendar una llamada de asesorÃ­a.\n\nTema que deseo revisar:\nFecha y hora preferidas:\nMedio (telÃ©fono o videollamada):\nÂ¿Necesito compartir algÃºn enlace o documento?:',
+            es: 'Hola, quiero agendar una llamada de asesoría.\n\nTema que deseo revisar:\nFecha y hora preferidas:\nMedio (teléfono o videollamada):\n¿Necesito compartir algún enlace o documento?:',
             en: 'Hi, I want to schedule a consulting call.\n\nTopic to discuss:\nPreferred date and time:\nChannel (phone or video):\nAny link or document to share?:',
-            de: 'Hallo, ich mÃ¶chte ein BeratungsgesprÃ¤ch buchen.\n\nThema:\nBevorzugtes Datum und Uhrzeit:\nKanal (Telefon oder Video):\nMuss ich einen Link/Dokument teilen?:',
-            fr: 'Bonjour, je veux planifier un appel de conseil.\n\nSujet Ã  aborder :\nDate et heure prÃ©fÃ©rÃ©es :\nCanal (tÃ©lÃ©phone ou visio) :\nLien ou document Ã  partager ? :',
-            pt: 'OlÃ¡, quero agendar uma chamada de consultoria.\n\nTema para conversar:\nData e hora preferidas:\nCanal (telefone ou vÃ­deo):\nAlgum link ou documento para compartilhar?:',
+            de: 'Hallo, ich möchte ein Beratungsgespräch buchen.\n\nThema:\nBevorzugtes Datum und Uhrzeit:\nKanal (Telefon oder Video):\nMuss ich einen Link/Dokument teilen?:',
+            fr: 'Bonjour, je veux planifier un appel de conseil.\n\nSujet à aborder :\nDate et heure préférées :\nCanal (téléphone ou visio) :\nLien ou document à partager ? :',
+            pt: 'Olá, quero agendar uma chamada de consultoria.\n\nTema para conversar:\nData e hora preferidas:\nCanal (telefone ou vídeo):\nAlgum link ou documento para compartilhar?:',
             it: 'Ciao, voglio programmare una call di consulenza.\n\nArgomento da trattare:\nData e ora preferite:\nCanale (telefono o video):\nDevo condividere un link o documento?:'
         }
     };
@@ -579,6 +579,11 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
 </script>
 
 <?php include 'includes/footer.php'; ?>
+
+
+
+
+
 
 
 

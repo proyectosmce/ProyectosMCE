@@ -8,79 +8,80 @@ $featuredProject = $projects[0] ?? null;
 <?php include 'includes/header.php'; ?>
 
 <!-- Hero Portafolio -->
-<section class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800 text-white mce-rounded-hero">
-    <div class="absolute inset-0 bg-grid-white/10"></div>
-    <div class="absolute -top-24 -left-16 w-72 h-72 bg-blue-500/30 blur-3xl rounded-full"></div>
-    <div class="absolute -bottom-28 -right-10 w-96 h-96 bg-purple-500/25 blur-3xl rounded-full"></div>
+<section class="relative overflow-hidden bg-gradient-to-br from-brand-ink via-[#120c2c] to-brand-dark text-white mce-rounded-hero">
+    <div class="absolute inset-0 bg-hero-mesh opacity-80"></div>
+    <div class="absolute -top-24 -left-16 w-72 h-72 bg-brand-primary/25 blur-3xl rounded-full"></div>
+    <div class="absolute -bottom-28 -right-10 w-96 h-96 bg-brand-accent/20 blur-3xl rounded-full"></div>
 
     <div class="relative max-w-7xl mx-auto px-4 py-20 lg:py-24">
         <div class="grid lg:grid-cols-12 gap-10 items-center">
             <div class="lg:col-span-7 space-y-5">
                 <span class="inline-flex items-center px-3 py-1 text-sm font-semibold bg-white/10 border border-white/20 rounded-full backdrop-blur">
-                    <i class="fas fa-briefcase mr-2 text-yellow-300"></i> <span class="i18n-pf-badge" data-i18n="pf-badge">Portafolio · Proyectos MCE</span>
+                    <i class="fas fa-briefcase mr-2 text-brand-accent"></i> <span class="i18n-pf-badge" data-i18n="pf-badge">Portafolio · Proyectos MCE</span>
                 </span>
                 <h1 class="text-4xl md:text-5xl font-bold leading-tight i18n-pf-hero-title" data-i18n="pf-hero-title">Productos digitales y sistemas en producción</h1>
                 <p class="text-lg text-blue-50 max-w-3xl i18n-pf-hero-sub" data-i18n="pf-hero-sub">
                     Proyectos reales con usuarios y datos en vivo: paneles internos, portales, automatizaciones y sitios de marca conectados a pasarelas y APIs.
                 </p>
                 <div class="flex flex-wrap gap-3">
-                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-pf-chip1" data-i18n="pf-chip1"><i class="fas fa-industry mr-2 text-yellow-300"></i><span>Retail · Logística · Servicios</span></span>
-                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-pf-chip2" data-i18n="pf-chip2"><i class="fas fa-code-branch mr-2 text-yellow-300"></i><span>APIs, colas y webhooks</span></span>
-                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-pf-chip3" data-i18n="pf-chip3"><i class="fas fa-lock mr-2 text-yellow-300"></i><span>Seguridad y pruebas completas</span></span>
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-pf-chip1" data-i18n="pf-chip1"><i class="fas fa-industry mr-2 text-brand-accent"></i><span>Retail · Logística · Servicios</span></span>
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-pf-chip2" data-i18n="pf-chip2"><i class="fas fa-code-branch mr-2 text-brand-accent"></i><span>APIs, colas y webhooks</span></span>
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm i18n-pf-chip3" data-i18n="pf-chip3"><i class="fas fa-lock mr-2 text-brand-accent"></i><span>Seguridad y pruebas completas</span></span>
                 </div>
                 <div class="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
-                    <a href="<?php echo app_url('contacto.php'); ?>" class="inline-flex items-center justify-center bg-yellow-300 text-slate-900 px-8 py-4 rounded-xl font-semibold shadow-lg shadow-yellow-900/20 hover:bg-yellow-200 transition i18n-pf-btn-demo" data-i18n="pf-btn-demo">
+                    <a href="<?php echo app_url('contacto.php'); ?>" class="inline-flex items-center justify-center bg-brand-primary text-white px-8 py-4 rounded-xl font-semibold shadow-glow hover:scale-[1.02] transition i18n-pf-btn-demo" data-i18n="pf-btn-demo">
                         <i class="fas fa-rocket mr-2"></i> Solicitar demo
                     </a>
-                    <a href="#proyectos-grid" class="inline-flex items-center justify-center border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-slate-900 transition i18n-pf-btn-see" data-i18n="pf-btn-see">
+                    <a href="#proyectos-grid" class="inline-flex items-center justify-center border border-white/40 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition i18n-pf-btn-see" data-i18n="pf-btn-see">
                         <i class="fas fa-eye mr-2"></i> Ver proyectos
                     </a>
-                    <a href="#casos-exito-portafolio" class="inline-flex items-center justify-center border-2 border-amber-300 text-amber-100 px-8 py-4 rounded-xl font-semibold hover:bg-amber-200 hover:text-slate-900 transition i18n-pf-btn-cases" data-i18n="pf-btn-cases">
-                        <i class="fas fa-trophy mr-2"></i> Casos de éxito
+                    <a href="#casos-exito-portafolio" class="inline-flex items-center justify-center border border-brand-accent/70 text-brand-accent px-8 py-4 rounded-xl font-semibold hover:bg-brand-accent hover:text-brand-ink transition i18n-pf-btn-cases" data-i18n="pf-btn-cases">
+                        <i class="fas fa-trophy mr-2"></i> <span>Casos de éxito</span>
                     </a>
                 </div>
             </div>
 
             <div class="lg:col-span-5">
-                <div class="bg-white/10 border border-white/20 backdrop-blur-xl rounded-2xl p-8 shadow-2xl space-y-5">
-                    <div class="flex items-center justify-between">
+                <div class="relative overflow-hidden rounded-3xl bg-white/10 ring-1 ring-white/15 backdrop-blur-2xl p-8 shadow-glow space-y-5">
+                    <div class="absolute inset-0 bg-hero-mesh opacity-50"></div>
+                    <div class="relative flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-blue-100 i18n-pf-what" data-i18n="pf-what">Qué verás</p>
+                            <p class="text-sm text-white/70 i18n-pf-what" data-i18n="pf-what">Qué verás</p>
                             <p class="text-2xl font-semibold text-white i18n-pf-what-title" data-i18n="pf-what-title">Casos listos para inspirar tu proyecto</p>
                         </div>
-                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-300 shadow-lg overflow-hidden mce-photo-badge">
+                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-lg overflow-hidden mce-photo-badge">
                             <img src="<?php echo app_url('imag/MCE.jpg'); ?>" alt="MCE" class="w-full h-full object-cover">
                         </span>
                     </div>
-                    <ul class="space-y-3 text-blue-50">
+                    <ul class="relative space-y-3 text-white/85">
                         <li class="flex items-start gap-3">
-                            <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-laptop-code"></i></span>
+                            <span class="w-9 h-9 flex items-center justify-center rounded-full bg-brand-primary/20 text-brand-accent border border-white/15"><i class="fas fa-laptop-code"></i></span>
                             <div>
                                 <p class="font-semibold i18n-pf-b1-title" data-i18n="pf-b1-title">Aplicaciones internas</p>
-                                <p class="text-sm text-blue-100 i18n-pf-b1-text" data-i18n="pf-b1-text">Paneles internos con roles y flujos simples.</p>
+                                <p class="text-sm text-white/70 i18n-pf-b1-text" data-i18n="pf-b1-text">Paneles internos con roles y flujos simples.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
-                            <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-globe"></i></span>
+                            <span class="w-9 h-9 flex items-center justify-center rounded-full bg-brand-primary/20 text-brand-accent border border-white/15"><i class="fas fa-globe"></i></span>
                             <div>
                                 <p class="font-semibold i18n-pf-b2-title" data-i18n="pf-b2-title">Sitios y landing pages</p>
-                                <p class="text-sm text-blue-100 i18n-pf-b2-text" data-i18n="pf-b2-text">Catálogos, carrito de compra, pagos y medición de ventas.</p>
+                                <p class="text-sm text-white/70 i18n-pf-b2-text" data-i18n="pf-b2-text">Catálogos, carrito de compra, pagos y medición de ventas.</p>
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
-                            <span class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-yellow-300"><i class="fas fa-gears"></i></span>
+                            <span class="w-9 h-9 flex items-center justify-center rounded-full bg-brand-primary/20 text-brand-accent border border-white/15"><i class="fas fa-gears"></i></span>
                             <div>
                                 <p class="font-semibold i18n-pf-b3-title" data-i18n="pf-b3-title">Automatizaciones</p>
-                                <p class="text-sm text-blue-100 i18n-pf-b3-text" data-i18n="pf-b3-text">Integraciones que conectan sistemas y reducen tareas manuales.</p>
+                                <p class="text-sm text-white/70 i18n-pf-b3-text" data-i18n="pf-b3-text">Integraciones que conectan sistemas y reducen tareas manuales.</p>
                             </div>
                         </li>
                     </ul>
-                    <a href="#proyectos-grid" class="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between hover:bg-white/10 transition">
+                    <a href="#proyectos-grid" class="relative p-4 rounded-xl bg-white/8 border border-white/15 flex items-center justify-between hover:bg-white/12 transition">
                         <div>
-                            <p class="text-sm text-blue-100 i18n-pf-cta-small" data-i18n="pf-cta-small">Entrega con visibilidad</p>
+                            <p class="text-sm text-white/70 i18n-pf-cta-small" data-i18n="pf-cta-small">Entrega con visibilidad</p>
                             <p class="font-semibold i18n-pf-cta-big" data-i18n="pf-cta-big">Demos frecuentes y documentación</p>
                         </div>
-                        <i class="fas fa-arrow-right text-yellow-300"></i>
+                        <i class="fas fa-arrow-right text-brand-accent text-xl"></i>
                     </a>
                 </div>
             </div>
