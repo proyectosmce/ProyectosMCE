@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nuevo
     redirect('testimonios.php?error=validation#form-testimonio');
 }
 
-$testimonios     = $conn->query("SELECT t.id, t.nombre, t.testimonio, t.valoracion, t.likes, COALESCE(p.titulo, t.empresa, 'Proyecto MCE') AS proyecto, COALESCE(p.public_url, '#') AS project_url FROM testimonios t LEFT JOIN proyectos p ON t.proyecto_id = p.id WHERE t.aprobado = 1 ORDER BY t.destacado DESC, t.created_at DESC LIMIT 9");
+$testimonios     = $conn->query("SELECT t.id, t.nombre, t.testimonio, t.valoracion, t.likes, COALESCE(p.titulo, t.empresa, 'Proyecto MCE') AS proyecto, p.url_demo AS project_demo FROM testimonios t LEFT JOIN proyectos p ON t.proyecto_id = p.id WHERE t.aprobado = 1 ORDER BY t.destacado DESC, t.created_at DESC LIMIT 9");
 $projectOptions  = fetchProjectDropdownOptions($conn);
 $testimonioOk    = isset($_GET['testimonio']) && $_GET['testimonio'] === 'ok';
 $testimonioError = $_GET['error'] ?? '';
@@ -224,7 +224,7 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
                 $initial = strtoupper(mb_substr($t['nombre'] ?? 'U', 0, 1, 'UTF-8'));
                 $projName = $t['proyecto'] ?? 'su proyecto';
                 $textoFinal = "Yo, {$t['nombre']} dueño de {$projName}, {$t['testimonio']}";
-                $projectUrl = trim((string) ($t['project_url'] ?? ''));
+                $projectUrl = getProjectPublicUrl(['url_demo' => $t['project_demo'] ?? '', 'titulo' => $projName]);
                 if ($projectUrl === '' || $projectUrl === '#') {
                     $projectUrl = app_url('portafolio.php');
                 }
