@@ -399,16 +399,16 @@
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.16),transparent_35%)] opacity-60"></div>
     <div class="relative max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div class="space-y-2 max-w-2xl">
-            <p class="text-sm uppercase tracking-[0.32em] text-white/70">Siguiente paso</p>
-            <h3 class="text-2xl md:text-3xl font-display font-semibold">Conversemos y bajemos tu idea a un plan ejecutable</h3>
-            <p class="text-white/80">Agenda una llamada rápida o revisa el portafolio para ver entregas reales.</p>
+            <p class="text-sm uppercase tracking-[0.32em] text-white/70" data-i18n="srv-next-label">Siguiente paso</p>
+            <h3 class="text-2xl md:text-3xl font-display font-semibold" data-i18n="srv-next-title">Cuéntanos qué quieres automatizar o lanzar</h3>
+            <p class="text-white/80" data-i18n="srv-next-desc">Respondemos en menos de 24 horas con un plan de acción y tiempos estimados.</p>
         </div>
         <div class="flex flex-wrap gap-3">
             <a href="<?php echo app_url('contacto.php'); ?>#contacto-form" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-brand-ink font-semibold shadow-soft hover:translate-y-[-2px] transition">
-                <i class="fas fa-calendar-check"></i> Contactar equipo
+                <i class="fas fa-calendar-check"></i> <span data-i18n="srv-next-call">Agendar llamada</span>
             </a>
             <a href="<?php echo app_url('portafolio.php'); ?>" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-white/60 text-white font-semibold hover:bg-white/10 transition">
-                <i class="fas fa-eye"></i> Ver portafolio
+                <i class="fas fa-eye"></i> <span data-i18n="srv-next-portfolio">Ver portafolio</span>
             </a>
         </div>
     </div>
