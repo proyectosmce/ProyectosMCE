@@ -496,7 +496,9 @@ $testimonialRecaptchaEnabled = form_guard_recaptcha_enabled();
             const tmap =
                 testimonialTranslations[id]?.[lang] ||
                 translationsByBody[bodyKey]?.[lang] ||
-                translationsByBodyNorm[normalize(bodyKey)]?.[lang];
+                translationsByBodyNorm[normalize(bodyKey)]?.[lang] ||
+                // fallback por coincidencia simple en texto visible (no BD)
+                (bodyKey.indexOf('Jose Delgado') !== -1 ? translationsByBody[joseBodyEs]?.[lang] : null);
             const nameEl = card.querySelector('.ts-name');
             const projectEl = card.querySelector('.ts-project');
             const bodyEl = card.querySelector('.ts-body');
