@@ -71,12 +71,12 @@
                     <ul class="space-y-3 text-gray-300">
                         <li>
                             <a href="mailto:proyectosmceaa@gmail.com" class="inline-flex items-center hover:text-white transition">
-                                <i class="fas fa-envelope mr-2"></i><span>proyectosmceaa@gmail.com</span>
+                                <i class="fas fa-envelope mr-2 text-blue-300"></i><span>proyectosmceaa@gmail.com</span>
                             </a>
                         </li>
                         <li>
                             <a href="tel:+573114125971" class="inline-flex items-center hover:text-white transition">
-                                <i class="fas fa-phone mr-2"></i><span>+57 311 412 59 71</span>
+                                <i class="fas fa-phone mr-2 text-blue-300"></i><span>+57 311 412 59 71</span>
                             </a>
                         </li>
                         <li class="inline-flex items-center text-gray-300">
