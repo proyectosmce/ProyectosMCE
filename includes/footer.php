@@ -59,9 +59,9 @@
                 <div>
                     <h4 class="text-lg font-semibold mb-4"><span data-i18n="nav-services">Servicios</span></h4>
                     <ul class="space-y-2 text-gray-300">
-                        <li><span class="i18n-ft-srv1" data-i18n="ft-srv1">Desarrollo a Medida</span></li>
-                        <li><span class="i18n-ft-srv2" data-i18n="ft-srv2">Sistemas de Inventario</span></li>
-                        <li><span class="i18n-ft-srv3" data-i18n="ft-srv3">Mantenimiento Web</span></li>
+                        <li class="inline-flex items-center gap-2"><i class="fas fa-code text-blue-300"></i><span class="i18n-ft-srv1" data-i18n="ft-srv1">Desarrollo a Medida</span></li>
+                        <li class="inline-flex items-center gap-2"><i class="fas fa-boxes text-blue-300"></i><span class="i18n-ft-srv2" data-i18n="ft-srv2">Sistemas de Inventario</span></li>
+                        <li class="inline-flex items-center gap-2"><i class="fas fa-tools text-blue-300"></i><span class="i18n-ft-srv3" data-i18n="ft-srv3">Mantenimiento Web</span></li>
                     </ul>
                 </div>
                 
