@@ -50,6 +50,8 @@
                         <li><a href="<?php echo app_url('portafolio.php'); ?>" class="hover:text-white transition inline-flex items-center gap-2"><i class="fas fa-briefcase text-blue-300"></i><span><span data-i18n="nav-portfolio">Portafolio</span></span></a></li>
                         <li><a href="<?php echo app_url('testimonios.php'); ?>" class="hover:text-white transition inline-flex items-center gap-2"><i class="fas fa-comments text-blue-300"></i><span><span data-i18n="nav-testimonials">Testimonios</span></span></a></li>
                         <li><a href="<?php echo app_url('contacto.php'); ?>" class="hover:text-white transition inline-flex items-center gap-2"><i class="fas fa-envelope-open-text text-blue-300"></i><span><span data-i18n="nav-contact">Contacto</span></span></a></li>
+                        <li><a href="<?php echo app_url('aviso-legal.php'); ?>" class="hover:text-white transition inline-flex items-center gap-2"><i class="fas fa-gavel text-blue-300"></i><span><span data-i18n="nav-legal">Aviso legal</span></span></a></li>
+                        <li><a href="<?php echo app_url('politica-privacidad.php'); ?>" class="hover:text-white transition inline-flex items-center gap-2"><i class="fas fa-user-shield text-blue-300"></i><span><span data-i18n="nav-privacy">Política de privacidad</span></span></a></li>
                     </ul>
                 </div>
                 
@@ -585,6 +587,8 @@
                 'nav-portfolio': 'Portafolio',
                 'nav-testimonials': 'Testimonios',
                 'nav-contact': 'Contacto',
+                'nav-legal': 'Aviso legal',
+                'nav-privacy': 'Política de privacidad',
                 'nav-subtitle': 'Desarrollo   Web',
                 'meta-title-index': 'Proyectos MCE | Soluciones Digitales',
                 'meta-title-servicios': 'Servicios · Proyectos MCE',
@@ -918,6 +922,8 @@
                 'nav-portfolio': 'Portfolio',
                 'nav-testimonials': 'Testimonials',
                 'nav-contact': 'Contact',
+                'nav-legal': 'Legal Notice',
+                'nav-privacy': 'Privacy Policy',
                 'nav-subtitle': 'Web Development',
                 'meta-title-index': 'MCE Projects | Custom Software',
                 'meta-title-servicios': 'Services · MCE Projects',
@@ -1251,6 +1257,8 @@
                 'nav-portfolio': 'Portfolio',
                 'nav-testimonials': 'Témoignages',
                 'nav-contact': 'Contact',
+                'nav-legal': 'Mentions légales',
+                'nav-privacy': 'Politique de confidentialité',
                 'nav-subtitle': 'Développement Web',
                 'meta-title-index': 'Projets MCE | Logiciels sur mesure',
                 'meta-title-servicios': 'Services · Projets MCE',
@@ -1584,6 +1592,8 @@
                 'nav-portfolio': 'Portfolio',
                 'nav-testimonials': 'Referenzen',
                 'nav-contact': 'Kontakt',
+                'nav-legal': 'Rechtlicher Hinweis',
+                'nav-privacy': 'Datenschutzerklärung',
                 'nav-subtitle': 'Webentwicklung',
                 'meta-title-index': 'MCE Projekte | Individuelle Software',
                 'meta-title-servicios': 'Leistungen · MCE Projekte',
@@ -1917,6 +1927,8 @@
                 'nav-portfolio': 'Portfólio',
                 'nav-testimonials': 'Depoimentos',
                 'nav-contact': 'Contato',
+                'nav-legal': 'Aviso legal',
+                'nav-privacy': 'Política de Privacidade',
                 'nav-subtitle': 'Desenvolvimento Web',
                 'meta-title-index': 'Projetos MCE | Software sob medida',
                 'meta-title-servicios': 'Serviços · Projetos MCE',
@@ -2250,6 +2262,8 @@
                 'nav-portfolio': 'Portfolio',
                 'nav-testimonials': 'Testimonianze',
                 'nav-contact': 'Contatti',
+                'nav-legal': 'Note legali',
+                'nav-privacy': 'Informativa sulla privacy',
                 'nav-subtitle': 'Sviluppo Web',
                 'meta-title-index': 'Progetti MCE | Software su misura',
                 'meta-title-servicios': 'Servizi · Progetti MCE',
