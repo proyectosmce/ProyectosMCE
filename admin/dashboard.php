@@ -11,6 +11,14 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     exit;
 }
 
+// Auto-migración global preventiva (asegura que soft-delete no crashee fetch_assoc en BD limpia)
+foreach (['mensajes', 'proyectos'] as $tbl) {
+    $chk = $conn->query("SHOW COLUMNS FROM {$tbl} LIKE 'deleted_at'");
+    if (!$chk || $chk->num_rows === 0) {
+        $conn->query("ALTER TABLE {$tbl} ADD COLUMN deleted_at TIMESTAMP NULL DEFAULT NULL");
+    }
+}
+
 // Obtener estadísticas
 ensureTestimonialsSchema($conn);
 ensureAdminActivityLogSchema($conn);
