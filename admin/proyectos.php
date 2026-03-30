@@ -8,6 +8,12 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     exit;
 }
 
+// Migración Soft Delete
+$chk = $conn->query("SHOW COLUMNS FROM proyectos LIKE 'deleted_at'");
+if (!$chk || $chk->num_rows === 0) {
+    $conn->query("ALTER TABLE proyectos ADD COLUMN deleted_at TIMESTAMP NULL DEFAULT NULL AFTER destacado");
+}
+
 $pendingTestimonials = getPendingTestimonialsCount($conn);
 $csrfToken = admin_get_csrf_token();
 $statusMessage = $_GET['msg'] ?? '';
@@ -30,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
 
     if ($action === 'delete' && $id > 0) {
-        if ($stmt = $conn->prepare('DELETE FROM proyectos WHERE id = ?')) {
+        if ($stmt = $conn->prepare('UPDATE proyectos SET deleted_at = NOW() WHERE id = ?')) {
             $stmt->bind_param('i', $id);
             $stmt->execute();
             $stmt->close();
@@ -42,10 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$whereSql = '';
+$whereSql = ' WHERE deleted_at IS NULL';
 if ($searchTerm !== '') {
     $safeSearch = $conn->real_escape_string($searchTerm);
-    $whereSql = " WHERE titulo LIKE '%{$safeSearch}%' OR categoria LIKE '%{$safeSearch}%' OR cliente LIKE '%{$safeSearch}%'";
+    $whereSql .= " AND (titulo LIKE '%{$safeSearch}%' OR categoria LIKE '%{$safeSearch}%' OR cliente LIKE '%{$safeSearch}%')";
 }
 
 $totalProjects = 0;

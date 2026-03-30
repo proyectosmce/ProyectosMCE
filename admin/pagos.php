@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
 
     if ($action === 'delete' && $id > 0) {
-        if ($stmt = $conn->prepare('DELETE FROM proyecto_pagos WHERE id = ?')) {
+        if ($stmt = $conn->prepare('UPDATE proyecto_pagos SET deleted_at = NOW() WHERE id = ?')) {
             $stmt->bind_param('i', $id);
             $stmt->execute();
             $stmt->close();
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$whereClauses = [];
+$whereClauses = ['pp.deleted_at IS NULL'];
 
 if ($projectId > 0) {
     $whereClauses[] = 'pp.proyecto_id = ' . $projectId;
