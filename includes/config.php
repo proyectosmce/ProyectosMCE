@@ -1,4 +1,14 @@
 <?php
+// MODO MANTENIMIENTO: Cambia a 'true' para poner el sitio publico en mantenimiento
+// Solo los administradores desde "/admin" podran ver el sitio.
+define('MAINTENANCE_MODE', false);
+
+if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
+    http_response_code(503);
+    echo '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Mantenimiento</title><style>body{background:#f8fafc;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;text-align:center;}h1{color:#1e293b;font-size:2.5rem;margin-bottom:0.5rem;}p{color:#64748b;font-size:1.1rem;}</style></head><body><div><h1>Estamos en mantenimiento 🛠️</h1><p>Realizando mejoras en el sitio. Volveremos enseguida.</p></div></body></html>';
+    exit;
+}
+
 // Carga secretos locales o generados en el deploy si existen.
 $secretPath = __DIR__ . '/secrets.php';
 if (is_file($secretPath)) {
