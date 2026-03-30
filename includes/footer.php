@@ -940,7 +940,7 @@
                 'ct-error-8': 'Debes completar la verificación reCAPTCHA antes de enviar el formulario.',
                 'ct-error-9': 'El horario elegido ya no está disponible. Por favor elige otra hora.',
                 'ct-error-default': 'Hubo un error. Por favor intenta nuevamente.',
-                'maint-title': '🛠️ En Mantenimiento',
+                'maint-title': 'En Mantenimiento',
                 'maint-desc': 'Estamos trabajando en mejoras y nuevas funciones. Regresamos en breve.'
             },
             'en': {
@@ -1277,7 +1277,7 @@
                 'ct-error-8': 'Please complete the reCAPTCHA verification before submitting the form.',
                 'ct-error-9': 'The selected time slot is no longer available. Please choose another time.',
                 'ct-error-default': 'An error occurred. Please try again.',
-                'maint-title': '🛠️ Under Maintenance',
+                'maint-title': 'Under Maintenance',
                 'maint-desc': 'We are working on improvements and new features. We\'ll be back shortly.'
             },
             'fr': {
@@ -1614,7 +1614,7 @@
                 'ct-error-8': 'Merci de compléter le reCAPTCHA avant de soumettre.',
                 'ct-error-9': "Le créneau choisi n'est plus disponible. Choisis une autre heure.",
                 'ct-error-default': 'Une erreur est survenue. Réessaie.',
-                'maint-title': '🛠️ En Maintenance',
+                'maint-title': 'En Maintenance',
                 'maint-desc': 'Nous travaillons sur des améliorations et de nouvelles fonctionnalités. De retour bientôt.'
             },
             'de': {
@@ -1951,7 +1951,7 @@
                 'ct-error-8': 'Bitte reCAPTCHA bestätigen, bevor du absendest.',
                 'ct-error-9': 'Der gewählte Zeitraum ist nicht mehr verfügbar. Wähle eine andere Uhrzeit.',
                 'ct-error-default': 'Ein Fehler ist aufgetreten. Bitte erneut versuchen.',
-                'maint-title': '🛠️ In Wartung',
+                'maint-title': 'In Wartung',
                 'maint-desc': 'Wir arbeiten an Verbesserungen und neuen Funktionen. Wir sind in Kürze zurück.'
             },
             'pt': {
@@ -2288,8 +2288,8 @@
                 'ct-error-8': 'Complete a verificação reCAPTCHA antes de enviar o formulário.',
                 'ct-error-9': 'El horario elegido no está más disponible. Elige otra hora.',
                 'ct-error-default': 'Ocurrió un error. Reintenta.',
-                'maint-title': '🛠️ En Mantenimiento',
-                'maint-desc': 'Estamos trabajando en mejoras y nuevas funciones. Regresamos en breve.'
+                'maint-title': 'Em Manutenção',
+                'maint-desc': 'Estamos trabalhando em melhorias e novos recursos. Voltaremos em breve.'
             },
             'it': {
                 'nav-home': 'Home',
@@ -2625,7 +2625,7 @@
                 'ct-error-8': 'Completa la verifica reCAPTCHA prima di inviare il form.',
                 'ct-error-9': "L'orario scelto non è più disponibile. Scegli un altro orario.",
                 'ct-error-default': 'Si è verificato un errore. Riprova.',
-                'maint-title': '🛠️ In Manutenzione',
+                'maint-title': 'In Manutenzione',
                 'maint-desc': 'Stiamo lavorando a miglioramenti e nuove funzionalità. Torneremo tra poco.'
             }
         };
