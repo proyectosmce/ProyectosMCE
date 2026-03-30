@@ -144,7 +144,10 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
     $_SERVER["PHP_SELF"] = '/mantenimiento.php';
     require_once __DIR__ . '/header.php';
     
-    // Inyectar CSS para ocultar el menú, el footer y otros flotantes, excepto WhatsApp
+    // Determinar si el tiempo ya expiró pero sigue bloqueado
+    $time_expired = ($maintenance_back_at > 0 && time() >= $maintenance_back_at);
+
+    // Inyectar CSS
     echo '<style>
         html, body { 
             overflow: hidden !important; 
@@ -172,6 +175,7 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
             justify-content:center;
             overflow: hidden;
             width: 100%;
+            transition: all 0.5s ease;
         }
 
         @media (max-width: 640px) {
@@ -179,6 +183,24 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
                 background-size: 33.33% 25%;
                 height: calc(100dvh - 64px);
             }
+        }
+
+        /* Animaciones para expired (Rayos rojos) */
+        .expired-bg { background: rgba(185, 28, 28, 0.4) !important; animation: redGlow 2s infinite alternate; }
+        @keyframes redGlow { from { box-shadow: inset 0 0 50px rgba(239, 68, 68, 0.2); } to { box-shadow: inset 0 0 100px rgba(239, 68, 68, 0.5); } }
+
+        .bolt-anim {
+            color: #ef4444;
+            animation: lightning 0.15s infinite;
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0;
+            pointer-events: none;
+        }
+        @keyframes lightning {
+            0% { opacity: 0; transform: scale(1) rotate(5deg); }
+            50% { opacity: 1; transform: scale(1.2) rotate(-5deg); }
+            100% { opacity: 0; transform: scale(1) rotate(5deg); }
         }
 
         .spin-gear {
@@ -193,15 +215,8 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
         @keyframes gearSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes gearSpinRev { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
 
-        .social-link {
-            color: rgba(255,255,255,0.6);
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-        }
-        .social-link:hover {
-            color: #fff;
-            transform: translateY(-3px);
-        }
+        .social-link { color: rgba(255,255,255,0.6); font-size: 1.2rem; transition: all 0.3s ease; }
+        .social-link:hover { color: #fff; transform: translateY(-3px); }
         
         #countdown-wrap {
             background: rgba(124, 58, 237, 0.1);
@@ -214,20 +229,33 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
         }
     </style>';
     
+    // Generar rayos aleatorios si expiró
+    $extra_html = '';
+    if ($time_expired) {
+        for ($i=0; $i<8; $i++) {
+            $top = rand(10,90); $left = rand(10,90); $del = rand(0, 20)/10;
+            $extra_html .= '<i class="fas fa-bolt bolt-anim" style="top:'.$top.'%; left:'.$left.'%; animation-delay:'.$del.'s;"></i>';
+        }
+    }
+
     // Inyectar tarjeta central
-    echo '<div class="maint-mosaic-bg">
-    <div style="position:absolute;inset:0;background:rgba(0,0,0,0.73);z-index:1;"></div>
-    <div style="position:relative;z-index:2;background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);padding:3rem 2rem;border-radius:24px;text-align:center;color:#fff;max-width:90%;width:420px;margin:1rem;box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+    echo '<div class="maint-mosaic-bg ' . ($time_expired ? 'expired-bg' : '') . '">
+    <div style="position:absolute;inset:0;background:rgba(0,0,-1,0.73);z-index:1;"></div>
+    ' . $extra_html . '
+    <div style="position:relative;z-index:2;background:rgba(255,255,255,' . ($time_expired ? '0.08' : '0.03') . ');backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid ' . ($time_expired ? '#fca5a5' : 'rgba(255,255,255,0.08)') . ';padding:3rem 2rem;border-radius:24px;text-align:center;color:#fff;max-width:90%;width:420px;margin:1rem;box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
         
-        <div style="font-size: 2.8rem; margin-bottom: 1.2rem; color: #a78bfa;">
-            <i class="fas fa-cog spin-gear"></i>
-            <i class="fas fa-cog spin-gear-rev" style="font-size: 1.8rem; vertical-align: bottom;"></i>
+        <div style="font-size: 2.8rem; margin-bottom: 1.2rem; color: ' . ($time_expired ? '#ef4444' : '#a78bfa') . ';">
+            ' . ($time_expired ? '<i class="fas fa-radiation-alt animate-pulse"></i>' : '<i class="fas fa-cog spin-gear"></i><i class="fas fa-cog spin-gear-rev" style="font-size: 1.8rem; vertical-align: bottom;"></i>') . '
         </div>
 
-        <h1 data-i18n="maint-title" style="margin:0 0 0.5rem;font-size:1.8rem;line-height:1.2;font-weight:900;letter-spacing:1px;">EN MANTENIMIENTO</h1>
-        <p data-i18n="maint-desc" style="font-size:1rem;opacity:0.7;line-height:1.5;margin:0;">Estamos mejorando nuestra plataforma para brindarte una mejor experiencia.</p>
+        <h1 style="margin:0 0 0.5rem;font-size:1.8rem;line-height:1.2;font-weight:900;letter-spacing:1px;color:' . ($time_expired ? '#ef4444' : '#fff') . ';">
+            ' . ($time_expired ? 'PÁGINA PÚBLICA BLOQUEADA' : 'EN MANTENIMIENTO') . '
+        </h1>
+        <p style="font-size:1rem;opacity:0.7;line-height:1.5;margin:0;">
+            ' . ($time_expired ? 'El tiempo limite de mantenimiento ha expirado. Por favor, contacta con soporte o espera la activacion manual.' : 'Estamos mejorando nuestra plataforma para brindarte una mejor experiencia.') . '
+        </p>
         
-        ' . (($maintenance_back_at > time()) ? '
+        ' . ((!$time_expired && $maintenance_back_at > time()) ? '
             <div id="countdown-wrap">
                 <div id="timer" style="font-family:monospace; font-size: 1.6rem; font-weight: bold; color: #fff;">00:00:00</div>
                 <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.5; margin-top: 4px;">Tiempo Estimado</div>
@@ -246,9 +274,8 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
 </div>';
 
     // Script para la cuenta regresiva y WhatsApp
-    $backAtJs = $maintenance_back_at * 1000; // Milisegundos para JS
+    $backAtJs = $maintenance_back_at * 1000;
     echo '<script>
-        // Cuenta regresiva
         const backAt = ' . $backAtJs . ';
         if (backAt > Date.now()) {
             const timerEl = document.getElementById("timer");
@@ -258,7 +285,7 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
                 
                 if (diff <= 0) {
                     clearInterval(interval);
-                    if (timerEl) timerEl.innerHTML = "¡Casi listos!";
+                    location.reload(); // RECARGAR AL LLEGAR A 0
                     return;
                 }
                 
@@ -275,7 +302,6 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
             }, 1000);
         }
 
-        // WhatsApp Personalizado
         const checkWa = setInterval(() => {
             const waBtn = document.querySelector(\'a[href*="wa.me"]\');
             if (waBtn) {
