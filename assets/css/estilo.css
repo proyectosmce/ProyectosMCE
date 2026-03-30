@@ -392,8 +392,9 @@ h1, h2, h3, h4, h5, h6,
         bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
     }
     .mce-call-float {
-        right: 12px;
-        bottom: calc(env(safe-area-inset-bottom, 0px) + 64px); /* encima del WhatsApp */
+        left: 12px;   /* mantiene su posición lateral como en desktop */
+        right: auto;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
         width: 56px;
         height: 56px;
         padding: 0;
