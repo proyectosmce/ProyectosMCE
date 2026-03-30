@@ -144,7 +144,12 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
     
     // Inyectar CSS para ocultar el menú, el footer y otros flotantes, excepto WhatsApp
     echo '<style>
-        body { overflow: hidden !important; } /* Eliminar scroll global */
+        html, body { 
+            overflow: hidden !important; 
+            height: 100%; 
+            margin: 0; 
+            padding: 0; 
+        }
         
         nav a[data-i18n^="nav-"], 
         #menu-btn, 
@@ -155,14 +160,24 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
         
         .maint-mosaic-bg {
             background-image: url(\'' . app_url('imag/MCE.jpg') . '\');
-            background-size: 20% 25%;
+            background-size: 20% 25%; /* Escritorio */
             background-repeat: repeat;
-            height: calc(100vh - 64px); /* Ajuste exacto al Viewport */
+            height: calc(100dvh - 64px); /* dvh para móviles modernos */
+            min-height: calc(100vh - 64px); /* fallback */
             position: relative;
             display: flex;
             align-items: center;
             justify-content:center;
             overflow: hidden;
+            width: 100%;
+        }
+
+        /* Ajuste para pantallas verticales (móviles) */
+        @media (max-width: 640px) {
+            .maint-mosaic-bg {
+                background-size: 33.33% 25%; /* Menos columnas en móvil para que luzca mejor */
+                height: calc(100dvh - 64px);
+            }
         }
 
         .spin-gear {
@@ -181,13 +196,13 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
     // Inyectar tarjeta central con fondo corporativo en mosaico
     echo '<div class="maint-mosaic-bg">
     <div style="position:absolute;inset:0;background:rgba(0,0,0,0.7);z-index:1;"></div>
-    <div style="position:relative;z-index:2;background:rgba(255,255,255,0.05);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.1);padding:3rem 2rem;border-radius:20px;text-align:center;color:#fff;max-width:420px;margin:2rem;">
-        <div style="font-size: 2.5rem; margin-bottom: 1rem; color: #7C3AED;">
+    <div style="position:relative;z-index:2;background:rgba(255,255,255,0.05);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.1);padding:2.5rem 1.5rem;border-radius:20px;text-align:center;color:#fff;max-width:90%;width:380px;margin:1rem;">
+        <div style="font-size: 2.2rem; margin-bottom: 0.8rem; color: #7C3AED;">
             <i class="fas fa-cog spin-gear"></i>
-            <i class="fas fa-cog spin-gear-rev" style="font-size: 1.8rem; vertical-align: bottom;"></i>
+            <i class="fas fa-cog spin-gear-rev" style="font-size: 1.6rem; vertical-align: bottom;"></i>
         </div>
-        <h1 data-i18n="maint-title" style="margin:0 0 1rem;font-size:2rem;font-weight:bold;">En Mantenimiento</h1>
-        <p data-i18n="maint-desc" style="font-size:1.1rem;opacity:0.8;line-height:1.5;margin:0;">Estamos trabajando en mejoras y nuevas funciones. Regresamos en breve.</p>
+        <h1 data-i18n="maint-title" style="margin:0 0 1rem;font-size:1.8rem;line-height:1.2;font-weight:bold;">En Mantenimiento</h1>
+        <p data-i18n="maint-desc" style="font-size:1rem;opacity:0.8;line-height:1.4;margin:0;">Estamos trabajando en mejoras y nuevas funciones. Regresamos en breve.</p>
     </div>
 </div>';
 

@@ -940,7 +940,7 @@
                 'ct-error-8': 'Debes completar la verificación reCAPTCHA antes de enviar el formulario.',
                 'ct-error-9': 'El horario elegido ya no está disponible. Por favor elige otra hora.',
                 'ct-error-default': 'Hubo un error. Por favor intenta nuevamente.',
-                'maint-title': 'En Mantenimiento',
+                'maint-title': 'EN MANTENIMIENTO',
                 'maint-desc': 'Estamos trabajando en mejoras y nuevas funciones. Regresamos en breve.'
             },
             'en': {
