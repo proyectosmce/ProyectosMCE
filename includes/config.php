@@ -139,7 +139,6 @@ function current_absolute_url()
 // Ejecución de MODO MANTENIMIENTO al final (cuando ya existen funciones como app_url)
 if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
     http_response_code(503);
-    // Faker vars para header
     $_SERVER["PHP_SELF"] = '/mantenimiento.php';
     require_once __DIR__ . '/header.php';
     
@@ -147,20 +146,24 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
     echo '<style>
         nav a[data-i18n^="nav-"], 
         #menu-btn, 
-        #mobile-menu { display: none !important; }
+        #mobile-menu, 
+        .floating-buttons, 
+        .mce-whatsapp-float, 
+        .mce-call-float,
+        footer a[data-i18n^="nav-"] { display: none !important; }
     </style>';
     
-    // Inyectar tarjeta central con fondo
-    echo '<div style="background:url(\'' . app_url('imag/MCE.jpg') . '\') center/cover no-repeat;min-height:calc(100vh - 64px);position:relative;display:flex;align-items:center;justify-content:center;">
+    // Inyectar tarjeta central con fondo corporativo
+    echo '<div style="background:url(\'' . app_url('imag/MCE.jpg') . '\') center/cover no-repeat;min-height:70vh;position:relative;display:flex;align-items:center;justify-content:center;">
     <div style="position:absolute;inset:0;background:rgba(0,0,0,0.7);z-index:1;"></div>
     <div style="position:relative;z-index:2;background:rgba(255,255,255,0.05);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.1);padding:3rem 2rem;border-radius:20px;text-align:center;color:#fff;max-width:420px;margin:2rem;">
-        <h1 style="margin:0 0 1rem;font-size:2rem;font-weight:bold;">🛠️ En Mantenimiento</h1>
-        <p style="font-size:1.1rem;opacity:0.8;line-height:1.5;margin:0;">Estamos trabajando en mejoras y nuevas funciones. Regresamos en breve.</p>
+        <h1 data-i18n="maint-title" style="margin:0 0 1rem;font-size:2rem;font-weight:bold;">🛠️ En Mantenimiento</h1>
+        <p data-i18n="maint-desc" style="font-size:1.1rem;opacity:0.8;line-height:1.5;margin:0;">Estamos trabajando en mejoras y nuevas funciones. Regresamos en breve.</p>
     </div>
 </div>';
 
-    // Cerrar tags de header
-    echo '</main></body></html>';
+    // Incluir footer real (ya contiene el cierre de main, body y html)
+    require_once __DIR__ . '/footer.php';
     exit;
 }
 ?>
