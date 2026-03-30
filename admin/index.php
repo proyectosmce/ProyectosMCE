@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Re-hashing automatico (Actualizacion de algoritmos)
                     if (password_needs_rehash($user['password_hash'], PASSWORD_DEFAULT)) {
                         $newHash = password_hash($password, PASSWORD_DEFAULT);
-                        $updateStmt = $conn->prepare("UPDATE admin_users SET password_hash = ? WHERE id = ?");
+                        $updateStmt = $conn->prepare("UPDATE usuarios SET password_hash = ? WHERE id = ?");
                         if ($updateStmt) {
                             $updateStmt->bind_param("si", $newHash, $user['id']);
                             $updateStmt->execute();
