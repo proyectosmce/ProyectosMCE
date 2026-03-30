@@ -201,7 +201,7 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
             <i class="fas fa-cog spin-gear"></i>
             <i class="fas fa-cog spin-gear-rev" style="font-size: 1.6rem; vertical-align: bottom;"></i>
         </div>
-        <h1 data-i18n="maint-title" style="margin:0 0 1rem;font-size:1.8rem;line-height:1.2;font-weight:bold;">En Mantenimiento</h1>
+        <h1 data-i18n="maint-title" style="margin:0 0 1rem;font-size:1.8rem;line-height:1.2;font-weight:bold;">EN MANTENIMIENTO</h1>
         <p data-i18n="maint-desc" style="font-size:1rem;opacity:0.8;line-height:1.4;margin:0;">Estamos trabajando en mejoras y nuevas funciones. Regresamos en breve.</p>
     </div>
 </div>';
