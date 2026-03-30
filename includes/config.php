@@ -142,19 +142,29 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
     $_SERVER["PHP_SELF"] = '/mantenimiento.php';
     require_once __DIR__ . '/header.php';
     
-    // Inyectar CSS para ocultar TODO el menú (links y móvil) excepto logo e idioma
+    // Inyectar CSS para ocultar el menú, el footer y otros flotantes, excepto WhatsApp
     echo '<style>
         nav a[data-i18n^="nav-"], 
         #menu-btn, 
         #mobile-menu, 
         .floating-buttons, 
-        .mce-whatsapp-float, 
         .mce-call-float,
-        footer a[data-i18n^="nav-"] { display: none !important; }
+        footer { display: none !important; }
+        
+        .maint-mosaic-bg {
+            background-image: url(\'' . app_url('imag/MCE.jpg') . '\');
+            background-size: 20% 25%; /* 5 columnas (20%) y 4 filas (25%) */
+            background-repeat: repeat;
+            min-height: calc(100vh - 64px);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content:center;
+        }
     </style>';
     
-    // Inyectar tarjeta central con fondo corporativo
-    echo '<div style="background:url(\'' . app_url('imag/MCE.jpg') . '\') center/cover no-repeat;min-height:70vh;position:relative;display:flex;align-items:center;justify-content:center;">
+    // Inyectar tarjeta central con fondo corporativo en mosaico
+    echo '<div class="maint-mosaic-bg">
     <div style="position:absolute;inset:0;background:rgba(0,0,0,0.7);z-index:1;"></div>
     <div style="position:relative;z-index:2;background:rgba(255,255,255,0.05);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.1);padding:3rem 2rem;border-radius:20px;text-align:center;color:#fff;max-width:420px;margin:2rem;">
         <h1 data-i18n="maint-title" style="margin:0 0 1rem;font-size:2rem;font-weight:bold;">🛠️ En Mantenimiento</h1>
@@ -162,7 +172,18 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
     </div>
 </div>';
 
-    // Incluir footer real (ya contiene el cierre de main, body y html)
+    // Script para cambiar el enlace de WhatsApp solo en mantenimiento
+    echo '<script>
+        window.addEventListener("DOMContentLoaded", () => {
+            const waBtn = document.querySelector(".mce-whatsapp-float");
+            if (waBtn) {
+                const newMsg = encodeURIComponent("Hola! Quisiera averiguar sobre un proyecto, pero veo que la página está en mantenimiento.");
+                waBtn.href = `https://wa.me/573114125971?text=${newMsg}`;
+            }
+        });
+    </script>';
+
+    // Incluir footer.php para cargar los scripts de traduccion, pero el CSS arriba oculta la caja visual del footer.
     require_once __DIR__ . '/footer.php';
     exit;
 }
