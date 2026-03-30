@@ -146,6 +146,5 @@ $tx = $t[$lang] ?? $t['es'];
   </section>
 </main>
 
-<!-- Página de privacidad sin footer para foco en el contenido -->
-</body>
-</html>
+<?php include "includes/footer.php"; ?>
+
