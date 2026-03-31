@@ -221,31 +221,12 @@ $featuredProject = $projects[0] ?? null;
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-100">
         <div class="md:flex">
             <div class="md:w-1/2">
-                    <img
-                        src="<?php echo htmlspecialchars($featuredProject['image_url'], ENT_QUOTES, 'UTF-8'); ?>"
-                        alt="<?php echo htmlspecialchars($featuredProject['titulo'], ENT_QUOTES, 'UTF-8'); ?>"
-    $featuredClient = trim((string) ($featuredProject['cliente'] ?? '')) ?: 'Cliente privado';
-    $featuredDate = null;
-    if (!empty($featuredProject['fecha_completado'])) {
-        $timestamp = strtotime((string) $featuredProject['fecha_completado']);
-        if ($timestamp) {
-            $featuredDate = date('d/m/Y', $timestamp);
-        }
-    }
-    $repoUrl = trim((string) ($featuredProject['url_repo'] ?? ''));
-    if ($repoUrl !== '' && preg_match('~^(https?://|/)~i', $repoUrl) !== 1) {
-        $repoUrl = 'https://' . $repoUrl;
-    }
-    ?>
-    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-100">
-        <div class="md:flex">
-            <div class="md:w-1/2">
-                    <img
-                        src="<?php echo htmlspecialchars($featuredProject['image_url'], ENT_QUOTES, 'UTF-8'); ?>"
-                        alt="<?php echo htmlspecialchars($featuredProject['titulo'], ENT_QUOTES, 'UTF-8'); ?>"
-                        class="w-full h-64 md:h-full object-cover"
-                        loading="lazy"
-                    >
+                <img
+                    src="<?php echo htmlspecialchars($featuredProject['image_url'], ENT_QUOTES, 'UTF-8'); ?>"
+                    alt="<?php echo htmlspecialchars($featuredProject['titulo'], ENT_QUOTES, 'UTF-8'); ?>"
+                    class="w-full h-64 md:h-full object-cover"
+                    loading="lazy"
+                >
             </div>
             <div class="md:w-1/2 p-8 space-y-4">
                 <div class="flex items-center justify-between">
