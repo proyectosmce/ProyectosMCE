@@ -210,6 +210,12 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
         }
     </style>';
     
+    // Lógica fuera para evitar errores de sintaxis
+    $is_expired = ($maintenance_back_at > 0 && time() >= $maintenance_back_at);
+    $title = $is_expired ? '¡YA CASI LISTOS!' : 'EN MANTENIMIENTO';
+    $desc = $is_expired ? 'En instantes estarán disponibles las nuevas funciones y mejoras para ti.' : 'Estamos mejorando nuestra plataforma para brindarte una mejor experiencia.';
+    $timer_label = $is_expired ? 'SINCRO EN PROGRESO' : 'Tiempo Estimado';
+
     // Inyectar tarjeta central
     echo '<div class="maint-mosaic-bg">
     <div style="position:absolute;inset:0;background:rgba(0,0,0,0.73);z-index:1;"></div>
@@ -220,22 +226,16 @@ if (MAINTENANCE_MODE && strpos($_SERVER['SCRIPT_NAME'], '/admin/') === false) {
             <i class="fas fa-cog spin-gear-rev" style="font-size: 1.8rem; vertical-align: bottom;"></i>
         </div>
 
-        <?php
-        $is_expired = ($maintenance_back_at > 0 && time() >= $maintenance_back_at);
-        $title = $is_expired ? '¡YA CASI LISTOS!' : 'EN MANTENIMIENTO';
-        $desc = $is_expired ? 'En instantes estarán disponibles las nuevas funciones y mejoras para ti.' : 'Estamos mejorando nuestra plataforma para brindarte una mejor experiencia.';
-        ?>
-
         <h1 style="margin:0 0 0.5rem;font-size:1.8rem;line-height:1.2;font-weight:900;letter-spacing:1px;">
-            <?php echo $title; ?>
+            ' . $title . '
         </h1>
         <p style="font-size:1rem;opacity:0.7;line-height:1.5;margin:0;">
-            <?php echo $desc; ?>
+            ' . $desc . '
         </p>
         
         <div id="countdown-wrap"' . (($maintenance_back_at == 0) ? ' style="display:none;"' : '') . '>
             <div id="timer" style="font-family:monospace; font-size: 1.6rem; font-weight: bold; color: #fff;">00:00:00</div>
-            <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.5; margin-top: 4px;">' . ($is_expired ? 'SINCRO EN PROGRESO' : 'Tiempo Estimado') . '</div>
+            <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.5; margin-top: 4px;">' . $timer_label . '</div>
         </div>
 
         <div style="height: 10px;"></div>
