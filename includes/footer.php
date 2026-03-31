@@ -3022,9 +3022,11 @@
             }
         });
     })();
+    </script>
+
     <!-- Modal de Compartir Social -->
     <div id="mce-share-modal" class="fixed inset-0 z-[60] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl transform transition-all border border-white/10">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl w-full max-sm:w-full max-w-sm overflow-hidden shadow-2xl transform transition-all border border-white/10">
             <div class="px-6 py-5 border-b border-gray-100 dark:border-white/10 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
                 <h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <i class="fas fa-share-alt text-blue-600"></i> Compartir proyecto
@@ -3033,20 +3035,20 @@
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
-            <div class="p-6 grid grid-cols-2 gap-4">
-                <a href="#" id="share-wa" target="_blank" class="flex flex-col items-center gap-2 p-4 rounded-2xl bg-green-50 dark:bg-green-500/10 hover:bg-green-100 transition shadow-sm group">
+            <div class="p-6 grid grid-cols-2 gap-4 text-center">
+                <a href="#" id="share-wa" target="_blank" class="flex flex-col items-center gap-2 p-4 rounded-2xl bg-green-50 dark:bg-green-500/10 hover:bg-green-100 dark:hover:bg-green-500/20 transition shadow-sm group border border-transparent hover:border-green-200">
                     <i class="fab fa-whatsapp text-3xl text-green-500 group-hover:scale-110 transition"></i>
                     <span class="text-xs font-semibold text-green-700 dark:text-green-400">WhatsApp</span>
                 </a>
-                <a href="#" id="share-fb" target="_blank" class="flex flex-col items-center gap-2 p-4 rounded-2xl bg-blue-50 dark:bg-blue-600/10 hover:bg-blue-100 transition shadow-sm group">
+                <a href="#" id="share-fb" target="_blank" class="flex flex-col items-center gap-2 p-4 rounded-2xl bg-blue-50 dark:bg-blue-600/10 hover:bg-blue-100 dark:hover:bg-blue-600/20 transition shadow-sm group border border-transparent hover:border-blue-200">
                     <i class="fab fa-facebook text-3xl text-blue-600 group-hover:scale-110 transition"></i>
                     <span class="text-xs font-semibold text-blue-700 dark:text-blue-400">Facebook</span>
                 </a>
-                <a href="#" id="share-li" target="_blank" class="flex flex-col items-center gap-2 p-4 rounded-2xl bg-sky-50 dark:bg-sky-600/10 hover:bg-sky-100 transition shadow-sm group">
+                <a href="#" id="share-li" target="_blank" class="flex flex-col items-center gap-2 p-4 rounded-2xl bg-sky-50 dark:bg-sky-600/10 hover:bg-sky-100 dark:hover:bg-sky-600/20 transition shadow-sm group border border-transparent hover:border-sky-200">
                     <i class="fab fa-linkedin text-3xl text-sky-600 group-hover:scale-110 transition"></i>
                     <span class="text-xs font-semibold text-sky-700 dark:text-sky-400">LinkedIn</span>
                 </a>
-                <a href="#" id="share-tw" target="_blank" class="flex flex-col items-center gap-2 p-4 rounded-2xl bg-slate-50 dark:bg-white/10 hover:bg-slate-100 transition shadow-sm group">
+                <a href="#" id="share-tw" target="_blank" class="flex flex-col items-center gap-2 p-4 rounded-2xl bg-slate-50 dark:bg-white/10 hover:bg-slate-100 dark:hover:bg-white/20 transition shadow-sm group border border-transparent hover:border-slate-300">
                     <i class="fab fa-x-twitter text-3xl text-slate-900 dark:text-white group-hover:scale-110 transition"></i>
                     <span class="text-xs font-semibold text-slate-700 dark:text-gray-300">Twitter / X</span>
                 </a>
