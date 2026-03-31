@@ -158,10 +158,18 @@
                 <?php echo $row['descripcion']; ?>
             </p>
             
-            <!-- Precio y CTA -->
-            <div class="flex justify-between items-center mb-4">
-                <span class="text-3xl font-bold text-brand-accent">$<?php echo number_format($row['precio_desde']); ?></span>
-                <span class="text-white/60 text-sm i18n-srv-price-tax" data-i18n="srv-price-tax">+IVA</span>
+            <!-- Precio y CTA en USD -->
+            <div class="flex flex-col mb-4">
+                <?php
+                $usdPrice = "Consultar";
+                if (stripos($row['titulo'], 'landing') !== false) $usdPrice = "100";
+                elseif (stripos($row['titulo'], 'desarrollo') !== false) $usdPrice = "450"; // Promedio junior
+                elseif (stripos($row['titulo'], 'inventario') !== false) $usdPrice = "800";
+                ?>
+                <div class="flex items-baseline gap-1">
+                    <span class="text-sm font-semibold text-white/50 i18n-srv-from" data-i18n="srv-from">Desde</span>
+                    <span class="text-3xl font-bold text-brand-accent">USD $<?php echo $usdPrice; ?></span>
+                </div>
             </div>
             
             <!-- Botón con efecto directo a WhatsApp (Color conservado en hover) -->
