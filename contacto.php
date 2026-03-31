@@ -192,12 +192,12 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                 </div>
                 
                 <div>
-                    <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-date" data-i18n="ct-form-date">Fecha de la llamada <span class="text-red-500">*</span></label>
+                    <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-date" data-i18n="ct-form-date"></label>
                     <input type="date" id="agenda-fecha" name="fecha_llamada" required min="<?php echo date('Y-m-d'); ?>" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 bg-slate-50">
                 </div>
 
                 <div>
-                    <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-time" data-i18n="ct-form-time">Hora disponible <span class="text-red-500">*</span></label>
+                    <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-time" data-i18n="ct-form-time"></label>
                     <div id="agenda-hora-container" class="grid grid-cols-3 gap-2">
                         <!-- Se llenará dinámicamente -->
                     </div>
@@ -232,19 +232,19 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
 
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-name" data-i18n="ct-form-name">Nombre <span class="text-red-500">*</span></label>
+                        <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-name" data-i18n="ct-form-name"></label>
                         <input type="text" name="nombre" required minlength="2" maxlength="100" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-name-ph" placeholder="Tu nombre completo">
                     </div>
                     <div>
-                        <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-email" data-i18n="ct-form-email">Email <span class="text-red-500">*</span></label>
+                        <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-email" data-i18n="ct-form-email"></label>
                         <input type="email" name="email" required maxlength="120" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-email-ph" placeholder="tucorreo@ejemplo.com">
                     </div>
                     <div>
-                        <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-phone" data-i18n="ct-form-phone">Teléfono</label>
+                        <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-phone" data-i18n="ct-form-phone"></label>
                         <input type="tel" name="telefono" maxlength="25" inputmode="tel" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-phone-ph" placeholder="Opcional">
                     </div>
                     <div>
-                        <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-service" data-i18n="ct-form-service">Servicio de interés</label>
+                        <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-service" data-i18n="ct-form-service"></label>
                         <select name="servicio" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                             <option value="" class="i18n-ct-form-service-opt0" data-i18n="ct-form-service-opt0">Llamada de exploración</option>
                             <?php
@@ -261,7 +261,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                         </select>
                     </div>
                     <div class="md:col-span-2">
-                        <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-obj" data-i18n="ct-form-obj">Objetivo de la llamada <span class="text-red-500">*</span></label>
+                        <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-obj" data-i18n="ct-form-obj"></label>
                         <?php
                             $ctaParam = strtolower(trim((string)($_GET['cta'] ?? '')));
                             $agendaPrefill = $ctaParam === 'agenda'
@@ -275,7 +275,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                 <?php if ($contactRecaptchaEnabled): ?>
                 <div class="pt-4 flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-slate-100">
                     <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars(form_guard_recaptcha_site_key(), ENT_QUOTES, 'UTF-8'); ?>"></div>
-                    <button type="submit" id="agenda-submit" class="cta-primary inline-flex items-center justify-center px-8 py-4 rounded-2xl font-bold shadow-xl hover:scale-[1.03] transition-all w-full md:w-auto i18n-ct-form-submit" data-i18n="ct-form-submit">
+                    <button type="submit" id="agenda-submit" class="cta-primary inline-flex items-center justify-center px-8 py-4 rounded-2xl font-bold shadow-xl hover:scale-[1.03] transition-all w-full md:w-auto">
                         <i class="fas fa-calendar-check mr-2"></i> <span class="i18n-ct-form-submit" data-i18n="ct-form-submit">Confirmar llamada</span>
                     </button>
                 </div>
@@ -322,19 +322,19 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                 </div>
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-name" data-i18n="ct-mail-name">Nombre <span class="text-red-500">*</span></label>
+                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-name" data-i18n="ct-mail-name"></label>
                         <input type="text" name="nombre" required minlength="2" maxlength="100" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-name-ph" placeholder="Tu nombre completo">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-email" data-i18n="ct-mail-email">Email <span class="text-red-500">*</span></label>
+                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-email" data-i18n="ct-mail-email"></label>
                         <input type="email" name="email" required maxlength="120" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-email-ph" placeholder="tucorreo@ejemplo.com">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-phone" data-i18n="ct-mail-phone">Teléfono</label>
+                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-phone" data-i18n="ct-mail-phone"></label>
                         <input type="tel" name="telefono" maxlength="25" inputmode="tel" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-phone-ph" placeholder="Opcional">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-service" data-i18n="ct-mail-service">¿Qué servicio te interesa?</label>
+                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-service" data-i18n="ct-mail-service"></label>
                         <select name="servicio" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                             <option value="" class="i18n-ct-mail-service-opt0" data-i18n="ct-mail-service-opt0">Seleccionar...</option>
                             <?php
@@ -351,7 +351,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                         </select>
                     </div>
                     <div class="md:col-span-2">
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-msg" data-i18n="ct-mail-msg">Mensaje <span class="text-red-500">*</span></label>
+                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-msg" data-i18n="ct-mail-msg"></label>
                         <textarea name="mensaje" rows="8" required minlength="20" maxlength="2000" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" style="min-height:200px;" data-i18n-placeholder="ct-mail-msg-ph" placeholder="Cuéntanos los detalles y cómo podemos ayudarte."></textarea>
                     </div>
                 </div>
