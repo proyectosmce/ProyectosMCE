@@ -3060,8 +3060,9 @@
         }
         // apply nav data-i18n spans
         document.querySelectorAll('[data-i18n]').forEach(el => {
-            if (!el.querySelector('span')) {
+            if (!el.querySelector('.mce-i18n-target')) {
                 const span = document.createElement('span');
+                span.className = 'mce-i18n-target';
                 span.textContent = el.textContent.trim();
                 el.innerHTML = '';
                 el.appendChild(span);
@@ -3081,12 +3082,12 @@
             // Atributo data-i18n
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.dataset.i18n;
-            if (dict[key]) {
-                const span = el.querySelector('span');
-                if (span) span.textContent = dict[key];
-                else el.textContent = dict[key];
-            }
-        });
+                if (dict[key]) {
+                    const span = el.querySelector('.mce-i18n-target');
+                    if (span) span.textContent = dict[key];
+                    else el.textContent = dict[key];
+                }
+            });
             // Título de la pestaña
             const pageKey = document.documentElement?.dataset?.pageKey;
             if (pageKey && dict[pageKey]) {
