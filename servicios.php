@@ -164,10 +164,12 @@
                 <span class="text-white/60 text-sm i18n-srv-price-tax" data-i18n="srv-price-tax">+IVA</span>
             </div>
             
-            <!-- Botón con efecto -->
-            <a href="<?php echo app_url('contacto.php'); ?>?servicio=<?php echo urlencode($row['titulo']); ?>" 
+            <!-- Botón con mensaje de servicio inteligente -->
+            <a href="https://wa.me/573114125971?text=Hola%20Proyectos%20MCE!%20🚀%20Vengo%20de%20la%20web%20y%20deseo%20solicitar%20un%20presupuesto%20para%20el%20servicio%20de:%20*<?php echo urlencode($row['titulo']); ?>*" 
+               target="_blank"
+               rel="noopener"
                data-track-lead="<?php echo htmlspecialchars($row['titulo']); ?>"
-               class="mt-4 inline-flex items-center text-brand-accent group-hover:text-white font-semibold">
+               class="mt-4 inline-flex items-center text-brand-accent font-semibold transition-colors duration-200 hover:text-white">
                 <span class="i18n-srv-ask-quote" data-i18n="srv-ask-quote">Solicitar presupuesto</span>
                 <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-2 transition"></i>
             </a>
