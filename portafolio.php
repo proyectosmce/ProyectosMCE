@@ -224,6 +224,25 @@ $featuredProject = $projects[0] ?? null;
                     <img
                         src="<?php echo htmlspecialchars($featuredProject['image_url'], ENT_QUOTES, 'UTF-8'); ?>"
                         alt="<?php echo htmlspecialchars($featuredProject['titulo'], ENT_QUOTES, 'UTF-8'); ?>"
+    $featuredClient = trim((string) ($featuredProject['cliente'] ?? '')) ?: 'Cliente privado';
+    $featuredDate = null;
+    if (!empty($featuredProject['fecha_completado'])) {
+        $timestamp = strtotime((string) $featuredProject['fecha_completado']);
+        if ($timestamp) {
+            $featuredDate = date('d/m/Y', $timestamp);
+        }
+    }
+    $repoUrl = trim((string) ($featuredProject['url_repo'] ?? ''));
+    if ($repoUrl !== '' && preg_match('~^(https?://|/)~i', $repoUrl) !== 1) {
+        $repoUrl = 'https://' . $repoUrl;
+    }
+    ?>
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-100">
+        <div class="md:flex">
+            <div class="md:w-1/2">
+                    <img
+                        src="<?php echo htmlspecialchars($featuredProject['image_url'], ENT_QUOTES, 'UTF-8'); ?>"
+                        alt="<?php echo htmlspecialchars($featuredProject['titulo'], ENT_QUOTES, 'UTF-8'); ?>"
                         class="w-full h-64 md:h-full object-cover"
                         loading="lazy"
                     >
@@ -231,7 +250,10 @@ $featuredProject = $projects[0] ?? null;
             <div class="md:w-1/2 p-8 space-y-4">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-semibold uppercase tracking-wide text-blue-700 i18n-pf-featured-badge" data-i18n="pf-featured-badge">Proyecto destacado</span>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold"><?php echo htmlspecialchars($featuredProject['categoria'], ENT_QUOTES, 'UTF-8'); ?></span>
+                    <?php $fCatKey = getCategoryI18nKey($featuredProject['categoria']); ?>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold <?php echo $fCatKey ? 'i18n-'.$fCatKey : ''; ?>" <?php echo $fCatKey ? 'data-i18n="'.$fCatKey.'"' : ''; ?>>
+                        <?php echo htmlspecialchars($featuredProject['categoria'], ENT_QUOTES, 'UTF-8'); ?>
+                    </span>
                 </div>
                 <h3 class="text-2xl font-bold text-slate-900"><?php echo htmlspecialchars($featuredProject['titulo'], ENT_QUOTES, 'UTF-8'); ?></h3>
                     <p class="text-gray-700"><?php echo htmlspecialchars($featuredDescription, ENT_QUOTES, 'UTF-8'); ?></p>
@@ -243,7 +265,9 @@ $featuredProject = $projects[0] ?? null;
                     </div>
                     <div class="flex items-center gap-2">
                         <i class="fas fa-layer-group text-blue-600"></i>
-                        <span><?php echo htmlspecialchars($featuredProject['categoria'], ENT_QUOTES, 'UTF-8'); ?></span>
+                        <span <?php echo $fCatKey ? 'class="i18n-'.$fCatKey.'" data-i18n="'.$fCatKey.'"' : ''; ?>>
+                            <?php echo htmlspecialchars($featuredProject['categoria'], ENT_QUOTES, 'UTF-8'); ?>
+                        </span>
                     </div>
                     <?php if ($featuredDate): ?>
                         <div class="flex items-center gap-2">
@@ -307,10 +331,23 @@ $featuredProject = $projects[0] ?? null;
             <p class="text-gray-700 i18n-pf-filter-desc" data-i18n="pf-filter-desc">Explora por categoría o mira todo el portafolio.</p>
         </div>
         <div class="flex flex-wrap gap-2">
+            <?php
+            function getCategoryI18nKey($cat) {
+                $c = strtolower(trim($cat));
+                if (strpos($c, 'sistema') !== false) return 'pf-cat-sistemas';
+                if (strpos($c, 'commerce') !== false || strpos($c, 'tienda') !== false) return 'pf-cat-ecommerce';
+                if (strpos($c, 'landing') !== false) return 'pf-cat-landing';
+                return null;
+            }
+            ?>
             <button class="filter-btn active px-4 py-2 rounded-full bg-blue-600 text-white i18n-pf-filter-all" data-i18n="pf-filter-all" data-filter="all">Todos</button>
-            <?php foreach ($categories as $category): ?>
+            <?php foreach ($categories as $category): 
+                $catKey = getCategoryI18nKey($category);
+            ?>
                 <button class="filter-btn px-4 py-2 rounded-full bg-gray-200 hover:bg-gray-300" data-filter="<?php echo htmlspecialchars($category, ENT_QUOTES, 'UTF-8'); ?>">
-                    <?php echo htmlspecialchars($category, ENT_QUOTES, 'UTF-8'); ?>
+                    <span <?php echo $catKey ? 'class="i18n-'.$catKey.'" data-i18n="'.$catKey.'"' : ''; ?>>
+                        <?php echo htmlspecialchars($category, ENT_QUOTES, 'UTF-8'); ?>
+                    </span>
                 </button>
             <?php endforeach; ?>
         </div>
@@ -320,12 +357,12 @@ $featuredProject = $projects[0] ?? null;
 <!-- Grid de proyectos -->
 <section class="max-w-7xl mx-auto px-4 py-12" id="proyectos-grid">
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
         <?php if (!$projects): ?>
             <div class="md:col-span-2 lg:col-span-3 rounded-2xl border border-dashed border-gray-300 bg-white p-10 text-center text-gray-600 i18n-pf-no-projects" data-i18n="pf-no-projects">
                 Aún no hay proyectos publicados en el portafolio.
             </div>
         <?php endif; ?>
-
         <?php foreach ($projects as $project): ?>
             <?php
             $projectUrl = $project['public_url'];
@@ -357,15 +394,11 @@ $featuredProject = $projects[0] ?? null;
                 </a>
                 <div class="p-6 space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-blue-600 font-semibold"><?php echo htmlspecialchars($project['categoria'], ENT_QUOTES, 'UTF-8'); ?></span>
+                        <?php $pCatKey = getCategoryI18nKey($project['categoria']); ?>
+                        <span class="text-sm text-blue-600 font-semibold <?php echo $pCatKey ? 'i18n-'.$pCatKey : ''; ?>" <?php echo $pCatKey ? 'data-i18n="'.$pCatKey.'"' : ''; ?>>
+                            <?php echo htmlspecialchars($project['categoria'], ENT_QUOTES, 'UTF-8'); ?>
+                        </span>
                         <span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold i18n-pf-real-case" data-i18n="pf-real-case">Caso real</span>
-                    </div>
-                    <h3 class="text-xl font-bold">
-                        <a
-                            href="<?php echo htmlspecialchars($projectUrl, ENT_QUOTES, 'UTF-8'); ?>"
-                            <?php echo $isExternal ? 'target="_blank" rel="noopener"' : ''; ?>
-                            class="hover:text-blue-600 transition <?php echo $hasLink ? '' : 'pointer-events-none'; ?>"
-                        >
                     </div>
                     <h3 class="text-xl font-bold">
                         <a
