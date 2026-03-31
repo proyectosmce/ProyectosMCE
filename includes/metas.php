@@ -1,7 +1,7 @@
 <?php
 // includes/metas.php
-$meta_titulo = $meta_titulo ?? 'Proyectos MCE - Desarrollo Web Profesional y Sistemas a Medida';
-$meta_descripcion = $meta_descripcion ?? 'Expertos en desarrollo de software, sistemas web a medida y transformación digital en Colombia. Creamos soluciones robustas que impulsan tu negocio.';
+$meta_titulo = $meta_titulo ?? 'Proyectos MCE | Desarrollo de Software a Medida y Automatización';
+$meta_descripcion = $meta_descripcion ?? 'Transformamos empresas con software robusto: sistemas de inventario, CRM, portales de clientes y automatización de procesos. Software real para problemas reales en Colombia.';
 $meta_imagen = $meta_imagen ?? app_absolute_url('imag/MCE.jpg');
 ?>
 <!-- Meta tags básicos -->

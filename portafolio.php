@@ -169,6 +169,9 @@ $featuredProject = $projects[0] ?? null;
                     <a href="<?php echo app_url('contacto.php'); ?>?cta=agenda#agenda-llamada" class="inline-flex items-center px-5 py-3 rounded-xl border border-slate-900 text-slate-900 font-semibold hover:bg-slate-900 hover:text-white transition">
                         <i class="fas fa-phone-alt mr-2"></i> <span class="i18n-pf-case-btn-call" data-i18n="pf-case-btn-call">Agenda una llamada</span>
                     </a>
+                    <a href="<?php echo app_url('contacto.php'); ?>" class="inline-flex items-center px-5 py-3 rounded-xl bg-brand-accent text-brand-ink font-bold shadow-lg hover:scale-105 transition-transform i18n-pf-case-btn-diag" data-i18n="pf-case-btn-diag">
+                        ¿Quieres un sistema similar? → Agenda tu diagnóstico
+                    </a>
                 </div>
             </div>
             <div class="md:col-span-5 relative min-h-[260px] bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.35),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.22),transparent_40%),radial-gradient(circle_at_60%_80%,rgba(255,255,255,0.28),transparent_45%)]">

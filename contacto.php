@@ -167,45 +167,86 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
 
 <!-- Agenda de llamada -->
 <section id="agenda-llamada" class="max-w-7xl mx-auto px-4 mt-10 lg:mt-14">
-    <div class="grid lg:grid-cols-12 gap-8 items-start">
-        <div class="lg:col-span-5 space-y-4 bg-gradient-to-br from-brand-ink via-[#120c2c] to-brand-dark text-white rounded-2xl shadow-2xl p-8 border border-white/10">
-            <p class="text-sm font-semibold text-white/70 uppercase tracking-wide i18n-ct-call-label" data-i18n="ct-call-label">Coordina tu llamada</p>
-            <h2 class="text-3xl font-bold leading-tight i18n-ct-call-title" data-i18n="ct-call-title">Elige fecha y hora para hablar</h2>
-            <p class="text-white/80 i18n-ct-call-desc" data-i18n="ct-call-desc">Agendamos una llamada corta para revisar tu necesidad y darte siguientes pasos. Confirmamos por correo con el enlace de la reunión.</p>
-            <ul class="space-y-3 text-white/70">
-                <li class="flex items-start gap-3"><span class="mt-1 text-brand-accent"><i class="fas fa-clock"></i></span><span class="i18n-ct-call-b1" data-i18n="ct-call-b1">Duración estimada: 20 minutos.</span></li>
-                <li class="flex items-start gap-3"><span class="mt-1 text-brand-accent"><i class="fas fa-video"></i></span><span class="i18n-ct-call-b2" data-i18n="ct-call-b2">Formato: videollamada o teléfono, según prefieras.</span></li>
-                <li class="flex items-start gap-3"><span class="mt-1 text-brand-accent"><i class="fas fa-bolt"></i></span><span class="i18n-ct-call-b3" data-i18n="ct-call-b3">Confirmación rápida con link y agenda en tu correo.</span></li>
-            </ul>
+    <div class="mb-8 text-center lg:text-left">
+        <p class="text-sm font-semibold text-blue-600 uppercase tracking-wide i18n-ct-call-label" data-i18n="ct-call-label">Coordina tu llamada</p>
+        <h2 class="text-4xl font-black text-slate-900 leading-tight i18n-ct-call-title" data-i18n="ct-call-title">Elige fecha y hora para hablar</h2>
+        <p class="text-lg text-slate-600 mt-2 max-w-2xl i18n-ct-call-desc" data-i18n="ct-call-desc">Agregamos soluciones, no problemas. Reserva un espacio de 20 minutos para revisar tu proyecto.</p>
+    </div>
+
+    <form id="agenda-form" action="enviar-contacto.php" method="POST" class="space-y-8">
+        <input type="hidden" name="form_token" value="<?php echo htmlspecialchars($contactFormGuard['token'], ENT_QUOTES, 'UTF-8'); ?>">
+        <input type="hidden" name="form_context" value="agenda">
+        <input type="hidden" name="redirect_anchor" value="form-feedback">
+        <input type="hidden" name="lang" id="agenda-lang" value="es">
+        <div style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+            <label for="agenda_company_website">No llenes este campo</label>
+            <input id="agenda_company_website" type="text" name="company_website" tabindex="-1" autocomplete="off">
         </div>
 
-        <div class="lg:col-span-7 order-2 lg:order-1">
-            <form id="agenda-form" action="enviar-contacto.php" method="POST" class="bg-white p-8 rounded-2xl mce-rounded-panel shadow-2xl border border-slate-100 overflow-hidden space-y-6">
-                <input type="hidden" name="form_token" value="<?php echo htmlspecialchars($contactFormGuard['token'], ENT_QUOTES, 'UTF-8'); ?>">
-                <input type="hidden" name="form_context" value="agenda">
-                <input type="hidden" name="redirect_anchor" value="form-feedback">
-                <input type="hidden" name="lang" id="agenda-lang" value="es">
-                <div style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
-                    <label for="agenda_company_website">No llenes este campo</label>
-                    <input id="agenda_company_website" type="text" name="company_website" tabindex="-1" autocomplete="off">
+        <div class="grid lg:grid-cols-12 gap-8 items-start">
+            <!-- Columna Izquierda: Calendario y Horarios -->
+            <div class="lg:col-span-5 bg-white p-8 rounded-3xl shadow-xl border border-slate-100 space-y-6">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white font-bold text-sm">1</span>
+                    <h3 class="text-xl font-bold text-slate-900 i18n-ct-form-step1" data-i18n="ct-form-step1">Selecciona el momento</h3>
                 </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-date" data-i18n="ct-form-date">Fecha de la llamada <span class="text-red-500">*</span></label>
+                    <input type="date" id="agenda-fecha" name="fecha_llamada" required min="<?php echo date('Y-m-d'); ?>" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 bg-slate-50">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-time" data-i18n="ct-form-time">Hora disponible <span class="text-red-500">*</span></label>
+                    <div id="agenda-hora-container" class="grid grid-cols-3 gap-2">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                    <select id="agenda-hora" name="hora_llamada" required class="hidden">
+                    </select>
+                    <p id="agenda-hora-msg" class="text-sm text-red-600 mt-2 hidden i18n-ct-form-time-msg" data-i18n="ct-form-time-msg">No hay horarios disponibles para esta fecha.</p>
+                </div>
+
+                <div class="pt-4 border-t border-slate-100">
+                    <label class="block text-gray-700 mb-3 font-semibold i18n-ct-form-pref" data-i18n="ct-form-pref">¿Prefieres videollamada o teléfono?</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="relative flex flex-col items-center justify-center p-4 border border-slate-200 rounded-2xl cursor-pointer hover:bg-blue-50 transition-colors group">
+                            <input type="radio" name="modo_llamada" value="video" class="absolute top-3 right-3 h-4 w-4 text-blue-600" checked>
+                            <i class="fas fa-video text-2xl text-slate-400 group-hover:text-blue-600 mb-2"></i>
+                            <span class="text-xs font-bold text-slate-600 uppercase tracking-tighter i18n-ct-form-pref-video-short" data-i18n="ct-form-pref-video-short">Video</span>
+                        </label>
+                        <label class="relative flex flex-col items-center justify-center p-4 border border-slate-200 rounded-2xl cursor-pointer hover:bg-blue-50 transition-colors group">
+                            <input type="radio" name="modo_llamada" value="telefono" class="absolute top-3 right-3 h-4 w-4 text-blue-600">
+                            <i class="fas fa-phone text-2xl text-slate-400 group-hover:text-blue-600 mb-2"></i>
+                            <span class="text-xs font-bold text-slate-600 uppercase tracking-tighter i18n-ct-form-pref-phone-short" data-i18n="ct-form-pref-phone-short">Teléfono</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Datos -->
+            <div class="lg:col-span-7 bg-white p-8 rounded-3xl shadow-xl border border-slate-100 space-y-6">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white font-bold text-sm">2</span>
+                    <h3 class="text-xl font-bold text-slate-900 i18n-ct-form-step2" data-i18n="ct-form-step2">Tus datos y proyecto</h3>
+                </div>
+
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-name" data-i18n="ct-form-name">Nombre <span class="text-red-500">*</span></label>
-                        <input type="text" name="nombre" required minlength="2" maxlength="100" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-name-ph" placeholder="Tu nombre completo">
+                        <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-name" data-i18n="ct-form-name">Nombre <span class="text-red-500">*</span></label>
+                        <input type="text" name="nombre" required minlength="2" maxlength="100" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-name-ph" placeholder="Tu nombre completo">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-email" data-i18n="ct-form-email">Email <span class="text-red-500">*</span></label>
-                        <input type="email" name="email" required maxlength="120" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-email-ph" placeholder="tucorreo@ejemplo.com">
+                        <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-email" data-i18n="ct-form-email">Email <span class="text-red-500">*</span></label>
+                        <input type="email" name="email" required maxlength="120" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-email-ph" placeholder="tucorreo@ejemplo.com">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-phone" data-i18n="ct-form-phone">Teléfono</label>
-                        <input type="tel" name="telefono" maxlength="25" inputmode="tel" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-phone-ph" placeholder="Opcional">
+                        <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-phone" data-i18n="ct-form-phone">Teléfono</label>
+                        <input type="tel" name="telefono" maxlength="25" inputmode="tel" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-phone-ph" placeholder="Opcional">
                     </div>
                     <div>
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-service" data-i18n="ct-form-service">Servicio de interés (opcional)</label>
-                        <select name="servicio" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                            <option value="" class="i18n-ct-form-service-opt0" data-i18n="ct-form-service-opt0">Solo llamada de exploración</option>
+                        <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-service" data-i18n="ct-form-service">Servicio de interés</label>
+                        <select name="servicio" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                            <option value="" class="i18n-ct-form-service-opt0" data-i18n="ct-form-service-opt0">Llamada de exploración</option>
                             <?php
                             $servicios = $conn->query("SELECT titulo FROM servicios WHERE LOWER(titulo) <> 'tiendas online' ORDER BY orden");
                             while ($s = $servicios->fetch_assoc()) {
@@ -219,62 +260,33 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                             ?>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-date" data-i18n="ct-form-date">Fecha de la llamada <span class="text-red-500">*</span></label>
-                        <input type="date" id="agenda-fecha" name="fecha_llamada" required min="<?php echo date('Y-m-d'); ?>" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                    </div>
-                    <div>
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-time" data-i18n="ct-form-time">Hora disponible <span class="text-red-500">*</span></label>
-                        <select id="agenda-hora" name="hora_llamada" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                        </select>
-                    </div>
                     <div class="md:col-span-2">
-                        <p id="agenda-hora-msg" class="text-sm text-red-600 mt-1 hidden i18n-ct-form-time-msg" data-i18n="ct-form-time-msg">No hay horarios disponibles para esta fecha.</p>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-pref" data-i18n="ct-form-pref">¿Prefieres videollamada o teléfono?</label>
-                        <div class="flex flex-wrap gap-4">
-                            <label class="inline-flex items-center gap-2 text-sm font-semibold text-gray-700">
-                                <input type="radio" name="modo_llamada" value="video" class="h-4 w-4 text-blue-600" checked>
-                                <span class="i18n-ct-form-pref-video" data-i18n="ct-form-pref-video">Videollamada (te enviamos el enlace)</span>
-                            </label>
-                            <label class="inline-flex items-center gap-2 text-sm font-semibold text-gray-700">
-                                <input type="radio" name="modo_llamada" value="telefono" class="h-4 w-4 text-blue-600">
-                                <span class="i18n-ct-form-pref-phone" data-i18n="ct-form-pref-phone">Solo llamada telefónica</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-gray-800 mb-2 font-semibold i18n-ct-form-obj" data-i18n="ct-form-obj">Objetivo de la llamada <span class="text-red-500">*</span></label>
+                        <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-obj" data-i18n="ct-form-obj">Objetivo de la llamada <span class="text-red-500">*</span></label>
                         <?php
                             $ctaParam = strtolower(trim((string)($_GET['cta'] ?? '')));
                             $agendaPrefill = $ctaParam === 'agenda'
-                                ? "Hola, quiero agendar una llamada de asesoría.\n\nTema a revisar:\nObjetivos que quiero lograr:\nFecha y hora preferidas:\nPreferencia (teléfono o videollamada):\n¿Enlace o documentos relevantes?:"
+                                ? "Hola, quiero agendar una llamada de asesoría.\n\nTema a revisar:\nObjetivos que quiero lograr:"
                                 : '';
                         ?>
-                        <textarea name="mensaje" rows="8" required minlength="10" maxlength="2000" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" style="min-height:200px;" data-i18n-placeholder="ct-form-obj-ph" placeholder="Cuéntanos en breve qué necesitas revisar en la llamada."><?php echo htmlspecialchars($agendaPrefill, ENT_QUOTES, 'UTF-8'); ?></textarea>
+                        <textarea name="mensaje" rows="4" required minlength="10" maxlength="2000" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-obj-ph" placeholder="Cuéntanos en breve qué necesitas revisar."><?php echo htmlspecialchars($agendaPrefill, ENT_QUOTES, 'UTF-8'); ?></textarea>
                     </div>
                 </div>
 
                 <?php if ($contactRecaptchaEnabled): ?>
-                <div class="pt-2">
+                <div class="pt-4 flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-slate-100">
                     <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars(form_guard_recaptcha_site_key(), ENT_QUOTES, 'UTF-8'); ?>"></div>
-                </div>
-                <?php else: ?>
-                <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 i18n-ct-form-recaptcha-missing" data-i18n="ct-form-recaptcha-missing">
-                    reCAPTCHA es obligatorio, pero no está configurado correctamente en este entorno.
-                </div>
-                <?php endif; ?>
-
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <p class="text-sm text-gray-600 i18n-ct-form-note" data-i18n="ct-form-note">Confirmaremos tu llamada por correo con el enlace de reunión.</p>
-                    <button type="submit" id="agenda-submit" <?php echo $contactRecaptchaEnabled ? '' : 'disabled'; ?> class="cta-primary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold shadow-lg transition w-full sm:w-auto disabled:cursor-not-allowed disabled:bg-slate-400 i18n-ct-form-submit" data-i18n="ct-form-submit">
+                    <button type="submit" id="agenda-submit" class="cta-primary inline-flex items-center justify-center px-8 py-4 rounded-2xl font-bold shadow-xl hover:scale-[1.03] transition-all w-full md:w-auto i18n-ct-form-submit" data-i18n="ct-form-submit">
                         <i class="fas fa-calendar-check mr-2"></i> <span class="i18n-ct-form-submit" data-i18n="ct-form-submit">Confirmar llamada</span>
                     </button>
                 </div>
-            </form>
+                <?php else: ?>
+                <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-700 i18n-ct-form-recaptcha-missing" data-i18n="ct-form-recaptcha-missing">
+                    reCAPTCHA es obligatorio.
+                </div>
+                <?php endif; ?>
+            </div>
         </div>
-    </div>
+    </form>
 </section>
 
 <!-- Separador visual -->
@@ -416,9 +428,10 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
     const horaSelect = document.getElementById('agenda-hora');
     const fechaInput = document.getElementById('agenda-fecha');
     const horaMsg = document.getElementById('agenda-hora-msg');
+    const horaContainer = document.getElementById('agenda-hora-container');
 
     const renderHours = (dateStr) => {
-        if (!horaSelect || !fechaInput) return;
+        if (!horaSelect || !fechaInput || !horaContainer) return;
         const booked = bookedSlots[dateStr] || [];
         let options = availableHours.filter(h => !booked.includes(h));
         const todayStr = new Date().toISOString().slice(0, 10);
@@ -427,19 +440,37 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
             const currentHHMM = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
             options = options.filter(h => h > currentHHMM);
         }
+        
         horaSelect.innerHTML = '';
+        horaContainer.innerHTML = '';
+        
         if (!options.length) {
             horaSelect.disabled = true;
             horaMsg?.classList.remove('hidden');
             return;
         }
+        
         horaSelect.disabled = false;
         horaMsg?.classList.add('hidden');
+        
         options.forEach(h => {
+            // Sincronizar select oculto
             const opt = document.createElement('option');
             opt.value = h;
             opt.textContent = h;
             horaSelect.appendChild(opt);
+
+            // Crear botón visual
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = h;
+            btn.className = 'py-2 px-3 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:border-blue-600 hover:bg-blue-50 transition-all slot-btn';
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600'));
+                btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+                horaSelect.value = h;
+            });
+            horaContainer.appendChild(btn);
         });
     };
     if (fechaInput) {
