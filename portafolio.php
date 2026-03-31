@@ -283,8 +283,11 @@ $featuredProject = $projects[0] ?? null;
                         <span class="i18n-pf-featured-more" data-i18n="pf-featured-more">Ver más proyectos</span>
                     </a>
 
+                    <?php 
+                    $featuredShareUrl = $featuredHasLink ? ($featuredIsExternal ? $featuredUrl : app_url($featuredUrl)) : app_url('portafolio.php');
+                    ?>
                     <button 
-                        onclick="mceShare('<?php echo addslashes($featuredProject['titulo']); ?>', '<?php echo addslashes($featuredUrl !== '#' ? $featuredUrl : app_url('portafolio.php')); ?>')"
+                        onclick="mceShare('<?php echo addslashes($featuredProject['titulo']); ?>', '<?php echo addslashes($featuredShareUrl); ?>')"
                         class="border border-slate-300 text-slate-600 px-6 py-3 rounded-lg hover:bg-slate-50 transition flex items-center gap-2"
                     >
                         <i class="fas fa-share-alt"></i> <span class="i18n-pf-share" data-i18n="pf-share">Compartir</span>
@@ -377,6 +380,10 @@ $featuredProject = $projects[0] ?? null;
                     <div class="flex justify-between items-center gap-4 pt-1">
                         <span class="text-gray-500 text-sm"><?php echo htmlspecialchars($clientLabel, ENT_QUOTES, 'UTF-8'); ?></span>
                         <div class="flex items-center gap-3">
+                            <?php 
+                            // Aseguramos que la URL sea absoluta para compartir
+                            $shareUrl = $hasLink ? (isExternalProjectUrl($projectUrl) ? $projectUrl : app_url($projectUrl)) : app_url('portafolio.php');
+                            ?>
                             <?php if ($hasLink): ?>
                                 <a
                                     href="<?php echo htmlspecialchars($projectUrl, ENT_QUOTES, 'UTF-8'); ?>"
@@ -390,7 +397,7 @@ $featuredProject = $projects[0] ?? null;
                             <?php endif; ?>
                             
                             <button 
-                                onclick="mceShare('<?php echo addslashes($project['titulo']); ?>', '<?php echo addslashes($hasLink ? $projectUrl : app_url('portafolio.php')); ?>')"
+                                onclick="mceShare('<?php echo addslashes($project['titulo']); ?>', '<?php echo addslashes($shareUrl); ?>')"
                                 class="inline-flex items-center text-slate-500 hover:text-blue-600 font-semibold transition"
                                 title="Compartir proyecto"
                             >
