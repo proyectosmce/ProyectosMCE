@@ -174,47 +174,47 @@
                 <?php elseif (strpos($titLow, 'desarrollo') !== false): ?>
                     <div class="flex items-center justify-between py-1 border-b border-white/10">
                         <div>
-                            <span class="text-xs font-bold text-white/50 uppercase tracking-wider">Básico</span>
-                            <p class="text-[11px] text-white/40 leading-tight">Landing page / sitio (hasta 5 secciones, responsive)</p>
+                            <span class="text-xs font-bold text-[#7C3AED] uppercase tracking-wider">Básico</span>
+                            <p class="text-[11px] text-white/60 leading-tight">Landing page / sitio (hasta 5 secciones, responsive)</p>
                         </div>
                         <span class="text-lg font-black text-[#7C3AED] whitespace-nowrap ml-2">$100 <span class="text-xs font-semibold">USD</span></span>
                     </div>
                     <div class="flex items-center justify-between py-1 border-b border-white/10">
                         <div>
-                            <span class="text-xs font-bold text-brand-accent uppercase tracking-wider">Medio</span>
-                            <p class="text-[11px] text-white/40 leading-tight">Panel admin, gestión de contenido, roles básicos</p>
+                            <span class="text-xs font-bold text-[#7C3AED] uppercase tracking-wider">Medio</span>
+                            <p class="text-[11px] text-white/60 leading-tight">Panel admin, gestión de contenido, roles básicos</p>
                         </div>
-                        <span class="text-lg font-black text-brand-accent whitespace-nowrap ml-2">$450 <span class="text-xs font-semibold">USD</span></span>
+                        <span class="text-lg font-black text-[#7C3AED] whitespace-nowrap ml-2">$450 <span class="text-xs font-semibold">USD</span></span>
                     </div>
                     <div class="flex items-center justify-between py-1">
                         <div>
-                            <span class="text-xs font-bold text-green-400 uppercase tracking-wider">Avanzado</span>
-                            <p class="text-[11px] text-white/40 leading-tight">Módulos personalizados, APIs, reportes avanzados</p>
+                            <span class="text-xs font-bold text-[#7C3AED] uppercase tracking-wider">Avanzado</span>
+                            <p class="text-[11px] text-white/60 leading-tight">Módulos personalizados, APIs, reportes avanzados</p>
                         </div>
-                        <span class="text-lg font-black text-green-400 whitespace-nowrap ml-2">$800 <span class="text-xs font-semibold">USD</span></span>
+                        <span class="text-lg font-black text-[#7C3AED] whitespace-nowrap ml-2">$800 <span class="text-xs font-semibold">USD</span></span>
                     </div>
 
                 <?php elseif (strpos($titLow, 'inventario') !== false): ?>
                     <div class="flex items-center justify-between py-1 border-b border-white/10">
                         <div>
-                            <span class="text-xs font-bold text-white/50 uppercase tracking-wider">Básico</span>
-                            <p class="text-[11px] text-white/40 leading-tight">Control de stock, productos, alertas</p>
+                            <span class="text-xs font-bold text-[#7C3AED] uppercase tracking-wider">Básico</span>
+                            <p class="text-[11px] text-white/60 leading-tight">Control de stock, productos, alertas</p>
                         </div>
                         <span class="text-lg font-black text-[#7C3AED] whitespace-nowrap ml-2">$350 <span class="text-xs font-semibold">USD</span></span>
                     </div>
                     <div class="flex items-center justify-between py-1 border-b border-white/10">
                         <div>
-                            <span class="text-xs font-bold text-brand-accent uppercase tracking-wider">Medio</span>
-                            <p class="text-[11px] text-white/40 leading-tight">+ Ventas, clientes, facturación básica</p>
+                            <span class="text-xs font-bold text-[#7C3AED] uppercase tracking-wider">Medio</span>
+                            <p class="text-[11px] text-white/60 leading-tight">+ Ventas, clientes, facturación básica</p>
                         </div>
-                        <span class="text-lg font-black text-brand-accent whitespace-nowrap ml-2">$600 <span class="text-xs font-semibold">USD</span></span>
+                        <span class="text-lg font-black text-[#7C3AED] whitespace-nowrap ml-2">$600 <span class="text-xs font-semibold">USD</span></span>
                     </div>
                     <div class="flex items-center justify-between py-1">
                         <div>
-                            <span class="text-xs font-bold text-green-400 uppercase tracking-wider">Avanzado</span>
-                            <p class="text-[11px] text-white/40 leading-tight">+ Garantías, compras, precios mayorista, cierres</p>
+                            <span class="text-xs font-bold text-[#7C3AED] uppercase tracking-wider">Avanzado</span>
+                            <p class="text-[11px] text-white/60 leading-tight">+ Garantías, compras, precios mayorista, cierres</p>
                         </div>
-                        <span class="text-lg font-black text-green-400 whitespace-nowrap ml-2">$900 <span class="text-xs font-semibold">USD</span></span>
+                        <span class="text-lg font-black text-[#7C3AED] whitespace-nowrap ml-2">$900 <span class="text-xs font-semibold">USD</span></span>
                     </div>
 
                 <?php else: ?>
