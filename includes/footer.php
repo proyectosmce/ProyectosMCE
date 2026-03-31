@@ -2665,7 +2665,7 @@
         const elems = (cls, key) => document.querySelectorAll('.i18n-' + key) || [];
 
         // Helper para obtener traducciones dinámicamente
-        function getI18n(key) {
+        window.getMceI18n = function(key) {
             const lang = window.mceCurrentLang || 'es';
             return (t[lang] && t[lang][key]) ? t[lang][key] : (t['es'][key] || key);
         }
@@ -3143,9 +3143,10 @@
         window.mceShare = (title, url) => {
             currentShareUrl = url;
             const modal = document.getElementById('mce-share-modal');
+            if (!modal) return;
             
-            // Mensaje traducido dinámicamente
-            let shareMsg = getI18n('share-message') || `Mira este proyecto de Proyectos MCE: {title} - {url}`;
+            // Usar la función global para obtener el mensaje traducido
+            let shareMsg = (window.getMceI18n ? window.getMceI18n('share-message') : null) || `Mira este proyecto de Proyectos MCE: ${title} - ${url}`;
             shareMsg = shareMsg.replace('{title}', title).replace('{url}', url);
             
             // Configurar enlaces de redes sociales
@@ -3154,16 +3155,23 @@
             document.getElementById('share-li').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
             document.getElementById('share-tw').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMsg)}`;
             
-            // Botón de copiar traducido
-            document.getElementById('copy-text').innerText = getI18n('share-copy');
+            // Actualizar el texto del botón de copiar según idioma
+            const copyBtnText = document.getElementById('copy-text');
+            if (copyBtnText && window.getMceI18n) {
+                copyBtnText.innerText = window.getMceI18n('share-copy');
+            }
+            
             modal.classList.remove('hidden');
         };
 
         window.mceCopyLink = () => {
+            if (!navigator.clipboard) return;
             navigator.clipboard.writeText(currentShareUrl).then(() => {
                 const btnText = document.getElementById('copy-text');
-                const successText = getI18n('share-copied');
-                const originalText = getI18n('share-copy');
+                if (!btnText || !window.getMceI18n) return;
+                
+                const successText = window.getMceI18n('share-copied');
+                const originalText = window.getMceI18n('share-copy');
                 
                 btnText.innerText = successText;
                 setTimeout(() => { btnText.innerText = originalText; }, 2000);
