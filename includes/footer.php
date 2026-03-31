@@ -539,6 +539,26 @@
                 { text: "🚀 Get a quote", action: "quote" },
                 { text: "📂 View portfolio", action: "portfolio" },
                 { text: "📱 Talk to advisor", action: "whatsapp" }
+            ],
+            fr: [
+                { text: "🚀 Obtenir un devis", action: "quote" },
+                { text: "📂 Voir le portfolio", action: "portfolio" },
+                { text: "📱 Parler à un conseiller", action: "whatsapp" }
+            ],
+            de: [
+                { text: "🚀 Angebot anfragen", action: "quote" },
+                { text: "📂 Portfolio ansehen", action: "portfolio" },
+                { text: "📱 Mit Berater sprechen", action: "whatsapp" }
+            ],
+            pt: [
+                { text: "🚀 Solicitar orçamento", action: "quote" },
+                { text: "📂 Ver portfólio", action: "portfolio" },
+                { text: "📱 Falar com consultor", action: "whatsapp" }
+            ],
+            it: [
+                { text: "🚀 Richiedi preventivo", action: "quote" },
+                { text: "📂 Vedi il portfolio", action: "portfolio" },
+                { text: "📱 Parla con un consulente", action: "whatsapp" }
             ]
         };
 

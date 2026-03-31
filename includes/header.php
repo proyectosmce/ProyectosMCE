@@ -236,14 +236,14 @@ $titleKey = "meta-title-" . $pageSlug;
         }
         .assistant-panel {
             position: fixed;
-            bottom: 180px;
+            bottom: 160px;
             right: 18px;
             width: 320px;
-            max-height: 420px;
+            height: 400px;
             background: #0d1b2e;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 18px 36px rgba(0,0,0,0.45);
-            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border-radius: 16px;
             display: none;
             flex-direction: column;
             overflow: hidden;
