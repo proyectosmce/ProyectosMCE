@@ -159,7 +159,7 @@
             </p>
             
             <!-- Precio y CTA en USD -->
-            <div class="flex flex-col mb-6 bg-white/5 p-4 rounded-2xl border border-white/10">
+            <div class="flex flex-col mb-6 bg-white/5 p-4 rounded-2xl border border-white/10 shadow-sm">
                 <?php
                 $usdPrice = "Consultar";
                 if (stripos($row['titulo'], 'landing') !== false) $usdPrice = "100";
@@ -167,10 +167,10 @@
                 elseif (stripos($row['titulo'], 'inventario') !== false) $usdPrice = "800";
                 ?>
                 <div class="flex flex-col">
-                    <span class="text-xs font-black uppercase tracking-widest text-white mb-1 i18n-srv-from" data-i18n="srv-from">Desde</span>
+                    <span class="text-xs font-black uppercase tracking-widest text-[#7C3AED] mb-1 i18n-srv-from" data-i18n="srv-from">Desde</span>
                     <div class="flex items-baseline gap-2">
-                        <span class="text-4xl font-black text-brand-accent tracking-tighter">$<?php echo $usdPrice; ?></span>
-                        <span class="text-2xl font-bold text-white">USD</span>
+                        <span class="text-4xl font-black text-[#7C3AED] tracking-tighter">$<?php echo $usdPrice; ?></span>
+                        <span class="text-2xl font-bold text-[#7C3AED]">USD</span>
                     </div>
                 </div>
             </div>
