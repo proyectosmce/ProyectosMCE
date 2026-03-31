@@ -241,11 +241,11 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                     </div>
                     <div>
                         <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-phone" data-i18n="ct-form-phone"></label>
-                        <input type="tel" name="telefono" maxlength="25" inputmode="tel" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-phone-ph" placeholder="Opcional">
+                        <input type="tel" name="telefono" required maxlength="25" inputmode="tel" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-phone-ph" placeholder="Tu número de teléfono">
                     </div>
                     <div>
                         <label class="block text-gray-700 mb-2 font-semibold i18n-ct-form-service" data-i18n="ct-form-service"></label>
-                        <select name="servicio" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <select name="servicio" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                             <option value="" class="i18n-ct-form-service-opt0" data-i18n="ct-form-service-opt0">Llamada de exploración</option>
                             <?php
                             $servicios = $conn->query("SELECT titulo FROM servicios WHERE LOWER(titulo) <> 'tiendas online' ORDER BY orden");
@@ -331,11 +331,11 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                     </div>
                     <div>
                         <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-phone" data-i18n="ct-mail-phone"></label>
-                        <input type="tel" name="telefono" maxlength="25" inputmode="tel" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-phone-ph" placeholder="Opcional">
+                        <input type="tel" name="telefono" required maxlength="25" inputmode="tel" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" data-i18n-placeholder="ct-form-phone-ph" placeholder="Tu número de teléfono">
                     </div>
                     <div>
                         <label class="block text-gray-800 mb-2 font-semibold i18n-ct-mail-service" data-i18n="ct-mail-service"></label>
-                        <select name="servicio" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <select name="servicio" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                             <option value="" class="i18n-ct-mail-service-opt0" data-i18n="ct-mail-service-opt0">Seleccionar...</option>
                             <?php
                             $servicios = $conn->query("SELECT titulo FROM servicios WHERE LOWER(titulo) <> 'tiendas online' ORDER BY orden");
