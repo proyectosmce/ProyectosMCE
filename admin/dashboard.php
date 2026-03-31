@@ -145,12 +145,29 @@ $lastPayments = $conn->query("
     LIMIT 5
 ");
 
+// Asegurar que la tabla de Leads existe (Lead Tracking)
+$conn->query("CREATE TABLE IF NOT EXISTS activity_leads (
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    project_name VARCHAR(255), 
+    page_url VARCHAR(255), 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+
 // Consultar Leads (WhatsApp clicks) de hoy
+$leads_hoy = 0;
+$pop_project = 'Ninguno';
+
 $stmt_leads = $conn->query("SELECT COUNT(*) as total FROM activity_leads WHERE created_at >= CURDATE()");
-$leads_hoy = $stmt_leads->fetch_assoc()['total'] ?? 0;
+if ($stmt_leads) {
+    $leads_row = $stmt_leads->fetch_assoc();
+    if ($leads_row) $leads_hoy = (int)$leads_row['total'];
+}
 
 $stmt_pop = $conn->query("SELECT project_name, COUNT(*) as clics FROM activity_leads WHERE created_at >= CURDATE() GROUP BY project_name ORDER BY clics DESC LIMIT 1");
-$pop_project = $stmt_pop->fetch_assoc()['project_name'] ?? 'Ninguno';
+if ($stmt_pop) {
+    $pop_row = $stmt_pop->fetch_assoc();
+    if ($pop_row) $pop_project = $pop_row['project_name'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
