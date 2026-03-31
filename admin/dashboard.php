@@ -225,22 +225,40 @@ $lastPayments = $conn->query("
                                 </button>
                             </form>
 
-                            <!-- Alerta de VOZ REPETITIVA - Web Speech API -->
+                            <!-- Alerta de VOZ REPETITIVA MASCULINA - Web Speech API -->
                             <script>
                                 window.addEventListener('DOMContentLoaded', () => {
                                     const speakAlert = () => {
                                         const msg = new SpeechSynthesisUtterance('Líder, desbloquea la página pública');
                                         msg.lang = 'es-ES';
-                                        msg.pitch = 0.8; 
-                                        msg.rate = 0.9;
+                                        msg.pitch = 0.5; // Muy grave para que suene masculino y robótico
+                                        msg.rate = 1.1;  // Un toque más rápido
+                                        
+                                        // Intentar buscar una voz masculina instalada en el navegador
+                                        const voices = window.speechSynthesis.getVoices();
+                                        const maleVoice = voices.find(v => (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('google español')) && v.lang.startsWith('es'));
+                                        if (maleVoice) msg.voice = maleVoice;
+                                        
                                         window.speechSynthesis.speak(msg);
                                     };
                                     
-                                    // Hablar la primera vez
-                                    setTimeout(speakAlert, 500);
+                                    // Esperar a que las voces carguen antes de hablar la primera vez
+                                    window.speechSynthesis.onvoiceschanged = () => {
+                                        if (!window.alreadySpelling) {
+                                            window.alreadySpelling = true;
+                                            setTimeout(speakAlert, 500);
+                                            window.adminVoiceInterval = setInterval(speakAlert, 5000);
+                                        }
+                                    };
                                     
-                                    // Repetir cada 5 segundos
-                                    window.adminVoiceInterval = setInterval(speakAlert, 5000);
+                                    // Lanzar de respaldo por si onvoiceschanged ya pasó
+                                    setTimeout(() => {
+                                        if(!window.alreadySpelling) {
+                                            window.alreadySpelling = true;
+                                            speakAlert();
+                                            window.adminVoiceInterval = setInterval(speakAlert, 5000);
+                                        }
+                                    }, 1000);
                                 });
                             </script>
                         </div>
