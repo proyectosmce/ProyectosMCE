@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 if (!headers_sent()) { header('Content-Type: text/html; charset=UTF-8'); }
 $pageSlug = basename($_SERVER["PHP_SELF"], ".php");
@@ -34,6 +34,7 @@ $titleKey = "meta-title-" . $pageSlug;
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 container: {
                     center: true,
@@ -73,6 +74,13 @@ $titleKey = "meta-title-" . $pageSlug;
                 },
             },
         };
+
+        // Lógica inmediata para evitar parpadeo blanco
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
     </script>
     
     <!-- Font Awesome para iconos -->
@@ -304,6 +312,41 @@ $titleKey = "meta-title-" . $pageSlug;
         }
         /* Ocultar select nativo del selector de idiomas del sitio (desktop) */
         #site-lang { display: none; }
+
+        /* Estilos Dark Mode personalizados */
+        .dark body { background-color: #030712 !important; color: #f3f4f6 !important; }
+        .dark .bg-white { background-color: #111827 !important; }
+        .dark .text-gray-700, .dark .text-slate-900, .dark .text-slate-800 { color: #f3f4f6 !important; }
+        .dark .text-slate-500, .dark .text-gray-500, .dark .text-gray-600 { color: #9ca3af !important; }
+        .dark .bg-gray-50 { background-color: #030712 !important; }
+        .dark .border-gray-200, .dark .border-e2e8f0 { border-color: #374151 !important; }
+        .dark nav { border-bottom: 1px solid #1f2937; }
+        .dark .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important; }
+        
+        /* Switch de tema */
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .dark .theme-toggle {
+            background: #1f2937;
+            color: #fbbf24;
+            border-color: #374151;
+        }
+        .theme-toggle:hover { transform: scale(1.05); }
+
+        /* Ajustes para testimonios y portafolio en dark */
+        .dark .bg-gray-100 { background-color: #1f2937 !important; }
+        .dark .text-gray-900 { color: #ffffff !important; }
     </style>
     <!-- Favicon -->
     <link rel="icon" href="<?php echo $faviconIcoUrl; ?>" sizes="any">
@@ -349,10 +392,20 @@ $titleKey = "meta-title-" . $pageSlug;
                             <option value="pt">Português</option>
                             <option value="it">Italiano</option>
                         </select>
-                        <button id="site-lang-toggle" class="lang-toggle" type="button" style="background:#ffffffd9;color:#0f172a;border-color:#e2e8f0;">
-                            <img id="site-lang-flag" src="https://flagcdn.com/w20/es.png" alt="Español">
-                            <span id="site-lang-label">Español</span>
-                        </button>
+
+                        <div class="flex items-center gap-2">
+                            <button id="site-lang-toggle" class="lang-toggle" type="button" style="background:#ffffffd9;color:#0f172a;border-color:#e2e8f0;">
+                                <img id="site-lang-flag" src="https://flagcdn.com/w20/es.png" alt="Español">
+                                <span id="site-lang-label">Español</span>
+                            </button>
+
+                            <!-- Botón Dark Mode Desktop -->
+                            <button id="theme-toggle" class="theme-toggle" title="Cambiar tema">
+                                <i class="fas fa-moon dark:hidden"></i>
+                                <i class="fas fa-sun hidden dark:block"></i>
+                            </button>
+                        </div>
+
                         <div class="lang-list" id="site-lang-list">
                             <div class="lang-option" data-lang="es" data-flag="es" data-label="Español">
                                 <img src="https://flagcdn.com/w20/es.png" alt="Español"><span style="color:#c1121f;">Español</span>
@@ -379,10 +432,19 @@ $titleKey = "meta-title-" . $pageSlug;
                 <!-- Controles móviles: idioma + menú -->
                 <div class="md:hidden flex items-center gap-3">
                     <div class="relative">
-                        <button id="site-lang-toggle-mobile" class="lang-toggle" type="button" style="background:#ffffffd9;color:#0f172a;border-color:#e2e8f0;">
-                            <img id="site-lang-flag-mobile" src="https://flagcdn.com/w20/es.png" alt="Español">
-                            <span id="site-lang-label-mobile">Español</span>
-                        </button>
+                        <div class="flex items-center gap-2">
+                             <button id="site-lang-toggle-mobile" class="lang-toggle" type="button" style="background:#ffffffd9;color:#0f172a;border-color:#e2e8f0;">
+                                <img id="site-lang-flag-mobile" src="https://flagcdn.com/w20/es.png" alt="Español">
+                                <span id="site-lang-label-mobile">Español</span>
+                            </button>
+
+                            <!-- Botón Dark Mode Móvil -->
+                            <button id="theme-toggle-mobile" class="theme-toggle" title="Cambiar tema">
+                                <i class="fas fa-moon dark:hidden text-sm"></i>
+                                <i class="fas fa-sun hidden dark:block text-sm"></i>
+                            </button>
+                        </div>
+
                         <div class="lang-list" id="site-lang-list-mobile">
                             <div class="lang-option" data-lang="es" data-flag="es" data-label="Español">
                                 <img src="https://flagcdn.com/w20/es.png" alt="Español"><span style="color:#c1121f;">Español</span>
@@ -424,9 +486,3 @@ $titleKey = "meta-title-" . $pageSlug;
     </nav>
     
     <main class="min-h-screen">
-
-
-
-
-
-

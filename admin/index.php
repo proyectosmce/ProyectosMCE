@@ -79,6 +79,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['admin_id'] = $user['id'];
                     $_SESSION['admin_username'] = $user['username'];
                     admin_login_record_attempt($attemptKey, true);
+
+                    // Alerta de Seguridad por Correo
+                    $to = "proyectosmceaa@gmail.com";
+                    $subject = "ALERTA: Inicio de sesion en Panel MCE";
+                    $message = "Se ha detectado un inicio de sesion en el Panel Administrativo.\n\nUsuario: " . $user['username'] . "\nIP: " . ($_SERVER['REMOTE_ADDR'] ?? 'Desconocida') . "\nFecha: " . date('Y-m-d H:i:s') . "\n\nSi no fuiste tu, por favor cambia tu contraseña de inmediato.";
+                    $headers = "From: seguridad@proyectosmce.com";
+                    @mail($to, $subject, $message, $headers);
+
                     header('Location: dashboard.php');
                     exit;
                 }

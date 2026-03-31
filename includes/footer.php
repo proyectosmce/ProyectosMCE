@@ -1,4 +1,4 @@
-﻿    </main>
+    </main>
     
     <!-- Footer profesional -->
     <footer class="bg-gradient-to-t from-slate-950 via-slate-900 to-slate-900 text-white mt-16 mce-rounded-footer">
@@ -2975,6 +2975,48 @@
         $recaptchaJsUrl  = app_url('assets/js/mce-recaptcha.js') . '?v=' . (is_file($recaptchaJsPath) ? filemtime($recaptchaJsPath) : time());
     ?>
     <script src="<?php echo $recaptchaJsUrl; ?>"></script>
+    
+    <!-- Lógica de Dark Mode y Lead Tracking -->
+    <script>
+    (() => {
+        // --- GESTIÓN DE DARK MODE ---
+        const themeToggles = [document.getElementById('theme-toggle'), document.getElementById('theme-toggle-mobile')];
+        
+        const toggleTheme = () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        };
+
+        themeToggles.forEach(btn => {
+            if (btn) btn.addEventListener('click', toggleTheme);
+        });
+
+        // --- LEAD TRACKING (WHATSAPP) ---
+        document.addEventListener('click', (e) => {
+            const waLink = e.target.closest('a[href*="wa.me"], a[href*="whatsapp.com"]');
+            if (waLink) {
+                // Intentar encontrar el nombre del proyecto más cercano (si estamos en detalles o portafolio)
+                let projectName = "General";
+                
+                // Si la página tiene un título de proyecto específico
+                const pageTitle = document.querySelector('h1')?.innerText || "General";
+                projectName = pageTitle;
+
+                // Enviar vía AJAX al servidor
+                fetch('<?php echo app_url("ajax/log-lead.php"); ?>', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `project=${encodeURIComponent(projectName)}&url=${encodeURIComponent(window.location.href)}`
+                }).catch(err => console.error("Lead tracking error:", err));
+            }
+        });
+    })();
+    </script>
 </body>
 </html>
 

@@ -144,6 +144,13 @@ $lastPayments = $conn->query("
     ORDER BY pp.fecha_pago DESC, pp.id DESC
     LIMIT 5
 ");
+
+// Consultar Leads (WhatsApp clicks) de hoy
+$stmt_leads = $conn->query("SELECT COUNT(*) as total FROM activity_leads WHERE created_at >= CURDATE()");
+$leads_hoy = $stmt_leads->fetch_assoc()['total'] ?? 0;
+
+$stmt_pop = $conn->query("SELECT project_name, COUNT(*) as clics FROM activity_leads WHERE created_at >= CURDATE() GROUP BY project_name ORDER BY clics DESC LIMIT 1");
+$pop_project = $stmt_pop->fetch_assoc()['project_name'] ?? 'Ninguno';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -414,29 +421,29 @@ $lastPayments = $conn->query("
                         </div>
                     </a>
 
-                    <a href="testimonios.php" class="relative block overflow-hidden rounded-lg border border-amber-100 bg-white p-6 shadow transition hover:-translate-y-1 hover:shadow-lg">
-                        <div class="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-amber-50 to-transparent"></div>
-                        <div class="relative flex items-center justify-between">
-                            <div>
-                                <p class="text-gray-500">Pendientes</p>
-                                <div class="mt-1 flex items-center gap-3">
-                                    <p class="text-3xl font-bold <?php echo $testimonios_pendientes > 0 ? 'text-amber-700' : 'text-green-600'; ?>">
-                                        <?php echo $testimonios_pendientes; ?>
-                                    </p>
-                                    <?php if ($testimonios_pendientes > 0): ?>
-                                        <span class="relative flex h-3 w-3">
-                                            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
-                                            <span class="relative inline-flex h-3 w-3 rounded-full bg-amber-500"></span>
-                                        </span>
-                                    <?php endif; ?>
-                                </div>
-                                <p class="mt-2 text-sm <?php echo $testimonios_pendientes > 0 ? 'text-amber-700' : 'text-green-700'; ?>">
-                                    <?php echo $testimonios_pendientes > 0 ? 'Esperando revision' : 'Todo aprobado'; ?>
-                                </p>
-                            </div>
-                            <i class="fas fa-comment-dots text-4xl <?php echo $testimonios_pendientes > 0 ? 'text-amber-500' : 'text-green-500'; ?>"></i>
                         </div>
                     </a>
+
+                    <!-- Tarjeta de Lead Tracking (WhatsApp) -->
+                    <div class="relative block overflow-hidden rounded-lg border border-emerald-100 bg-white p-6 shadow transition hover:-translate-y-1 hover:shadow-lg">
+                        <div class="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-emerald-50 to-transparent"></div>
+                        <div class="relative flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500">Interés (WhatsApp)</p>
+                                <div class="mt-1 flex items-center gap-3">
+                                    <p class="text-3xl font-bold text-emerald-700">
+                                        <?php echo $leads_hoy; ?>
+                                    </p>
+                                    <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">clics hoy</span>
+                                </div>
+                                <p class="mt-2 text-sm text-gray-600">
+                                    <i class="fas fa-star text-amber-400 mr-1"></i>
+                                    Top: <span class="font-bold text-emerald-800"><?php echo admin_escape($pop_project); ?></span>
+                                </p>
+                            </div>
+                            <i class="fab fa-whatsapp text-4xl text-emerald-500"></i>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Agenda de llamadas -->
