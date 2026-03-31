@@ -422,6 +422,9 @@ $featuredProject = $projects[0] ?? null;
                 </div>
             </div>
         <?php endforeach; ?>
+    </div>
+</section>
+
 <!-- CTA final -->
 <section class="max-w-7xl mx-auto px-4 pb-16">
     <div class="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-800 text-white rounded-2xl mce-rounded-panel p-10 shadow-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
