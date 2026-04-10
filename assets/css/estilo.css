@@ -99,39 +99,23 @@ h1, h2, h3, h4, h5, h6,
 .mce-whatsapp-float {
     isolation: isolate;
     will-change: transform, box-shadow;
-    animation: mceWhatsappBreath 3.2s ease-in-out infinite;
+    /* Se elimina el halo animado para que el botón se vea como un solo círculo */
+    animation: none;
 }
 
 .mce-whatsapp-float::before {
-    content: "";
-    position: absolute;
-    inset: -10px;
-    border-radius: 9999px;
-    background: radial-gradient(circle, rgba(74, 222, 128, 0.28) 0%, rgba(74, 222, 128, 0) 68%);
-    opacity: 0;
-    transform: scale(0.92);
-    z-index: -2;
-    pointer-events: none;
-    animation: mceWhatsappHalo 3.2s ease-out infinite;
+    content: none;
 }
 
 .mce-whatsapp-float::after {
-    content: "";
-    position: absolute;
-    inset: 5px;
-    border-radius: 9999px;
-    background: radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.38) 0%, rgba(255, 255, 255, 0.16) 18%, rgba(255, 255, 255, 0) 44%);
-    opacity: 0.42;
-    pointer-events: none;
-    z-index: -1;
-    animation: mceWhatsappReflection 3.2s ease-in-out infinite;
+    content: none;
 }
 
 .mce-whatsapp-float__icon {
     display: block;
     position: relative;
     z-index: 1;
-    animation: mceWhatsappIconBreath 3.2s ease-in-out infinite;
+    animation: none;
 }
 
 /* Llamada animada */
