@@ -154,7 +154,7 @@
             <h3 class="text-2xl font-bold mb-3 group-hover:text-brand-primary transition <?php echo $i18nKey ? 'i18n-' . $i18nKey . '-title' : ''; ?>" <?php echo $i18nKey ? 'data-i18n="'.$i18nKey.'-title"' : ''; ?>>
                 <?php echo $row['titulo']; ?>
             </h3>
-            <p class="text-white/75 mb-4 line-clamp-2 <?php echo $i18nKey ? 'i18n-' . $i18nKey . '-desc' : ''; ?>" <?php echo $i18nKey ? 'data-i18n="'.$i18nKey.'-desc"' : ''; ?>>
+            <p class="text-blue-300 mb-4 line-clamp-2 <?php echo $i18nKey ? 'i18n-' . $i18nKey . '-desc' : ''; ?>" <?php echo $i18nKey ? 'data-i18n="'.$i18nKey.'-desc"' : ''; ?>>
                 <?php echo $row['descripcion']; ?>
             </p>
             
