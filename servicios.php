@@ -326,15 +326,34 @@
     const modalIcon = modal.querySelector('.srv-modal__icon');
     const closeEls = modal.querySelectorAll('[data-close-modal]');
     let lastFocus = null;
+    let lastCard = null;
+
+    const translateBlock = (root) => {
+        const dict = window.mceTranslations || {};
+        root.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.dataset.i18n;
+            if (dict[key]) {
+                const span = el.querySelector('.mce-i18n-target');
+                if (span) span.textContent = dict[key];
+                else el.textContent = dict[key];
+            }
+        });
+        root.querySelectorAll('[data-i18n-key]').forEach(el => {
+            const key = el.dataset.i18nKey;
+            if (dict[key]) el.innerHTML = dict[key];
+        });
+    };
 
     const openModal = (card) => {
         const template = card.querySelector('.srv-modal-template');
         if (!template) return;
+        lastCard = card;
         lastFocus = document.activeElement;
         modalTitle.textContent = card.querySelector('h3')?.textContent || '';
         modalSummary.textContent = card.querySelector('.srv-summary-price')?.textContent || '';
         modalBody.innerHTML = template.innerHTML;
         modalIcon.innerHTML = card.querySelector('.text-5xl')?.innerHTML || '';
+        translateBlock(modal);
         modal.classList.add('is-active');
         modal.setAttribute('aria-hidden', 'false');
         modal.querySelector('.srv-modal__close')?.focus();
@@ -364,6 +383,13 @@
     });
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal();
+    });
+
+    // Re-traducir modal abierto al cambiar idioma
+    window.addEventListener('mce-lang-changed', () => {
+        if (modal.classList.contains('is-active') && lastCard) {
+            openModal(lastCard);
+        }
     });
 })();
 </script>
