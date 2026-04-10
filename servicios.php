@@ -141,7 +141,23 @@
             $slug = strtolower(trim($row['titulo'] ?? ''));
             $i18nKey = $i18nMap[$slug] ?? null;
         ?>
-        <div class="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-soft hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden animate-on-scroll p-8 text-white">
+        <?php
+            // Precio resumen para vista compacta
+            $titLow = strtolower($row['titulo']);
+            if (strpos($titLow, 'landing') !== false) {
+                $priceSummary = 'Desde $100 USD';
+            } elseif (strpos($titLow, 'desarrollo') !== false) {
+                $priceSummary = 'Desde $100 USD';
+            } elseif (strpos($titLow, 'inventario') !== false) {
+                $priceSummary = 'Desde $350 USD';
+            } else {
+                $priceSummary = 'Consultar';
+            }
+        ?>
+        <div class="srv-card collapsed group bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-soft hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden animate-on-scroll p-8 text-white"
+             role="button"
+             tabindex="0"
+             aria-expanded="false">
             <!-- Barra decorativa superior -->
             <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-primary to-brand-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
             
@@ -154,16 +170,19 @@
             <h3 class="text-2xl font-bold mb-3 group-hover:text-brand-primary transition <?php echo $i18nKey ? 'i18n-' . $i18nKey . '-title' : ''; ?>" <?php echo $i18nKey ? 'data-i18n="'.$i18nKey.'-title"' : ''; ?>>
                 <?php echo $row['titulo']; ?>
             </h3>
-            <p class="text-blue-300 mb-4 line-clamp-2 <?php echo $i18nKey ? 'i18n-' . $i18nKey . '-desc' : ''; ?>" <?php echo $i18nKey ? 'data-i18n="'.$i18nKey.'-desc"' : ''; ?>>
+            
+            <!-- Resumen compacto -->
+            <div class="srv-summary text-slate-200 font-semibold mb-4">
+                <?php echo $priceSummary; ?>
+            </div>
+
+            <p class="srv-extra text-blue-300 mb-4 line-clamp-2 <?php echo $i18nKey ? 'i18n-' . $i18nKey . '-desc' : ''; ?>" <?php echo $i18nKey ? 'data-i18n="'.$i18nKey.'-desc"' : ''; ?>>
                 <?php echo $row['descripcion']; ?>
             </p>
             
             <!-- Precios por nivel -->
-            <div class="flex flex-col mb-6 bg-white/5 p-4 rounded-2xl border border-white/10 shadow-sm space-y-2">
-                <?php
-                $titLow = strtolower($row['titulo']);
-                if (strpos($titLow, 'landing') !== false):
-                ?>
+            <div class="srv-extra flex flex-col mb-6 bg-white/5 p-4 rounded-2xl border border-white/10 shadow-sm space-y-2">
+                <?php if (strpos($titLow, 'landing') !== false): ?>
                     <div class="flex items-baseline gap-2">
                         <span class="text-xs font-black uppercase tracking-widest text-[#7C3AED] mr-1">Desde</span>
                         <span class="text-4xl font-black text-[#7C3AED] tracking-tighter">$100</span>
@@ -230,10 +249,16 @@
                target="_blank"
                rel="noopener"
                data-track-lead="<?php echo htmlspecialchars($row['titulo']); ?>"
-               class="mt-4 inline-flex items-center text-brand-accent font-semibold transition-colors duration-300">
+               class="srv-extra mt-4 inline-flex items-center text-brand-accent font-semibold transition-colors duration-300">
                 <span class="i18n-srv-ask-quote" data-i18n="srv-ask-quote">Solicitar presupuesto</span>
                 <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-2 transition"></i>
             </a>
+
+            <!-- Botón para volver al modo compacto -->
+            <button type="button" class="srv-back mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 border border-white/15 text-white/90 font-semibold transition hover:bg-white/15">
+                <i class="fas fa-arrow-left"></i>
+                <span>Volver atrás</span>
+            </button>
         </div>
         <?php endwhile; ?>
     </div>
@@ -266,5 +291,37 @@
         </div>
     </div>
 </section>
+
+<script>
+(() => {
+    const cards = document.querySelectorAll('.srv-card');
+    cards.forEach(card => {
+        const backBtn = card.querySelector('.srv-back');
+
+        const collapse = (evt) => {
+            if (evt) evt.stopPropagation();
+            card.classList.add('collapsed');
+            card.setAttribute('aria-expanded', 'false');
+        };
+
+        const expand = () => {
+            card.classList.remove('collapsed');
+            card.setAttribute('aria-expanded', 'true');
+        };
+
+        card.addEventListener('click', expand);
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                expand();
+            }
+        });
+        backBtn?.addEventListener('click', collapse);
+
+        // inicio colapsado
+        collapse();
+    });
+})();
+</script>
 
 <?php include 'includes/footer.php'; ?>

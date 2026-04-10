@@ -375,6 +375,23 @@ h1, h2, h3, h4, h5, h6,
     animation-duration: 2.2s, 1.8s;
 }
 
+/* Tarjetas de servicios: modo compacto/expandido */
+.srv-card {
+    cursor: pointer;
+}
+.srv-card .srv-back {
+    display: none;
+}
+.srv-card.collapsed .srv-extra {
+    display: none !important;
+}
+.srv-card:not(.collapsed) .srv-summary {
+    display: none;
+}
+.srv-card:not(.collapsed) .srv-back {
+    display: inline-flex;
+}
+
 /* --------- Ajustes móviles --------- */
 @media (max-width: 640px) {
     /* Botones flotantes: misma estética, sin barra blanca y sin solaparse */
