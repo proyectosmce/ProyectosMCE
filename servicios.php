@@ -364,12 +364,14 @@
         modal.setAttribute('aria-hidden', 'false');
         modal.querySelector('.srv-modal__close')?.focus();
         document.documentElement.classList.add('no-scroll');
+        document.body?.classList.add('no-scroll');
     };
 
     const closeModal = () => {
         modal.classList.remove('is-active');
         modal.setAttribute('aria-hidden', 'true');
         document.documentElement.classList.remove('no-scroll');
+        document.body?.classList.remove('no-scroll');
         if (lastFocus) lastFocus.focus();
     };
 
