@@ -140,6 +140,15 @@
         while ($row = $result->fetch_assoc()):
             $slug = strtolower(trim($row['titulo'] ?? ''));
             $i18nKey = $i18nMap[$slug] ?? null;
+            // Descripciones más profesionales por servicio (sin tocar la base de datos)
+            $descOverrides = [
+                'desarrollo web a medida' => 'Plataformas y portales hechos a la medida de tus procesos, con arquitectura escalable, seguridad y analítica desde el día uno.',
+                'sistemas de inventario'  => 'Suite de inventario y operaciones con trazabilidad, alertas de stock, ventas y reportes en tiempo real.',
+                'landing pages'           => 'Landing pages orientadas a conversión: copy persuasivo, captura de leads y medición completa (analytics y píxeles).',
+            ];
+            if (isset($descOverrides[$slug])) {
+                $row['descripcion'] = $descOverrides[$slug];
+            }
         ?>
         <?php
             // Precio resumen para vista compacta
@@ -191,27 +200,27 @@
                             <span class="text-4xl font-black text-[#7C3AED] tracking-tighter">$100</span>
                             <span class="text-2xl font-bold text-[#7C3AED]">USD</span>
                         </div>
-                        <p class="srv-level-desc">Página profesional para campañas o presentación de servicios.</p>
+                        <p class="srv-level-desc">Landing enfocada en campañas con copy persuasivo, formulario de leads y tracking listo para anuncios.</p>
 
                     <?php elseif (strpos($titLow, 'desarrollo') !== false): ?>
                         <div class="flex items-center justify-between py-1 border-b border-white/10">
                             <div>
                                 <span class="text-xs font-bold text-[#7C3AED] uppercase tracking-wider">Básico</span>
-                                <p class="srv-level-desc">Landing page / sitio (hasta 5 secciones, responsive)</p>
+                                <p class="srv-level-desc">Sitio/landing de hasta 5 secciones, responsive y optimizado para captar leads.</p>
                             </div>
                             <span class="text-lg font-black text-[#7C3AED] whitespace-nowrap ml-2">$100 <span class="text-xs font-semibold">USD</span></span>
                         </div>
                         <div class="flex items-center justify-between py-1 border-b border-white/10">
                             <div>
                                 <span class="text-xs font-bold text-[#7C3AED] uppercase tracking-wider">Medio</span>
-                                <p class="srv-level-desc">Panel admin, gestión de contenido, roles básicos</p>
+                                <p class="srv-level-desc">Panel admin, gestión de contenido, roles y autenticación básica con analítica.</p>
                             </div>
                             <span class="text-lg font-black text-[#7C3AED] whitespace-nowrap ml-2">$450 <span class="text-xs font-semibold">USD</span></span>
                         </div>
                         <div class="flex items-center justify-between py-1">
                             <div>
                                 <span class="text-xs font-bold text-[#7C3AED] uppercase tracking-wider">Avanzado</span>
-                                <p class="srv-level-desc">Módulos personalizados, APIs, reportes avanzados</p>
+                                <p class="srv-level-desc">Módulos a medida, APIs, flujos de negocio y reportes avanzados listos para escalar.</p>
                             </div>
                             <span class="text-lg font-black text-[#7C3AED] whitespace-nowrap ml-2">$800 <span class="text-xs font-semibold">USD</span></span>
                         </div>
@@ -220,21 +229,21 @@
                         <div class="flex items-center justify-between py-1 border-b border-white/10">
                             <div>
                                 <span class="text-xs font-bold text-[#7C3AED] uppercase tracking-wider">Básico</span>
-                                <p class="srv-level-desc">Control de stock, productos, alertas</p>
+                                <p class="srv-level-desc">Catálogo, control de stock, kardex y alertas automáticas.</p>
                             </div>
                             <span class="text-lg font-black text-[#7C3AED] whitespace-nowrap ml-2">$350 <span class="text-xs font-semibold">USD</span></span>
                         </div>
                         <div class="flex items-center justify-between py-1 border-b border-white/10">
                             <div>
                                 <span class="text-xs font-bold text-[#7C3AED] uppercase tracking-wider">Medio</span>
-                                <p class="srv-level-desc">+ Ventas, clientes, facturación básica</p>
+                                <p class="srv-level-desc">Ventas y clientes, facturación básica y punto de venta ligero.</p>
                             </div>
                             <span class="text-lg font-black text-[#7C3AED] whitespace-nowrap ml-2">$600 <span class="text-xs font-semibold">USD</span></span>
                         </div>
                         <div class="flex items-center justify-between py-1">
                             <div>
                                 <span class="text-xs font-bold text-[#7C3AED] uppercase tracking-wider">Avanzado</span>
-                                <p class="srv-level-desc">+ Garantías, compras, precios mayorista, cierres</p>
+                                <p class="srv-level-desc">Compras, garantías, costos y precios mayorista con cierres y reportes gerenciales.</p>
                             </div>
                             <span class="text-lg font-black text-[#7C3AED] whitespace-nowrap ml-2">$900 <span class="text-xs font-semibold">USD</span></span>
                         </div>
