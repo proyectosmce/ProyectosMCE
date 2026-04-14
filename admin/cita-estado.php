@@ -90,12 +90,16 @@ if (file_exists($secretPath)) {
 $defaultSmtpEmail = 'contacto@proyectosmce.com';
 $smtpUser = $SMTP_USER ?? getenv('SMTP_USER') ?? $defaultSmtpEmail;
 $smtpPass = $SMTP_PASS ?? getenv('SMTP_PASS') ?? '';
-$smtpHost = $SMTP_HOST ?? getenv('SMTP_HOST') ?? 'smtp.gmail.com';
+$smtpHost = $SMTP_HOST ?? getenv('SMTP_HOST') ?? 'smtp.hostinger.com';
 $smtpPort = (int) ($SMTP_PORT ?? getenv('SMTP_PORT') ?? 587);
 $smtpSecure = strtolower((string) ($SMTP_SECURE ?? getenv('SMTP_SECURE') ?? 'tls'));
 $smtpFromEmail = $SMTP_FROM_EMAIL ?? getenv('SMTP_FROM_EMAIL') ?? $defaultSmtpEmail;
 $smtpFromName = $SMTP_FROM_NAME ?? getenv('SMTP_FROM_NAME') ?? 'Proyectos MCE';
 $smtpDebug = (string) ($SMTP_DEBUG ?? getenv('SMTP_DEBUG') ?? '0') === '1';
+
+if (stripos((string) $smtpFromEmail, 'gmail.com') !== false) {
+    $smtpFromEmail = $defaultSmtpEmail;
+}
 
 if (stripos($smtpHost, 'gmail.com') !== false) {
     $smtpPass = str_replace(' ', '', $smtpPass);
@@ -141,6 +145,7 @@ function admin_send_cita_email(array $cita, string $estadoNuevo, array $smtp): v
         }
 
         $mail->CharSet = 'UTF-8';
+        $mail->Sender = $smtp['from_email'];
         $mail->setFrom($smtp['from_email'], $smtp['from_name']);
         $mail->addAddress($destino, $cita['nombre'] ?? '');
         if (!empty($smtp['from_email'])) {

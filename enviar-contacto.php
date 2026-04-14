@@ -16,13 +16,18 @@ if (file_exists($secretPath)) {
 $defaultSmtpEmail = 'contacto@proyectosmce.com';
 $smtpUser = $SMTP_USER ?? getenv('SMTP_USER') ?? $defaultSmtpEmail;
 $smtpPass = $SMTP_PASS ?? getenv('SMTP_PASS') ?? '';
-$smtpHost = $SMTP_HOST ?? getenv('SMTP_HOST') ?? 'smtp.gmail.com';
+$smtpHost = $SMTP_HOST ?? getenv('SMTP_HOST') ?? 'smtp.hostinger.com';
 $smtpPort = (int) ($SMTP_PORT ?? getenv('SMTP_PORT') ?? 587);
 $smtpSecure = strtolower((string) ($SMTP_SECURE ?? getenv('SMTP_SECURE') ?? 'tls'));
 $smtpFromEmail = $SMTP_FROM_EMAIL ?? getenv('SMTP_FROM_EMAIL') ?? $defaultSmtpEmail;
 $smtpFromName = $SMTP_FROM_NAME ?? getenv('SMTP_FROM_NAME') ?? 'Proyectos MCE';
 $smtpToEmail = $SMTP_TO_EMAIL ?? getenv('SMTP_TO_EMAIL') ?? $defaultSmtpEmail;
 $smtpDebug = (string) ($SMTP_DEBUG ?? getenv('SMTP_DEBUG') ?? '0') === '1';
+
+// Evita remitentes heredados de Gmail cuando queremos estandarizar el dominio de marca.
+if (stripos((string) $smtpFromEmail, 'gmail.com') !== false) {
+    $smtpFromEmail = $defaultSmtpEmail;
+}
 
 // Helper para generar enlace de reunión (Teams por defecto)
 function mce_generate_meet_link(): string
@@ -650,6 +655,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             }
              
+            $mail->Sender = $smtpFromEmail;
             $mail->setFrom($smtpFromEmail, $smtpFromName);
             $mail->addAddress($smtpToEmail);
             if (!empty($email)) {
@@ -793,7 +799,7 @@ HTML;
                 $mail->clearReplyTos();
 
                 $mail->addAddress($emailMail, $nombreMail);
-                $mail->addReplyTo($smtpUser, $brand);
+                $mail->addReplyTo($smtpFromEmail, $brand);
                 $mail->Subject = $clientSubject;
                 $mail->Body = <<<HTML
 <!DOCTYPE html>

@@ -105,7 +105,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                             <div>
                                 <p class="font-semibold i18n-ct-mail" data-i18n="ct-mail">Correo</p>
                                 <p class="text-sm text-white/70">
-                                    <a class="hover:underline" href="mailto:proyectosmceaa@gmail.com">proyectosmceaa@gmail.com</a>
+                                    <a class="hover:underline" href="mailto:contacto@proyectosmce.com">contacto@proyectosmce.com</a>
                                 </p>
                             </div>
                         </li>
@@ -392,7 +392,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                     <a href="https://wa.me/573114125971?text=Hola%21%20Quiero%20consultar%20por%20un%20proyecto" target="_blank" rel="noopener" class="inline-flex items-center justify-center px-4 py-3 rounded-xl bg-green-500 text-white font-semibold shadow hover:bg-green-600 transition">
                         <i class="fab fa-whatsapp mr-2"></i> WhatsApp
                     </a>
-                    <a href="mailto:proyectosmceaa@gmail.com" class="inline-flex items-center justify-center px-4 py-3 rounded-xl border border-slate-200 text-slate-900 font-semibold hover:bg-slate-50 transition">
+                    <a href="mailto:contacto@proyectosmce.com" class="inline-flex items-center justify-center px-4 py-3 rounded-xl border border-slate-200 text-slate-900 font-semibold hover:bg-slate-50 transition">
                         <i class="fas fa-envelope mr-2"></i> Correo
                     </a>
                 </div>
@@ -595,3 +595,4 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
 </script>
 
 <?php include 'includes/footer.php'; ?>
+

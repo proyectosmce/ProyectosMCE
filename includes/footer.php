@@ -70,8 +70,8 @@
                     <h4 class="text-xl font-semibold transition-colors duration-300 hover:bg-gradient-to-r hover:from-emerald-300 hover:to-purple-300 hover:text-transparent hover:bg-clip-text"><span data-i18n="nav-contact">Contacto</span></h4>
                     <ul class="space-y-3 text-gray-300">
                         <li>
-                            <a href="mailto:proyectosmceaa@gmail.com" class="inline-flex items-center hover:text-white transition">
-                                <i class="fas fa-envelope mr-2 text-blue-300"></i><span>proyectosmceaa@gmail.com</span>
+                            <a href="mailto:contacto@proyectosmce.com" class="inline-flex items-center hover:text-white transition">
+                                <i class="fas fa-envelope mr-2 text-blue-300"></i><span>contacto@proyectosmce.com</span>
                             </a>
                         </li>
                         <li>
@@ -438,12 +438,12 @@
             it: 'Testimonianze: feedback dei clienti sul nostro lavoro e risultati.'
         }},
         { keywords: ['contacto', 'contact', 'contactar'], answers: {
-            es: 'Contacto: sección con formulario, WhatsApp y correo. Tel: +57 311 412 5971 · Email: proyectosmceaa@gmail.com',
-            en: 'Contact: form plus WhatsApp and email. Phone: +57 311 412 5971 · Email: proyectosmceaa@gmail.com',
-            fr: 'Contact : formulaire, WhatsApp et email. Tél : +57 311 412 5971 · Email : proyectosmceaa@gmail.com',
-            de: 'Kontakt: Formular, WhatsApp und E-Mail. Tel: +57 311 412 5971 · E-Mail: proyectosmceaa@gmail.com',
-            pt: 'Contato: formulário, WhatsApp e e-mail. Tel: +57 311 412 5971 · Email: proyectosmceaa@gmail.com',
-            it: 'Contatti: form, WhatsApp ed email. Tel: +57 311 412 5971 · Email: proyectosmceaa@gmail.com'
+            es: 'Contacto: sección con formulario, WhatsApp y correo. Tel: +57 311 412 5971 · Email: contacto@proyectosmce.com',
+            en: 'Contact: form plus WhatsApp and email. Phone: +57 311 412 5971 · Email: contacto@proyectosmce.com',
+            fr: 'Contact : formulaire, WhatsApp et email. Tél : +57 311 412 5971 · Email : contacto@proyectosmce.com',
+            de: 'Kontakt: Formular, WhatsApp und E-Mail. Tel: +57 311 412 5971 · E-Mail: contacto@proyectosmce.com',
+            pt: 'Contato: formulário, WhatsApp e e-mail. Tel: +57 311 412 5971 · Email: contacto@proyectosmce.com',
+            it: 'Contatti: form, WhatsApp ed email. Tel: +57 311 412 5971 · Email: contacto@proyectosmce.com'
         }},
         { keywords: ['whatsapp', 'wa'], answers: {
             es: 'Nuestro WhatsApp: https://wa.me/573114125971',
@@ -502,12 +502,12 @@
             it: 'Progetti MCE è il nostro brand. MCE sono le iniziali di Marlon Carabalí, programmatore e lead.'
         }},
         { keywords: ['contacto', 'correo', 'email', 'whatsapp'], answers: {
-            es: 'Escríbenos a proyectosmceaa@gmail.com o por WhatsApp al +57 311 412 5971.',
-            en: 'Write to us at proyectosmceaa@gmail.com or WhatsApp +57 311 412 5971.',
-            fr: 'Écrivez-nous à proyectosmceaa@gmail.com ou WhatsApp +57 311 412 5971.',
-            de: 'Schreib uns an proyectosmceaa@gmail.com oder per WhatsApp +57 311 412 5971.',
-            pt: 'Fale conosco em proyectosmceaa@gmail.com ou WhatsApp +57 311 412 5971.',
-            it: 'Scrivici a proyectosmceaa@gmail.com o su WhatsApp +57 311 412 5971.'
+            es: 'Escríbenos a contacto@proyectosmce.com o por WhatsApp al +57 311 412 5971.',
+            en: 'Write to us at contacto@proyectosmce.com or WhatsApp +57 311 412 5971.',
+            fr: 'Écrivez-nous à contacto@proyectosmce.com ou WhatsApp +57 311 412 5971.',
+            de: 'Schreib uns an contacto@proyectosmce.com oder per WhatsApp +57 311 412 5971.',
+            pt: 'Fale conosco em contacto@proyectosmce.com ou WhatsApp +57 311 412 5971.',
+            it: 'Scrivici a contacto@proyectosmce.com o su WhatsApp +57 311 412 5971.'
         }},
     ];
 
@@ -3337,3 +3337,4 @@
     </script>
 </body>
 </html>
+

@@ -460,12 +460,16 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
     $defaultSmtpEmail = 'contacto@proyectosmce.com';
     $smtpUser = $SMTP_USER ?? getenv('SMTP_USER') ?? $defaultSmtpEmail;
     $smtpPass = $SMTP_PASS ?? getenv('SMTP_PASS') ?? '';
-    $smtpHost = $SMTP_HOST ?? getenv('SMTP_HOST') ?? 'smtp.gmail.com';
+    $smtpHost = $SMTP_HOST ?? getenv('SMTP_HOST') ?? 'smtp.hostinger.com';
     $smtpPort = (int) ($SMTP_PORT ?? getenv('SMTP_PORT') ?? 587);
     $smtpSecure = strtolower((string) ($SMTP_SECURE ?? getenv('SMTP_SECURE') ?? 'tls'));
     $smtpFromEmail = $SMTP_FROM_EMAIL ?? getenv('SMTP_FROM_EMAIL') ?? $defaultSmtpEmail;
     $smtpFromName = $SMTP_FROM_NAME ?? getenv('SMTP_FROM_NAME') ?? 'Proyectos MCE';
     $smtpToAdmin = $SMTP_TO_EMAIL ?? getenv('SMTP_TO_EMAIL') ?? $defaultSmtpEmail;
+
+    if (stripos((string) $smtpFromEmail, 'gmail.com') !== false) {
+        $smtpFromEmail = $defaultSmtpEmail;
+    }
 
     // Ajuste Gmail: quitar espacios en app password
     if (stripos($smtpHost, 'gmail.com') !== false) {
@@ -492,6 +496,7 @@ function send_invoice_email(array $payment, string $toEmail, mysqli $conn, ?stri
         $mail->Port = $smtpPort;
         $mail->CharSet = 'UTF-8';
 
+        $mail->Sender = $smtpFromEmail;
         $mail->setFrom($smtpFromEmail, $smtpFromName);
         $mail->addAddress($toEmail);
         if (!empty($smtpToAdmin) && strtolower($smtpToAdmin) !== strtolower($toEmail)) {
