@@ -887,7 +887,7 @@
                 'pf-filter-all': 'Todos',
                 'pf-no-projects': 'Aún no hay proyectos publicados en el portafolio.',
                 'pf-real-case': 'Caso real',
-                'pf-demo-case': 'Ejemplo representativo',
+                'pf-demo-case': 'Ejemplo demostrativo',
                 'pf-see-more': 'Ver más',
                 'pf-no-link': 'Sin enlace disponible',
                 'pf-cta2-label': '¿Listo para tu caso?',

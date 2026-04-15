@@ -59,6 +59,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $orden = (int) ($_POST['orden'] ?? 0);
     $imagen = trim((string) ($_POST['imagen_actual'] ?? ''));
     $imagen = ltrim(str_replace('\\', '/', $imagen), '/');
+    $basePath = trim(app_base_path(), '/');
+    if ($basePath !== '' && stripos($imagen, $basePath . '/') === 0) {
+        $imagen = substr($imagen, strlen($basePath) + 1);
+    }
+    if (stripos($imagen, 'proyectosmce/') === 0) {
+        $imagen = substr($imagen, strlen('proyectosmce/'));
+    }
     $currentImage = $project['imagen'] ?? null;
 
     if (!isset($error) && ($titulo === '' || $descripcion === '' || $categoria === '')) {
@@ -251,10 +258,10 @@ $currentImageUrl = !empty($project['imagen']) ? getProjectImageUrl($project) : n
                                     type="text"
                                     name="imagen_actual"
                                     value="<?php echo htmlspecialchars($project['imagen'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
-                                    placeholder="fondo.jpeg o assets/img/proyectos/mi-imagen.jpg"
+                                    placeholder="fondo.jpeg o assets/img/proyectos/mi-imagen.jpg (sin /proyectosmce/)"
                                     class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-600"
                                 >
-                                <p class="text-sm text-gray-500 mt-1">Puedes usar una ruta existente o subir una nueva imagen abajo.</p>
+                                <p class="text-sm text-gray-500 mt-1">Usa rutas relativas del proyecto (ej: fondo.jpeg), no rutas absolutas con /proyectosmce/.</p>
                             </div>
 
                             <div>

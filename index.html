@@ -16,12 +16,90 @@
         
         body {
             background: white;
+            padding: 96px 20px 40px;
+        }
+
+        .export-area {
             display: flex;
             justify-content: center;
             align-items: center;
             flex-wrap: wrap;
             gap: 30px;
-            padding: 40px 20px;
+        }
+
+        .export-toolbar {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: rgba(15, 39, 75, 0.95);
+            border: 1px solid rgba(255, 215, 0, 0.45);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(4px);
+        }
+
+        .export-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .export-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .export-btn-jpg {
+            background: #ffd700;
+            color: #0f274b;
+        }
+
+        .export-btn-pdf {
+            background: #1e3c72;
+            color: #ffd700;
+            border: 1px solid rgba(255, 215, 0, 0.55);
+        }
+
+        .export-status {
+            min-width: 132px;
+            color: #d7e3ff;
+            font-size: 0.76rem;
+            font-weight: 600;
+            letter-spacing: 0.15px;
+        }
+
+        @media (max-width: 700px) {
+            .export-toolbar {
+                width: calc(100% - 20px);
+                left: 10px;
+                transform: none;
+                justify-content: space-between;
+                gap: 8px;
+            }
+
+            .export-btn {
+                flex: 1;
+                padding: 10px 8px;
+            }
+
+            .export-status {
+                display: none;
+            }
         }
         
         .business-card {
@@ -502,6 +580,13 @@
     </style>
 </head>
 <body>
+    <div class="export-toolbar" aria-label="Opciones de descarga">
+        <button type="button" class="export-btn export-btn-jpg" id="download-jpg">Descargar JPG</button>
+        <button type="button" class="export-btn export-btn-pdf" id="download-pdf">Descargar PDF</button>
+        <span class="export-status" id="export-status" aria-live="polite"></span>
+    </div>
+
+    <div class="export-area" id="export-area">
     <!-- TARJETA DELANTERA - FONDO BLANCO -->
     <div class="business-card front-card">
         <div class="card-header">
@@ -542,6 +627,10 @@
                         <span><strong>Diseño UX/UI</strong></span>
                     </div>
                     <div class="service-item">
+                        <span class="service-icon"><i class="fas fa-window-maximize"></i></span>
+                        <span><strong>Landing Page</strong></span>
+                    </div>
+                    <div class="service-item">
                         <span class="service-icon">🔌</span>
                         <span><strong>Conexiones API</strong></span>
                     </div>
@@ -558,7 +647,7 @@
             <div class="contact-data">
                 <i class="fab fa-whatsapp whatsapp-icon"></i> +57 311 412 5971  |  <i class="far fa-envelope email-icon"></i> contacto@proyectosmce.com
             </div>
-            <img class="qr-code qr-contact-front" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fproyectosmce.com" alt="QR proyectosmce.com">
+            <img class="qr-code qr-contact-front" crossorigin="anonymous" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fproyectosmce.com%2Fenlaces" alt="QR de enlaces proyectosmce.com">
         </div>
     </div>
     
@@ -614,11 +703,90 @@
             <div class="contact-data">
                 <i class="fab fa-whatsapp whatsapp-icon"></i> +57 311 412 5971  |  <i class="far fa-envelope email-icon"></i> contacto@proyectosmce.com
             </div>
-            <img class="qr-code qr-contact-back" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fproyectosmce.com" alt="QR proyectosmce.com">
+            <img class="qr-code qr-contact-back" crossorigin="anonymous" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fproyectosmce.com%2Fenlaces" alt="QR de enlaces proyectosmce.com">
         </div>
+    </div>
     </div>
 
     <!-- (Asistente flotante eliminado en esta versión de tarjetas) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        (function () {
+            const exportArea = document.getElementById('export-area');
+            const jpgBtn = document.getElementById('download-jpg');
+            const pdfBtn = document.getElementById('download-pdf');
+            const statusLabel = document.getElementById('export-status');
+            const fileBaseName = 'tarjetas-proyectos-mce';
+
+            if (!exportArea || !jpgBtn || !pdfBtn || !statusLabel) {
+                return;
+            }
+
+            const setBusy = function (busy, message) {
+                jpgBtn.disabled = busy;
+                pdfBtn.disabled = busy;
+                statusLabel.textContent = message || '';
+            };
+
+            const renderCanvas = async function () {
+                setBusy(true, 'Generando archivo...');
+                return html2canvas(exportArea, {
+                    scale: 3,
+                    backgroundColor: '#ffffff',
+                    useCORS: true,
+                    logging: false,
+                    imageTimeout: 15000
+                });
+            };
+
+            const downloadBlobUrl = function (url, filename) {
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            const downloadJpg = async function () {
+                try {
+                    const canvas = await renderCanvas();
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.96);
+                    downloadBlobUrl(dataUrl, fileBaseName + '.jpg');
+                    setBusy(false, 'JPG listo');
+                } catch (error) {
+                    console.error(error);
+                    setBusy(false, 'Error al exportar');
+                    alert('No se pudo generar el JPG. Intenta de nuevo y verifica que carguen las imágenes.');
+                }
+            };
+
+            const downloadPdf = async function () {
+                try {
+                    const canvas = await renderCanvas();
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.96);
+                    const orientation = canvas.width >= canvas.height ? 'l' : 'p';
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF({
+                        orientation: orientation,
+                        unit: 'px',
+                        format: [canvas.width, canvas.height]
+                    });
+                    pdf.addImage(dataUrl, 'JPEG', 0, 0, canvas.width, canvas.height, undefined, 'FAST');
+                    pdf.save(fileBaseName + '.pdf');
+                    setBusy(false, 'PDF listo');
+                } catch (error) {
+                    console.error(error);
+                    setBusy(false, 'Error al exportar');
+                    alert('No se pudo generar el PDF. Intenta de nuevo y verifica que carguen las imágenes.');
+                }
+            };
+
+            jpgBtn.addEventListener('click', downloadJpg);
+            pdfBtn.addEventListener('click', downloadPdf);
+        }());
+    </script>
 </body>
 </html>
 

@@ -10,10 +10,59 @@
         body {
             font-family: 'Segoe UI', Roboto, Arial, sans-serif;
             background: #f6f8fb;
-            padding: 32px;
+            padding: 96px 32px 32px;
             display: grid;
             gap: 28px;
             justify-content: center;
+        }
+        .export-toolbar {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: rgba(15, 39, 75, 0.95);
+            border: 1px solid rgba(255, 215, 0, 0.45);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(4px);
+        }
+        .export-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+        }
+        .export-btn:hover {
+            transform: translateY(-1px);
+        }
+        .export-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .export-btn-jpg {
+            background: #ffd700;
+            color: #0f274b;
+        }
+        .export-btn-pdf {
+            background: #1e3c72;
+            color: #ffd700;
+            border: 1px solid rgba(255, 215, 0, 0.55);
+        }
+        .export-status {
+            min-width: 132px;
+            color: #d7e3ff;
+            font-size: 0.76rem;
+            font-weight: 600;
+            letter-spacing: 0.15px;
         }
         .flyer {
             width: 520px;
@@ -187,12 +236,32 @@
         @media (max-width: 560px) {
             .flyer { width: 100%; }
             .services { grid-template-columns: 1fr; }
+            .export-toolbar {
+                width: calc(100% - 20px);
+                left: 10px;
+                transform: none;
+                justify-content: space-between;
+                gap: 8px;
+            }
+            .export-btn {
+                flex: 1;
+                padding: 10px 8px;
+            }
+            .export-status {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="export-toolbar" aria-label="Opciones de descarga">
+        <button type="button" class="export-btn export-btn-jpg" id="download-jpg">Descargar JPG</button>
+        <button type="button" class="export-btn export-btn-pdf" id="download-pdf">Descargar PDF</button>
+        <span class="export-status" id="export-status" aria-live="polite"></span>
+    </div>
+
     <!-- Flyer frente -->
-    <div class="flyer">
+    <div class="flyer" id="export-area">
         <div class="hero">
             <div class="brand-row">
                 <img src="MCE.jpg" alt="Logo MCE" class="logo-img">
@@ -231,6 +300,13 @@
                     </div>
                 </div>
                 <div class="service">
+                    <div class="icon"><i class="fas fa-window-maximize"></i></div>
+                    <div>
+                        <h4>Landing Page</h4>
+                        <p>Páginas enfocadas en conversión para captar leads y ventas.</p>
+                    </div>
+                </div>
+                <div class="service">
                     <div class="icon"><i class="fas fa-plug"></i></div>
                     <div>
                         <h4>Conexiones API</h4>
@@ -263,9 +339,87 @@
                 <div class="contact-row"><i class="far fa-envelope"></i><span>contacto@proyectosmce.com</span></div>
                 <div class="domain"><i class="fas fa-globe"></i> proyectosmce.com</div>
             </div>
-            <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fproyectosmce.com" alt="QR proyectosmce.com">
+            <img class="qr-code" crossorigin="anonymous" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fproyectosmce.com%2Fenlaces" alt="QR de enlaces proyectosmce.com">
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        (function () {
+            const exportArea = document.getElementById('export-area');
+            const jpgBtn = document.getElementById('download-jpg');
+            const pdfBtn = document.getElementById('download-pdf');
+            const statusLabel = document.getElementById('export-status');
+            const fileBaseName = 'flyer-proyectos-mce';
+
+            if (!exportArea || !jpgBtn || !pdfBtn || !statusLabel) {
+                return;
+            }
+
+            const setBusy = function (busy, message) {
+                jpgBtn.disabled = busy;
+                pdfBtn.disabled = busy;
+                statusLabel.textContent = message || '';
+            };
+
+            const renderCanvas = async function () {
+                setBusy(true, 'Generando archivo...');
+                return html2canvas(exportArea, {
+                    scale: 3,
+                    backgroundColor: '#ffffff',
+                    useCORS: true,
+                    logging: false,
+                    imageTimeout: 15000
+                });
+            };
+
+            const downloadBlobUrl = function (url, filename) {
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            const downloadJpg = async function () {
+                try {
+                    const canvas = await renderCanvas();
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.96);
+                    downloadBlobUrl(dataUrl, fileBaseName + '.jpg');
+                    setBusy(false, 'JPG listo');
+                } catch (error) {
+                    console.error(error);
+                    setBusy(false, 'Error al exportar');
+                    alert('No se pudo generar el JPG. Intenta de nuevo y verifica que carguen las imágenes.');
+                }
+            };
+
+            const downloadPdf = async function () {
+                try {
+                    const canvas = await renderCanvas();
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.96);
+                    const orientation = canvas.width >= canvas.height ? 'l' : 'p';
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF({
+                        orientation: orientation,
+                        unit: 'px',
+                        format: [canvas.width, canvas.height]
+                    });
+                    pdf.addImage(dataUrl, 'JPEG', 0, 0, canvas.width, canvas.height, undefined, 'FAST');
+                    pdf.save(fileBaseName + '.pdf');
+                    setBusy(false, 'PDF listo');
+                } catch (error) {
+                    console.error(error);
+                    setBusy(false, 'Error al exportar');
+                    alert('No se pudo generar el PDF. Intenta de nuevo y verifica que carguen las imágenes.');
+                }
+            };
+
+            jpgBtn.addEventListener('click', downloadJpg);
+            pdfBtn.addEventListener('click', downloadPdf);
+        }());
+    </script>
 </body>
 </html>
 
