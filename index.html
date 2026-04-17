@@ -3,19 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tarjetas Proyectos MCE - Icono WhatsApp Real</title>
+    <title>Tarjetas Corporativas Proyectos MCE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
     <!-- Font Awesome para el icono de WhatsApp -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
+        :root {
+            --mce-blue: #1e3c72;
+            --mce-blue-dark: #0f274b;
+            --mce-gold: #ffd700;
+            --mce-surface: #ffffff;
+            --mce-muted: #5e6f88;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            font-family: 'Manrope', 'Segoe UI', sans-serif;
         }
         
         body {
-            background: white;
+            background:
+                radial-gradient(700px 360px at 0% 0%, rgba(255, 215, 0, 0.18), transparent 45%),
+                radial-gradient(900px 500px at 100% 100%, rgba(30, 60, 114, 0.12), transparent 58%),
+                linear-gradient(150deg, #f8fbff 0%, #edf3fb 46%, #e4ecf7 100%);
             padding: 96px 20px 40px;
         }
 
@@ -65,13 +79,13 @@
         }
 
         .export-btn-jpg {
-            background: #ffd700;
-            color: #0f274b;
+            background: var(--mce-gold);
+            color: var(--mce-blue-dark);
         }
 
         .export-btn-pdf {
-            background: #1e3c72;
-            color: #ffd700;
+            background: var(--mce-blue);
+            color: var(--mce-gold);
             border: 1px solid rgba(255, 215, 0, 0.55);
         }
 
@@ -168,9 +182,10 @@
         }
         
         .logo h2 {
+            font-family: 'Sora', sans-serif;
             font-size: 1.3rem;
             font-weight: 800;
-            color: #1e3c72;
+            color: var(--mce-blue);
             line-height: 1;
         }
         
@@ -235,9 +250,10 @@
         }
         
         .main-title {
+            font-family: 'Sora', sans-serif;
             font-size: 1.15rem;
             font-weight: bold;
-            color: #1e3c72;
+            color: var(--mce-blue);
             text-transform: uppercase;
             letter-spacing: 0.4px;
             white-space: normal;
@@ -511,8 +527,8 @@
             position: fixed;
             bottom: 90px;
             right: 20px;
-            width: 320px;
-            max-height: 420px;
+            width: 390px;
+            max-height: 520px;
             background: #ffffff;
             border: 1px solid #e3e9f3;
             box-shadow: 0 18px 36px rgba(0,0,0,0.25);
@@ -538,10 +554,24 @@
             font-size: 0.95rem;
         }
 
+        .assistant-close {
+            border: none;
+            background: transparent;
+            color: #d9e7ff;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 2px;
+            line-height: 1;
+        }
+
+        .assistant-close:hover {
+            color: #ffffff;
+        }
+
         .assistant-body {
-            padding: 12px;
+            padding: 14px;
             display: grid;
-            gap: 10px;
+            gap: 12px;
             font-size: 0.9rem;
             color: #1b2b48;
         }
@@ -550,9 +580,56 @@
             background: #f5f7fb;
             border: 1px solid #e3e9f3;
             border-radius: 10px;
-            padding: 10px;
-            min-height: 60px;
-            line-height: 1.4;
+            padding: 12px;
+            min-height: 130px;
+            max-height: 290px;
+            overflow-y: auto;
+            display: grid;
+            gap: 9px;
+            line-height: 1.35;
+        }
+
+        .assistant-msg {
+            padding: 9px 11px;
+            border-radius: 9px;
+            font-size: 0.9rem;
+            max-width: 94%;
+            word-break: break-word;
+        }
+
+        .assistant-msg.bot {
+            justify-self: start;
+            background: #e9f0fb;
+            color: #1c3354;
+            border: 1px solid #d3dff0;
+        }
+
+        .assistant-msg.user {
+            justify-self: end;
+            background: #10305a;
+            color: #ffffff;
+            border: 1px solid #244a7b;
+        }
+
+        .assistant-quick {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .assistant-quick button {
+            border: 1px solid #d2deee;
+            background: #f8fbff;
+            color: #173b68;
+            border-radius: 999px;
+            padding: 5px 9px;
+            font-size: 0.73rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .assistant-quick button:hover {
+            background: #edf4ff;
         }
 
         .assistant-input {
@@ -562,20 +639,41 @@
 
         .assistant-input input {
             flex: 1;
-            padding: 10px 12px;
+            min-height: 46px;
+            padding: 11px 14px;
             border-radius: 10px;
             border: 1px solid #d4dce7;
-            font-size: 0.9rem;
+            font-size: 0.98rem;
         }
 
         .assistant-input button {
-            padding: 10px 12px;
+            min-height: 46px;
+            padding: 11px 14px;
             border-radius: 10px;
             border: none;
             background: #0f274b;
             color: #ffd700;
             font-weight: 700;
             cursor: pointer;
+        }
+
+        @media (max-width: 700px) {
+            .assistant-panel {
+                width: calc(100% - 20px);
+                right: 10px;
+                bottom: 84px;
+                max-height: 74vh;
+            }
+
+            .floating-buttons {
+                bottom: 12px;
+                right: 12px;
+            }
+
+            .float-btn {
+                width: 58px;
+                height: 58px;
+            }
         }
     </style>
 </head>
@@ -708,7 +806,36 @@
     </div>
     </div>
 
-    <!-- (Asistente flotante eliminado en esta versión de tarjetas) -->
+    <div class="assistant-panel" id="assistant-panel" aria-label="Asistente virtual de Proyectos MCE">
+        <div class="assistant-header">
+            <span>Asistente Proyectos MCE</span>
+            <button type="button" class="assistant-close" id="assistant-close" aria-label="Cerrar asistente">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="assistant-body">
+            <div class="assistant-answer" id="assistant-answer" aria-live="polite"></div>
+            <div class="assistant-quick">
+                <button type="button" data-question="¿Qué servicios ofrece Proyectos MCE?">Servicios</button>
+                <button type="button" data-question="¿Cómo puedo agendar una reunión?">Agendar reunión</button>
+                <button type="button" data-question="¿Cuánto tarda un proyecto?">Tiempos</button>
+            </div>
+            <form class="assistant-input" id="assistant-form">
+                <input type="text" id="assistant-question" placeholder="Escribe tu pregunta..." autocomplete="off">
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="floating-buttons">
+        <button type="button" class="float-btn assistant" id="assistant-toggle" aria-label="Abrir asistente">
+            <i class="fas fa-robot"></i>
+        </button>
+        <a class="float-btn whatsapp" href="https://wa.me/573114125971?text=Hola%20equipo%20MCE,%20quiero%20informaci%C3%B3n%20sobre%20sus%20servicios" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
@@ -785,6 +912,257 @@
 
             jpgBtn.addEventListener('click', downloadJpg);
             pdfBtn.addEventListener('click', downloadPdf);
+
+            const faqDictionary = {
+                'Saludo inicial': {
+                    keywords: ['hola', 'buenas', 'buenos dias', 'buen dia', 'buenas tardes', 'buenas noches', 'hey', 'holi', 'que tal'],
+                    answer: 'Hola, bienvenido a Proyectos MCE. Te puedo ayudar con servicios, tiempos, precios, soporte y contacto.'
+                },
+                'Despedida amable': {
+                    keywords: ['gracias', 'muchas gracias', 'ok gracias', 'perfecto gracias', 'adios', 'hasta luego', 'nos vemos'],
+                    answer: 'Con gusto. Cuando quieras, te ayudo con informacion de Proyectos MCE y con agendar una reunion.'
+                },
+                '¿Qué significa MCE?': {
+                    keywords: ['mce', 'que significa mce', 'que es mce', 'iniciales mce', 'marlon carabali', 'lider del equipo'],
+                    answer: 'Proyectos MCE es nuestra marca. MCE son las iniciales de Marlon Carabali, programador y lider del equipo.'
+                },
+                '¿Qué servicios ofrece Proyectos MCE?': {
+                    keywords: ['servicios', 'que ofrecen', 'que hacen', 'soluciones', 'desarrollo'],
+                    answer: 'Proyectos MCE ofrece desarrollo web a medida, sistemas de inventario, diseño UX/UI, landing pages, integraciones API y soporte continuo.'
+                },
+                '¿Desarrollan software a medida?': {
+                    keywords: ['software a medida', 'a medida', 'personalizado', 'desarrollan sistema'],
+                    answer: 'Sí. Diseñamos y construimos software a medida según el flujo real de tu negocio y tus metas comerciales.'
+                },
+                '¿Pueden crear un sistema de inventario?': {
+                    keywords: ['inventario', 'stock', 'bodega', 'control de inventario', 'erp'],
+                    answer: 'Claro. Implementamos sistemas de inventario con control de productos, movimientos, reportes y visibilidad en tiempo real.'
+                },
+                '¿También hacen landing pages?': {
+                    keywords: ['landing', 'pagina de aterrizaje', 'captacion', 'conversión', 'pagina web'],
+                    answer: 'Sí. Diseñamos landing pages enfocadas en conversión, velocidad de carga y comunicación clara del valor de tu negocio.'
+                },
+                '¿Realizan integraciones API?': {
+                    keywords: ['api', 'integraciones', 'conectar sistemas', 'pasarela', 'webhook'],
+                    answer: 'Sí. Conectamos tu plataforma con APIs de terceros para automatizar procesos y unificar operaciones.'
+                },
+                '¿Cómo es el proceso de trabajo?': {
+                    keywords: ['proceso', 'metodologia', 'como trabajan', 'etapas', 'fases'],
+                    answer: 'Trabajamos en 4 etapas: discovery, diseño/prototipo, desarrollo iterativo con pruebas y soporte post-lanzamiento.'
+                },
+                '¿Cuánto tarda un proyecto?': {
+                    keywords: ['tiempo', 'cuanto tarda', 'duracion', 'entrega', 'plazo'],
+                    answer: 'El tiempo depende del alcance. Después del discovery definimos un cronograma realista por fases y fechas claras.'
+                },
+                '¿Ofrecen soporte luego de entregar?': {
+                    keywords: ['soporte', 'mantenimiento', 'post venta', 'despues de entregar'],
+                    answer: 'Sí. Brindamos soporte y monitoreo continuo para mantener la estabilidad y evolución de la solución.'
+                },
+                '¿Cómo puedo agendar una reunión?': {
+                    keywords: ['agendar', 'reunion', 'discovery', 'asesoria', 'cotizacion'],
+                    answer: 'Puedes agendar una sesión de discovery sin costo por WhatsApp al +57 311 412 5971 o escribiendo a contacto@proyectosmce.com.'
+                },
+                '¿Cuál es el contacto de Proyectos MCE?': {
+                    keywords: ['contacto', 'whatsapp', 'correo', 'telefono', 'email'],
+                    answer: 'Puedes contactarnos por WhatsApp al +57 311 412 5971, por correo a contacto@proyectosmce.com y en proyectosmce.com/enlaces.'
+                },
+                '¿Cuál es el horario de atención?': {
+                    keywords: ['horario', 'horarios', 'horario de atencion', 'hora de atencion', 'atienden hoy', 'hora', 'disponibilidad'],
+                    answer: 'Nuestro horario de atencion es lunes a viernes de 08:00 a 17:00, y sabados de 09:00 a 14:00.'
+                },
+                '¿Atienden fines de semana?': {
+                    keywords: ['fin de semana', 'fines de semana', 'sabado', 'domingo', 'atienden sabado', 'atienden domingo'],
+                    answer: 'Si, atendemos los sabados de 09:00 a 14:00. Los domingos normalmente no hay atencion.'
+                },
+                '¿En qué horario responden WhatsApp?': {
+                    keywords: ['whatsapp horario', 'horario whatsapp', 'responden whatsapp', 'chat horario', 'soporte horario'],
+                    answer: 'Respondemos WhatsApp dentro del horario de atencion: lunes a viernes de 08:00 a 17:00 y sabados de 09:00 a 14:00.'
+                },
+                '¿Atienden solo en Colombia?': {
+                    keywords: ['colombia', 'latam', 'pais', 'ubicacion', 'internacional'],
+                    answer: 'Operamos desde Colombia y atendemos proyectos remotos para clientes en distintos países de LATAM.'
+                },
+                '¿Qué incluye la sesión discovery sin costo?': {
+                    keywords: ['discovery', 'sin costo', 'incluye', 'diagnostico', 'evaluacion'],
+                    answer: 'La sesión discovery incluye diagnóstico de necesidades, prioridades de negocio y una ruta inicial de implementación.'
+                },
+                '¿Cómo manejan los precios?': {
+                    keywords: ['precio', 'costos', 'valor', 'presupuesto', 'tarifa', 'cuanto cuesta', 'cotizar', 'cotizacion'],
+                    answer: 'Los precios se definen según alcance y complejidad. Primero analizamos tus requerimientos y luego enviamos propuesta formal.'
+                },
+                '¿Qué necesitan para cotizar?': {
+                    keywords: ['que necesitan para cotizar', 'que datos necesitan', 'que informacion necesitan', 'que debo enviar para cotizar', 'requisitos cotizacion', 'brief'],
+                    answer: 'Para cotizar necesitamos objetivo del proyecto, funcionalidades clave, tiempo estimado y si ya tienes diseño o sistema actual.'
+                },
+                '¿Con qué tecnologías trabajan?': {
+                    keywords: ['tecnologias', 'tecnología', 'stack', 'framework', 'lenguajes', 'wordpress', 'laravel', 'react', 'php'],
+                    answer: 'Trabajamos con diferentes tecnologías según el proyecto, por ejemplo PHP, Laravel, WordPress, JavaScript y stacks modernos para web.'
+                },
+                '¿Desarrollan tiendas online?': {
+                    keywords: ['tienda online', 'ecommerce', 'e commerce', 'tienda virtual', 'carrito de compras', 'ventas por internet'],
+                    answer: 'Sí, desarrollamos tiendas online con catálogo, carrito, pagos, gestión de pedidos y reportes para tu operación.'
+                },
+                '¿Integran pasarelas de pago?': {
+                    keywords: ['pasarela de pago', 'pasarelas', 'pagos online', 'wompi', 'mercado pago', 'payu', 'stripe'],
+                    answer: 'Sí, integramos pasarelas de pago según tu necesidad y país de operación para facilitar ventas seguras en línea.'
+                },
+                '¿Dan garantía del desarrollo?': {
+                    keywords: ['garantia', 'garantía', 'respaldo', 'fallas', 'errores', 'bug', 'correcciones'],
+                    answer: 'Sí, ofrecemos garantía técnica post-entrega para ajustes y estabilidad, de acuerdo con el alcance definido del proyecto.'
+                },
+                '¿Ofrecen mantenimiento mensual?': {
+                    keywords: ['mantenimiento', 'soporte mensual', 'plan mensual', 'bolsa de horas', 'actualizaciones', 'monitoreo'],
+                    answer: 'Sí, contamos con planes de mantenimiento y soporte mensual para mejoras, monitoreo, ajustes y continuidad operativa.'
+                },
+                '¿Pueden mejorar una web o sistema existente?': {
+                    keywords: ['mejorar web', 'mejorar sistema', 'optimizar pagina', 'rediseño', 'rediseno', 'modernizar sistema', 'web existente'],
+                    answer: 'Claro. Podemos auditar tu web o sistema actual y proponer mejoras por etapas para reducir riesgo y acelerar resultados.'
+                },
+                '¿Tienen portafolio?': {
+                    keywords: ['portafolio', 'portfolio', 'casos de exito', 'trabajos realizados', 'proyectos hechos', 'ejemplos'],
+                    answer: 'Sí, te compartimos portafolio y casos de referencia relacionados con tu tipo de negocio.'
+                },
+                '¿Manejan facturación?': {
+                    keywords: ['factura', 'facturacion', 'facturación', 'facturan', 'comprobante', 'documento de cobro'],
+                    answer: 'Sí, manejamos facturación formal para nuestros servicios de desarrollo y soporte.'
+                },
+                '¿Cómo iniciamos?': {
+                    keywords: ['como iniciamos', 'como empezamos', 'siguiente paso', 'primer paso', 'como contratar', 'arrancamos'],
+                    answer: 'El primer paso es agendar una llamada corta de discovery. Con eso definimos alcance, tiempos y propuesta.'
+                }
+            };
+
+            const assistantPanel = document.getElementById('assistant-panel');
+            const assistantToggle = document.getElementById('assistant-toggle');
+            const assistantClose = document.getElementById('assistant-close');
+            const assistantAnswer = document.getElementById('assistant-answer');
+            const assistantForm = document.getElementById('assistant-form');
+            const assistantQuestion = document.getElementById('assistant-question');
+            const quickQuestionButtons = document.querySelectorAll('[data-question]');
+
+            const normalizeText = function (text) {
+                return (text || '')
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^\w\s]/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+            };
+
+            const faqEntries = Object.keys(faqDictionary).map(function (question) {
+                const item = faqDictionary[question];
+                return {
+                    question: question,
+                    questionNormalized: normalizeText(question),
+                    keywords: item.keywords.map(normalizeText),
+                    answer: item.answer
+                };
+            });
+
+            const createMessage = function (role, text) {
+                if (!assistantAnswer) {
+                    return;
+                }
+
+                const msg = document.createElement('div');
+                msg.className = 'assistant-msg ' + role;
+                msg.textContent = text;
+                assistantAnswer.appendChild(msg);
+                assistantAnswer.scrollTop = assistantAnswer.scrollHeight;
+            };
+
+            const findBestAnswer = function (userText) {
+                const normalizedMessage = normalizeText(userText);
+
+                if (!normalizedMessage) {
+                    return 'Escríbeme una pregunta y con gusto te ayudo con información de Proyectos MCE.';
+                }
+
+                const exactMatch = faqEntries.find(function (item) {
+                    return item.questionNormalized === normalizedMessage;
+                });
+
+                if (exactMatch) {
+                    return exactMatch.answer;
+                }
+
+                let bestEntry = null;
+                let bestScore = 0;
+
+                faqEntries.forEach(function (item) {
+                    let currentScore = 0;
+
+                    item.keywords.forEach(function (keyword) {
+                        if (keyword && normalizedMessage.includes(keyword)) {
+                            currentScore += keyword.length > 6 ? 2 : 1;
+                        }
+                    });
+
+                    if (currentScore > bestScore) {
+                        bestScore = currentScore;
+                        bestEntry = item;
+                    }
+                });
+
+                if (bestEntry && bestScore > 0) {
+                    return bestEntry.answer;
+                }
+
+                return 'No encontré esa pregunta exacta en mi base. Puedes preguntarme sobre servicios, costos, tiempos, tecnologías, ecommerce, soporte, contacto y agendar una reunión.';
+            };
+
+            const askBot = function (question) {
+                const cleanQuestion = (question || '').trim();
+
+                if (!cleanQuestion) {
+                    return;
+                }
+
+                createMessage('user', cleanQuestion);
+                const answer = findBestAnswer(cleanQuestion);
+
+                window.setTimeout(function () {
+                    createMessage('bot', answer);
+                }, 180);
+            };
+
+            if (
+                assistantPanel &&
+                assistantToggle &&
+                assistantClose &&
+                assistantAnswer &&
+                assistantForm &&
+                assistantQuestion
+            ) {
+                createMessage('bot', 'Hola, soy el asistente de Proyectos MCE. Pregúntame sobre servicios, tiempos, soporte, contacto o reuniones.');
+
+                assistantToggle.addEventListener('click', function () {
+                    assistantPanel.classList.toggle('open');
+
+                    if (assistantPanel.classList.contains('open')) {
+                        assistantQuestion.focus();
+                    }
+                });
+
+                assistantClose.addEventListener('click', function () {
+                    assistantPanel.classList.remove('open');
+                });
+
+                assistantForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    askBot(assistantQuestion.value);
+                    assistantQuestion.value = '';
+                    assistantQuestion.focus();
+                });
+
+                quickQuestionButtons.forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        const question = button.getAttribute('data-question');
+                        askBot(question);
+                    });
+                });
+            }
         }());
     </script>
 </body>

@@ -1,4 +1,6 @@
-﻿<?php
+***archivo  enviar-contacto.php funcional, se agrega para reguardalo de mensajes y agenda de llamadas desde el formulario de contacto. Incluye validaciones, protección contra spam, almacenamiento en BD y envío de emails con PHPMailer.***
+
+<?php
 require_once 'includes/config.php';
 require_once 'includes/form-guard.php';
 require_once __DIR__ . '/includes/PHPMailer/Exception.php';
@@ -49,23 +51,6 @@ function mce_generate_meet_link(): string
 
 if (stripos($smtpHost, 'gmail.com') !== false) {
     $smtpPass = str_replace(' ', '', $smtpPass);
-}
-
-// En servidores FastCGI podemos devolver la respuesta al navegador y continuar
-// con tareas pesadas (como SMTP) en segundo plano.
-function mce_finish_request_early(string $redirectUrl): bool
-{
-    if (!function_exists('fastcgi_finish_request')) {
-        return false;
-    }
-
-    header("Location: {$redirectUrl}");
-    if (session_status() === PHP_SESSION_ACTIVE) {
-        session_write_close();
-    }
-    ignore_user_abort(true);
-    fastcgi_finish_request();
-    return true;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -263,9 +248,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $insertCita->close();
             }
         }
-
-        $successUrl = 'contacto.php?success=1' . $redirectHash;
-        $mailInBackground = mce_finish_request_early($successUrl);
 
         // Enviar email con PHPMailer
         $mail = new PHPMailer(true);
@@ -948,9 +930,7 @@ HTML;
                 error_log('Error al enviar confirmacion al cliente: ' . $clientMailException->getMessage());
             }
 
-            if (!$mailInBackground) {
-                redirect($successUrl);
-            }
+            redirect('contacto.php?success=1' . $redirectHash);
         } catch (Exception $e) {
             error_log('Error al enviar correo: ' . $e->getMessage());
             if (!empty($mail->ErrorInfo)) {
@@ -959,10 +939,8 @@ HTML;
             if (!empty($smtpDebugLog)) {
                 error_log("SMTP debug:\n" . implode("\n", $smtpDebugLog));
             }
-            if (!$mailInBackground) {
-                $code = (empty($smtpUser) || empty($smtpPass)) ? 4 : 5;
-                redirect('contacto.php?error=' . $code . $redirectHash);
-            }
+            $code = (empty($smtpUser) || empty($smtpPass)) ? 4 : 5;
+            redirect('contacto.php?error=' . $code . $redirectHash);
         }
     } else {
         redirect('contacto.php?error=3' . $redirectHash);

@@ -59,9 +59,9 @@
                 <div>
                     <h4 class="text-xl font-semibold mb-4 transition-colors duration-300 hover:bg-gradient-to-r hover:from-emerald-300 hover:to-purple-300 hover:text-transparent hover:bg-clip-text"><span data-i18n="nav-services">Servicios</span></h4>
                     <ul class="space-y-2 text-gray-300">
-                        <li class="inline-flex items-center gap-2"><i class="fas fa-code text-blue-300"></i><span class="i18n-ft-srv1" data-i18n="ft-srv1">Desarrollo a Medida</span></li>
-                        <li class="inline-flex items-center gap-2"><i class="fas fa-boxes text-blue-300"></i><span class="i18n-ft-srv2" data-i18n="ft-srv2">Sistemas de Inventario</span></li>
-                        <li class="inline-flex items-center gap-2"><i class="fas fa-tools text-blue-300"></i><span class="i18n-ft-srv3" data-i18n="ft-srv3">Mantenimiento Web</span></li>
+                        <li class="inline-flex items-center gap-2"><i class="fas fa-code text-blue-300"></i><span class="i18n-ft-srv1" data-i18n="ft-srv1">Desarrollo a medida</span></li>
+                        <li class="inline-flex items-center gap-2"><i class="fas fa-boxes text-blue-300"></i><span class="i18n-ft-srv2" data-i18n="ft-srv2">Sistemas de Inventarios</span></li>
+                        <li class="inline-flex items-center gap-2"><i class="fas fa-bullseye text-blue-300"></i><span class="i18n-ft-srv3" data-i18n="ft-srv3">Landing Page</span></li>
                     </ul>
                 </div>
                 
@@ -80,7 +80,7 @@
                             </a>
                         </li>
                         <li class="inline-flex items-center text-gray-300">
-                            <i class="fas fa-clock mr-2"></i><span><span class="i18n-ft-hours" data-i18n="ft-hours">Lunes a sábado · 8:00 - 18:00 </span></span>
+                            <i class="fas fa-clock mr-2"></i><span><span class="i18n-ft-hours" data-i18n="ft-hours">Lunes a viernes · 08:00 - 17:00 · Sábados · 09:00 - 14:00 </span></span>
                         </li>
                         <li class="flex flex-wrap items-center gap-4 pt-2">
                             <a href="https://wa.me/573114125971?text=Hola%21%20Quiero%20consultar%20por%20un%20proyecto" target="_blank" rel="noopener" class="inline-flex text-gray-300 hover:text-white text-xl" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
@@ -185,6 +185,21 @@
         $scriptUrl = app_url('assets/js/script.js') . '?v=' . $scriptVersion;
     ?>
     <script src="<?php echo $scriptUrl; ?>"></script>
+    <script>
+    // Optimización segura de imágenes: lazy-load para recursos no críticos.
+    (() => {
+        const imgs = document.querySelectorAll('img:not([loading])');
+        imgs.forEach((img, idx) => {
+            const isAssistant = img.closest('#assistant-panel') || img.classList.contains('bot-img');
+            if (!isAssistant) {
+                img.setAttribute('loading', idx < 3 ? 'eager' : 'lazy');
+            }
+            if (!img.hasAttribute('decoding')) {
+                img.setAttribute('decoding', 'async');
+            }
+        });
+    })();
+    </script>
     <!-- Lógica asistente global -->
     <script>
     (() => {
@@ -414,7 +429,7 @@
             it: 'Home: pagina di ingresso con la value proposition di Progetti MCE e CTA per prenotare o vedere il portfolio.'
         }},
         { keywords: ['servicios', 'services'], answers: {
-            es: 'Servicios: lista de lo que hacemos (desarrollo a medida, inventarios, UX/UI, integraciones, soporte 24/7).',
+            es: 'Servicios: lista de lo que hacemos (Desarrollo a medida, Sistemas de Inventarios, Landing Page, UX/UI, integraciones y soporte 24/7).',
             en: 'Services: what we deliver (custom dev, inventory, UX/UI, integrations, 24/7 support).',
             fr: 'Services : ce que nous faisons (dev sur mesure, inventaires, UX/UI, intégrations, support 24/7).',
             de: 'Services: unsere Leistungen (Custom Dev, Inventar, UX/UI, Integrationen, 24/7 Support).',
@@ -511,6 +526,261 @@
         }},
     ];
 
+        // Diccionario comercial principal (prioritario) para Hostinger
+        const customFaqTranslations = {
+            "Hola, bienvenido a Proyectos MCE. Te puedo ayudar con servicios, tiempos, precios, soporte y contacto.": {
+                en: "Hi, welcome to Proyectos MCE. I can help with services, timelines, pricing, support, and contact info.",
+                fr: "Bonjour, bienvenue chez Proyectos MCE. Je peux vous aider avec les services, delais, prix, support et contact.",
+                de: "Hallo, willkommen bei Proyectos MCE. Ich helfe dir mit Services, Zeitplanen, Preisen, Support und Kontakt.",
+                pt: "Ola, bem-vindo a Proyectos MCE. Posso ajudar com servicos, prazos, precos, suporte e contato.",
+                it: "Ciao, benvenuto in Proyectos MCE. Posso aiutarti con servizi, tempi, prezzi, supporto e contatti."
+            },
+            "Con gusto. Cuando quieras, te ayudo con informacion de Proyectos MCE y con agendar una reunion.": {
+                en: "My pleasure. Whenever you want, I can help you with Proyectos MCE info and booking a meeting.",
+                fr: "Avec plaisir. Quand vous voulez, je peux vous aider avec les infos de Proyectos MCE et la prise de rendez-vous.",
+                de: "Gern. Wenn du willst, helfe ich dir mit Infos zu Proyectos MCE und mit der Terminbuchung.",
+                pt: "Com prazer. Quando quiser, eu te ajudo com informacoes da Proyectos MCE e com agendamento de reuniao.",
+                it: "Con piacere. Quando vuoi, ti aiuto con info su Proyectos MCE e con la prenotazione di una riunione."
+            },
+            "Proyectos MCE es nuestra marca. MCE son las iniciales de Marlon Carabali, programador y lider del equipo.": {
+                en: "Proyectos MCE is our brand. MCE are the initials of Marlon Carabali, programmer and team leader.",
+                fr: "Proyectos MCE est notre marque. MCE sont les initiales de Marlon Carabali, developpeur et leader de l'equipe.",
+                de: "Proyectos MCE ist unsere Marke. MCE sind die Initialen von Marlon Carabali, Programmierer und Teamleiter.",
+                pt: "Proyectos MCE e nossa marca. MCE sao as iniciais de Marlon Carabali, programador e lider da equipe.",
+                it: "Proyectos MCE e il nostro marchio. MCE sono le iniziali di Marlon Carabali, programmatore e leader del team."
+            },
+            "Proyectos MCE ofrece Desarrollo a medida, Sistemas de Inventarios y Landing Page, ademas de diseno UX/UI, integraciones API y soporte continuo.": {
+                en: "Proyectos MCE offers custom web development, inventory systems, UX/UI design, landing pages, API integrations, and ongoing support.",
+                fr: "Proyectos MCE propose du developpement web sur mesure, des systemes d'inventaire, du design UX/UI, des landing pages, des integrations API et un support continu.",
+                de: "Proyectos MCE bietet individuelle Webentwicklung, Inventarsysteme, UX/UI-Design, Landingpages, API-Integrationen und kontinuierlichen Support.",
+                pt: "A Proyectos MCE oferece desenvolvimento web sob medida, sistemas de inventario, design UX/UI, landing pages, integracoes de API e suporte continuo.",
+                it: "Proyectos MCE offre sviluppo web su misura, sistemi di inventario, design UX/UI, landing page, integrazioni API e supporto continuo."
+            },
+            "Si. Disenamos y construimos software a medida segun el flujo real de tu negocio y tus metas comerciales.": {
+                en: "Yes. We design and build custom software based on your real business workflow and commercial goals.",
+                fr: "Oui. Nous concevons et developpons un logiciel sur mesure selon le flux reel de votre entreprise et vos objectifs commerciaux.",
+                de: "Ja. Wir entwerfen und entwickeln individuelle Software nach dem realen Ablauf deines Geschafts und deinen Zielen.",
+                pt: "Sim. Projetamos e desenvolvemos software sob medida de acordo com o fluxo real do seu negocio e suas metas comerciais.",
+                it: "Si. Progettiamo e sviluppiamo software su misura in base al flusso reale del tuo business e ai tuoi obiettivi commerciali."
+            },
+            "Claro. Implementamos sistemas de inventario con control de productos, movimientos, reportes y visibilidad en tiempo real.": {
+                en: "Of course. We implement inventory systems with product control, movements, reports, and real-time visibility.",
+                fr: "Bien sur. Nous implementons des systemes d'inventaire avec controle des produits, mouvements, rapports et visibilite en temps reel.",
+                de: "Klar. Wir implementieren Inventarsysteme mit Produktkontrolle, Bewegungen, Berichten und Echtzeit-Transparenz.",
+                pt: "Claro. Implementamos sistemas de inventario com controle de produtos, movimentacoes, relatorios e visibilidade em tempo real.",
+                it: "Certo. Implementiamo sistemi di inventario con controllo prodotti, movimenti, report e visibilita in tempo reale."
+            },
+            "Si. Disenamos landing pages enfocadas en conversion, velocidad de carga y comunicacion clara del valor de tu negocio.": {
+                en: "Yes. We design landing pages focused on conversion, loading speed, and clear communication of your business value.",
+                fr: "Oui. Nous concevons des landing pages axees sur la conversion, la vitesse de chargement et une communication claire de votre valeur.",
+                de: "Ja. Wir gestalten Landingpages mit Fokus auf Conversion, Ladegeschwindigkeit und klarer Kommunikation deines Mehrwerts.",
+                pt: "Sim. Criamos landing pages focadas em conversao, velocidade de carregamento e comunicacao clara do valor do seu negocio.",
+                it: "Si. Progettiamo landing page focalizzate su conversione, velocita di caricamento e comunicazione chiara del valore del tuo business."
+            },
+            "Si. Conectamos tu plataforma con APIs de terceros para automatizar procesos y unificar operaciones.": {
+                en: "Yes. We connect your platform with third-party APIs to automate processes and unify operations.",
+                fr: "Oui. Nous connectons votre plateforme a des API tierces pour automatiser les processus et unifier les operations.",
+                de: "Ja. Wir verbinden deine Plattform mit Drittanbieter-APIs, um Prozesse zu automatisieren und Ablaufe zu vereinheitlichen.",
+                pt: "Sim. Conectamos sua plataforma com APIs de terceiros para automatizar processos e unificar operacoes.",
+                it: "Si. Colleghiamo la tua piattaforma con API di terze parti per automatizzare i processi e unificare le operazioni."
+            },
+            "Trabajamos en 4 etapas: discovery, diseno/prototipo, desarrollo iterativo con pruebas y soporte post-lanzamiento.": {
+                en: "We work in 4 stages: discovery, design/prototype, iterative development with testing, and post-launch support.",
+                fr: "Nous travaillons en 4 etapes : discovery, design/prototype, developpement iteratif avec tests, puis support post-lancement.",
+                de: "Wir arbeiten in 4 Phasen: Discovery, Design/Prototyp, iterative Entwicklung mit Tests und Support nach dem Launch.",
+                pt: "Trabalhamos em 4 etapas: discovery, design/prototipo, desenvolvimento iterativo com testes e suporte pos-lancamento.",
+                it: "Lavoriamo in 4 fasi: discovery, design/prototipo, sviluppo iterativo con test e supporto post-lancio."
+            },
+            "El tiempo depende del alcance. Despues del discovery definimos un cronograma realista por fases y fechas claras.": {
+                en: "Timeline depends on scope. After discovery, we define a realistic schedule with phases and clear dates.",
+                fr: "Le delai depend du perimetre. Apres le discovery, nous definissons un calendrier realiste par phases et dates claires.",
+                de: "Die Dauer hangt vom Umfang ab. Nach dem Discovery legen wir einen realistischen Zeitplan mit klaren Phasen und Terminen fest.",
+                pt: "O prazo depende do escopo. Depois do discovery, definimos um cronograma realista com fases e datas claras.",
+                it: "I tempi dipendono dall'ambito. Dopo la discovery definiamo un cronoprogramma realistico per fasi e date chiare."
+            },
+            "Si. Brindamos soporte y monitoreo continuo para mantener la estabilidad y evolucion de la solucion.": {
+                en: "Yes. We provide ongoing support and monitoring to keep your solution stable and evolving.",
+                fr: "Oui. Nous assurons un support et un monitoring continus pour maintenir la stabilite et l'evolution de la solution.",
+                de: "Ja. Wir bieten kontinuierlichen Support und Monitoring, damit die Losung stabil bleibt und sich weiterentwickelt.",
+                pt: "Sim. Oferecemos suporte e monitoramento continuo para manter a estabilidade e evolucao da solucao.",
+                it: "Si. Forniamo supporto e monitoraggio continuo per mantenere stabile la soluzione e farla evolvere."
+            },
+            "Puedes agendar una sesion de discovery sin costo por WhatsApp al +57 311 412 5971 o escribiendo a contacto@proyectosmce.com.": {
+                en: "You can book a free discovery session by WhatsApp at +57 311 412 5971 or by email at contacto@proyectosmce.com.",
+                fr: "Vous pouvez reserver une session discovery gratuite sur WhatsApp au +57 311 412 5971 ou par email a contacto@proyectosmce.com.",
+                de: "Du kannst eine kostenlose Discovery-Session per WhatsApp unter +57 311 412 5971 oder per E-Mail an contacto@proyectosmce.com buchen.",
+                pt: "Voce pode agendar uma sessao de discovery gratuita pelo WhatsApp +57 311 412 5971 ou por e-mail em contacto@proyectosmce.com.",
+                it: "Puoi prenotare una sessione discovery gratuita su WhatsApp al +57 311 412 5971 o via email a contacto@proyectosmce.com."
+            },
+            "Puedes contactarnos por WhatsApp al +57 311 412 5971, por correo a contacto@proyectosmce.com y en proyectosmce.com/enlaces.": {
+                en: "You can contact us on WhatsApp at +57 311 412 5971, by email at contacto@proyectosmce.com, and at proyectosmce.com/enlaces.",
+                fr: "Vous pouvez nous contacter via WhatsApp au +57 311 412 5971, par email a contacto@proyectosmce.com et sur proyectosmce.com/enlaces.",
+                de: "Du erreichst uns per WhatsApp unter +57 311 412 5971, per E-Mail an contacto@proyectosmce.com und auf proyectosmce.com/enlaces.",
+                pt: "Voce pode falar conosco pelo WhatsApp +57 311 412 5971, pelo e-mail contacto@proyectosmce.com e em proyectosmce.com/enlaces.",
+                it: "Puoi contattarci su WhatsApp al +57 311 412 5971, via email a contacto@proyectosmce.com e su proyectosmce.com/enlaces."
+            },
+            "Nuestro horario de atencion es lunes a viernes de 08:00 a 17:00, y sabados de 09:00 a 14:00.": {
+                en: "Our support hours are Monday to Friday from 08:00 to 17:00, and Saturdays from 09:00 to 14:00.",
+                fr: "Nos horaires de service sont du lundi au vendredi de 08:00 a 17:00, et le samedi de 09:00 a 14:00.",
+                de: "Unsere Servicezeiten sind Montag bis Freitag von 08:00 bis 17:00 Uhr und samstags von 09:00 bis 14:00 Uhr.",
+                pt: "Nosso horario de atendimento e de segunda a sexta, das 08:00 as 17:00, e aos sabados das 09:00 as 14:00.",
+                it: "Il nostro orario di assistenza e dal lunedi al venerdi dalle 08:00 alle 17:00, e il sabato dalle 09:00 alle 14:00."
+            },
+            "Si, atendemos los sabados de 09:00 a 14:00. Los domingos normalmente no hay atencion.": {
+                en: "Yes, we work on Saturdays from 09:00 to 14:00. We are normally closed on Sundays.",
+                fr: "Oui, nous travaillons le samedi de 09:00 a 14:00. Le dimanche, nous ne sommes normalement pas ouverts.",
+                de: "Ja, wir sind samstags von 09:00 bis 14:00 Uhr erreichbar. Sonntags gibt es normalerweise keinen Service.",
+                pt: "Sim, atendemos aos sabados das 09:00 as 14:00. Aos domingos normalmente nao ha atendimento.",
+                it: "Si, lavoriamo il sabato dalle 09:00 alle 14:00. La domenica normalmente non c'e assistenza."
+            },
+            "Respondemos WhatsApp dentro del horario de atencion: lunes a viernes de 08:00 a 17:00 y sabados de 09:00 a 14:00.": {
+                en: "We reply on WhatsApp during support hours: Monday to Friday from 08:00 to 17:00 and Saturdays from 09:00 to 14:00.",
+                fr: "Nous repondons sur WhatsApp pendant les horaires de service : du lundi au vendredi de 08:00 a 17:00 et le samedi de 09:00 a 14:00.",
+                de: "Wir antworten auf WhatsApp innerhalb der Servicezeiten: Montag bis Freitag 08:00-17:00 und samstags 09:00-14:00.",
+                pt: "Respondemos no WhatsApp dentro do horario de atendimento: segunda a sexta das 08:00 as 17:00 e sabados das 09:00 as 14:00.",
+                it: "Rispondiamo su WhatsApp negli orari di assistenza: lunedi-venerdi 08:00-17:00 e sabato 09:00-14:00."
+            },
+            "Operamos desde Colombia y atendemos proyectos remotos para clientes en distintos paises de LATAM.": {
+                en: "We operate from Colombia and handle remote projects for clients across different LATAM countries.",
+                fr: "Nous operons depuis la Colombie et accompagnons des projets a distance pour des clients dans plusieurs pays d'Amerique latine.",
+                de: "Wir arbeiten aus Kolumbien und betreuen Remote-Projekte fur Kunden in verschiedenen LATAM-Landern.",
+                pt: "Operamos da Colombia e atendemos projetos remotos para clientes em diferentes paises da LATAM.",
+                it: "Operiamo dalla Colombia e gestiamo progetti da remoto per clienti in diversi paesi LATAM."
+            },
+            "La sesion discovery incluye diagnostico de necesidades, prioridades de negocio y una ruta inicial de implementacion.": {
+                en: "The discovery session includes needs diagnosis, business priorities, and an initial implementation roadmap.",
+                fr: "La session discovery inclut un diagnostic des besoins, les priorites business et une feuille de route initiale d'implementation.",
+                de: "Die Discovery-Session umfasst Bedarfsanalyse, Business-Prioritaten und eine erste Umsetzungs-Roadmap.",
+                pt: "A sessao discovery inclui diagnostico de necessidades, prioridades de negocio e uma rota inicial de implementacao.",
+                it: "La sessione discovery include diagnosi delle necessita, priorita di business e una roadmap iniziale di implementazione."
+            },
+            "Los precios se definen segun alcance y complejidad. Primero analizamos tus requerimientos y luego enviamos propuesta formal.": {
+                en: "Pricing is defined by scope and complexity. First we review your requirements, then we send a formal proposal.",
+                fr: "Les prix sont definis selon le perimetre et la complexite. Nous analysons d'abord vos besoins puis envoyons une proposition formelle.",
+                de: "Die Preise richten sich nach Umfang und Komplexitat. Zuerst analysieren wir deine Anforderungen, dann senden wir ein formelles Angebot.",
+                pt: "Os precos sao definidos pelo escopo e complexidade. Primeiro analisamos seus requisitos e depois enviamos proposta formal.",
+                it: "I prezzi sono definiti in base a portata e complessita. Prima analizziamo i requisiti, poi inviamo una proposta formale."
+            },
+            "Para cotizar necesitamos objetivo del proyecto, funcionalidades clave, tiempo estimado y si ya tienes diseno o sistema actual.": {
+                en: "To prepare a quote we need: project goal, key features, estimated timeline, and whether you already have a design or existing system.",
+                fr: "Pour chiffrer, nous avons besoin de l'objectif du projet, des fonctionnalites cles, du delai estime et de savoir si vous avez deja un design ou systeme actuel.",
+                de: "Fur ein Angebot brauchen wir Projektziel, Kernfunktionen, geschatzten Zeitrahmen und ob bereits ein Design oder System vorhanden ist.",
+                pt: "Para cotar, precisamos do objetivo do projeto, funcionalidades-chave, prazo estimado e se voce ja tem design ou sistema atual.",
+                it: "Per un preventivo ci servono obiettivo del progetto, funzionalita chiave, tempi stimati e se hai gia design o sistema esistente."
+            },
+            "Trabajamos con diferentes tecnologias segun el proyecto, por ejemplo PHP, Laravel, WordPress, JavaScript y stacks modernos para web.": {
+                en: "We work with different technologies depending on the project, such as PHP, Laravel, WordPress, JavaScript, and modern web stacks.",
+                fr: "Nous travaillons avec differentes technologies selon le projet, par exemple PHP, Laravel, WordPress, JavaScript et des stacks web modernes.",
+                de: "Wir arbeiten je nach Projekt mit verschiedenen Technologien, z. B. PHP, Laravel, WordPress, JavaScript und modernen Web-Stacks.",
+                pt: "Trabalhamos com diferentes tecnologias conforme o projeto, por exemplo PHP, Laravel, WordPress, JavaScript e stacks web modernos.",
+                it: "Lavoriamo con diverse tecnologie in base al progetto, ad esempio PHP, Laravel, WordPress, JavaScript e stack web moderni."
+            },
+            "Si, desarrollamos tiendas online con catalogo, carrito, pagos, gestion de pedidos y reportes para tu operacion.": {
+                en: "Yes, we build online stores with catalog, cart, payments, order management, and reports for your operation.",
+                fr: "Oui, nous developpons des boutiques en ligne avec catalogue, panier, paiements, gestion des commandes et rapports pour votre operation.",
+                de: "Ja, wir entwickeln Onlineshops mit Katalog, Warenkorb, Zahlungen, Bestellverwaltung und Reports fur deinen Betrieb.",
+                pt: "Sim, desenvolvemos lojas online com catalogo, carrinho, pagamentos, gestao de pedidos e relatorios para sua operacao.",
+                it: "Si, sviluppiamo negozi online con catalogo, carrello, pagamenti, gestione ordini e report per la tua operativita."
+            },
+            "Si, integramos pasarelas de pago segun tu necesidad y pais de operacion para facilitar ventas seguras en linea.": {
+                en: "Yes, we integrate payment gateways based on your needs and operating country to enable secure online sales.",
+                fr: "Oui, nous integrons des passerelles de paiement selon vos besoins et votre pays d'operation pour faciliter des ventes en ligne securisees.",
+                de: "Ja, wir integrieren Payment-Gateways passend zu Bedarf und Land, um sichere Online-Verkaufe zu ermoglichen.",
+                pt: "Sim, integramos gateways de pagamento conforme sua necessidade e pais de operacao para facilitar vendas online seguras.",
+                it: "Si, integriamo gateway di pagamento in base alle tue esigenze e al paese operativo per vendite online sicure."
+            },
+            "Si, ofrecemos garantia tecnica post-entrega para ajustes y estabilidad, de acuerdo con el alcance definido del proyecto.": {
+                en: "Yes, we provide post-delivery technical warranty for adjustments and stability, according to the defined project scope.",
+                fr: "Oui, nous offrons une garantie technique post-livraison pour ajustements et stabilite, selon le perimetre defini du projet.",
+                de: "Ja, wir bieten eine technische Gewahrleistung nach Lieferung fur Anpassungen und Stabilitat gemass dem definierten Projektumfang.",
+                pt: "Sim, oferecemos garantia tecnica pos-entrega para ajustes e estabilidade, de acordo com o escopo definido do projeto.",
+                it: "Si, offriamo garanzia tecnica post-consegna per regolazioni e stabilita, in base all'ambito definito del progetto."
+            },
+            "Si, contamos con planes de mantenimiento y soporte mensual para mejoras, monitoreo, ajustes y continuidad operativa.": {
+                en: "Yes, we offer monthly maintenance and support plans for improvements, monitoring, adjustments, and operational continuity.",
+                fr: "Oui, nous avons des plans mensuels de maintenance et support pour ameliorations, monitoring, ajustements et continuite operationnelle.",
+                de: "Ja, wir bieten monatliche Wartungs- und Supportplane fur Verbesserungen, Monitoring, Anpassungen und operative Kontinuitat.",
+                pt: "Sim, temos planos mensais de manutencao e suporte para melhorias, monitoramento, ajustes e continuidade operacional.",
+                it: "Si, abbiamo piani mensili di manutenzione e supporto per migliorie, monitoraggio, regolazioni e continuita operativa."
+            },
+            "Claro. Podemos auditar tu web o sistema actual y proponer mejoras por etapas para reducir riesgo y acelerar resultados.": {
+                en: "Of course. We can audit your current website or system and propose phased improvements to reduce risk and speed up results.",
+                fr: "Bien sur. Nous pouvons auditer votre site ou systeme actuel et proposer des ameliorations par etapes pour reduire le risque et accelerer les resultats.",
+                de: "Klar. Wir konnen deine aktuelle Website oder dein System auditieren und stufenweise Verbesserungen vorschlagen, um Risiko zu senken und Ergebnisse zu beschleunigen.",
+                pt: "Claro. Podemos auditar seu site ou sistema atual e propor melhorias por etapas para reduzir risco e acelerar resultados.",
+                it: "Certo. Possiamo fare audit del tuo sito o sistema attuale e proporre miglioramenti per fasi per ridurre rischi e accelerare i risultati."
+            },
+            "Si, te compartimos portafolio y casos de referencia relacionados con tu tipo de negocio.": {
+                en: "Yes, we can share portfolio pieces and reference cases related to your business type.",
+                fr: "Oui, nous pouvons partager un portfolio et des cas de reference lies a votre type d'activite.",
+                de: "Ja, wir teilen Portfolio-Beispiele und Referenzfalle passend zu deiner Branche.",
+                pt: "Sim, compartilhamos portifolio e casos de referencia relacionados ao seu tipo de negocio.",
+                it: "Si, condividiamo portfolio e casi di riferimento legati al tuo tipo di business."
+            },
+            "Si, manejamos facturacion formal para nuestros servicios de desarrollo y soporte.": {
+                en: "Yes, we issue formal invoicing for our development and support services.",
+                fr: "Oui, nous gerons une facturation formelle pour nos services de developpement et support.",
+                de: "Ja, wir bieten ordnungsgemaBe Rechnungsstellung fur unsere Entwicklungs- und Supportleistungen.",
+                pt: "Sim, trabalhamos com faturamento formal para nossos servicos de desenvolvimento e suporte.",
+                it: "Si, gestiamo fatturazione formale per i nostri servizi di sviluppo e supporto."
+            },
+            "El primer paso es agendar una llamada corta de discovery. Con eso definimos alcance, tiempos y propuesta.": {
+                en: "The first step is to schedule a short discovery call. With that, we define scope, timeline, and proposal.",
+                fr: "La premiere etape est de planifier un court appel discovery. Avec cela, nous definissons perimetre, delais et proposition.",
+                de: "Der erste Schritt ist ein kurzes Discovery-Gesprach. Damit definieren wir Umfang, Zeitplan und Angebot.",
+                pt: "O primeiro passo e agendar uma chamada curta de discovery. Com isso definimos escopo, prazos e proposta.",
+                it: "Il primo passo e fissare una breve chiamata discovery. Cosi definiamo ambito, tempi e proposta."
+            }
+        };
+
+        const packAnswers = (es) => {
+            const base = String(es || '').trim();
+            const translated = customFaqTranslations[base] || {};
+            return {
+                es: base,
+                en: translated.en || base,
+                fr: translated.fr || base,
+                de: translated.de || base,
+                pt: translated.pt || base,
+                it: translated.it || base
+            };
+        };
+        const customFaqs = [
+            { keywords: ['hola', 'buenas', 'buenos dias', 'buen dia', 'buenas tardes', 'buenas noches', 'hey', 'holi', 'que tal', 'qué tal'], answers: packAnswers('Hola, bienvenido a Proyectos MCE. Te puedo ayudar con servicios, tiempos, precios, soporte y contacto.') },
+            { keywords: ['gracias', 'muchas gracias', 'ok gracias', 'perfecto gracias', 'adios', 'adiós', 'hasta luego', 'nos vemos'], answers: packAnswers('Con gusto. Cuando quieras, te ayudo con informacion de Proyectos MCE y con agendar una reunion.') },
+            { keywords: ['mce', 'que significa mce', 'qué significa mce', 'que es mce', 'qué es mce', 'iniciales mce', 'marlon carabali', 'lider del equipo', 'lider', 'líder'], answers: packAnswers('Proyectos MCE es nuestra marca. MCE son las iniciales de Marlon Carabali, programador y lider del equipo.') },
+
+            { keywords: ['servicios', 'que ofrecen', 'qué ofrecen', 'que hacen', 'qué hacen', 'soluciones', 'desarrollo'], answers: packAnswers('Proyectos MCE ofrece Desarrollo a medida, Sistemas de Inventarios y Landing Page, ademas de diseno UX/UI, integraciones API y soporte continuo.') },
+            { keywords: ['software a medida', 'a medida', 'personalizado', 'desarrollan sistema', 'sistema a medida'], answers: packAnswers('Si. Disenamos y construimos software a medida segun el flujo real de tu negocio y tus metas comerciales.') },
+            { keywords: ['inventario', 'stock', 'bodega', 'control de inventario', 'erp'], answers: packAnswers('Claro. Implementamos sistemas de inventario con control de productos, movimientos, reportes y visibilidad en tiempo real.') },
+            { keywords: ['landing', 'landing page', 'pagina de aterrizaje', 'captacion', 'captación', 'conversion', 'conversión', 'pagina web'], answers: packAnswers('Si. Disenamos landing pages enfocadas en conversion, velocidad de carga y comunicacion clara del valor de tu negocio.') },
+            { keywords: ['api', 'integraciones', 'integracion', 'integración', 'conectar sistemas', 'pasarela', 'webhook'], answers: packAnswers('Si. Conectamos tu plataforma con APIs de terceros para automatizar procesos y unificar operaciones.') },
+            { keywords: ['proceso', 'metodologia', 'metodología', 'como trabajan', 'como es el proceso', 'etapas', 'fases'], answers: packAnswers('Trabajamos en 4 etapas: discovery, diseno/prototipo, desarrollo iterativo con pruebas y soporte post-lanzamiento.') },
+            { keywords: ['tiempo', 'cuanto tarda', 'cuánto tarda', 'duracion', 'duración', 'entrega', 'plazo'], answers: packAnswers('El tiempo depende del alcance. Despues del discovery definimos un cronograma realista por fases y fechas claras.') },
+            { keywords: ['soporte', 'mantenimiento', 'post venta', 'postventa', 'despues de entregar', 'después de entregar'], answers: packAnswers('Si. Brindamos soporte y monitoreo continuo para mantener la estabilidad y evolucion de la solucion.') },
+            { keywords: ['agendar', 'reunion', 'reunión', 'discovery', 'asesoria', 'asesoría', 'cotizacion', 'cotización'], answers: packAnswers('Puedes agendar una sesion de discovery sin costo por WhatsApp al +57 311 412 5971 o escribiendo a contacto@proyectosmce.com.') },
+            { keywords: ['contacto', 'correo', 'email', 'telefono', 'teléfono', 'whatsapp', 'datos de contacto'], answers: packAnswers('Puedes contactarnos por WhatsApp al +57 311 412 5971, por correo a contacto@proyectosmce.com y en proyectosmce.com/enlaces.') },
+
+            { keywords: ['horario', 'horarios', 'horario de atencion', 'horario de atención', 'hora de atencion', 'atienden hoy', 'disponibilidad'], answers: packAnswers('Nuestro horario de atencion es lunes a viernes de 08:00 a 17:00, y sabados de 09:00 a 14:00.') },
+            { keywords: ['fin de semana', 'fines de semana', 'sabado', 'sábado', 'domingo', 'atienden sabado', 'atienden domingo'], answers: packAnswers('Si, atendemos los sabados de 09:00 a 14:00. Los domingos normalmente no hay atencion.') },
+            { keywords: ['whatsapp horario', 'horario whatsapp', 'responden whatsapp', 'chat horario', 'soporte horario'], answers: packAnswers('Respondemos WhatsApp dentro del horario de atencion: lunes a viernes de 08:00 a 17:00 y sabados de 09:00 a 14:00.') },
+            { keywords: ['colombia', 'latam', 'pais', 'país', 'ubicacion', 'ubicación', 'internacional'], answers: packAnswers('Operamos desde Colombia y atendemos proyectos remotos para clientes en distintos paises de LATAM.') },
+            { keywords: ['discovery sin costo', 'que incluye discovery', 'qué incluye discovery', 'incluye discovery', 'diagnostico', 'diagnóstico', 'evaluacion', 'evaluación'], answers: packAnswers('La sesion discovery incluye diagnostico de necesidades, prioridades de negocio y una ruta inicial de implementacion.') },
+
+            { keywords: ['precio', 'costos', 'valor', 'presupuesto', 'tarifa', 'cuanto cuesta', 'cuánto cuesta', 'cotizar', 'cotizacion', 'cotización'], answers: packAnswers('Los precios se definen segun alcance y complejidad. Primero analizamos tus requerimientos y luego enviamos propuesta formal.') },
+            { keywords: ['que necesitan para cotizar', 'qué necesitan para cotizar', 'que datos necesitan', 'qué datos necesitan', 'que informacion necesitan', 'qué informacion necesitan', 'brief'], answers: packAnswers('Para cotizar necesitamos objetivo del proyecto, funcionalidades clave, tiempo estimado y si ya tienes diseno o sistema actual.') },
+            { keywords: ['tecnologias', 'tecnologías', 'stack', 'framework', 'lenguajes', 'wordpress', 'laravel', 'react', 'php'], answers: packAnswers('Trabajamos con diferentes tecnologias segun el proyecto, por ejemplo PHP, Laravel, WordPress, JavaScript y stacks modernos para web.') },
+            { keywords: ['tienda online', 'ecommerce', 'e commerce', 'tienda virtual', 'carrito de compras', 'ventas por internet'], answers: packAnswers('Si, desarrollamos tiendas online con catalogo, carrito, pagos, gestion de pedidos y reportes para tu operacion.') },
+            { keywords: ['pasarela de pago', 'pasarelas', 'pagos online', 'wompi', 'mercado pago', 'payu', 'stripe'], answers: packAnswers('Si, integramos pasarelas de pago segun tu necesidad y pais de operacion para facilitar ventas seguras en linea.') },
+            { keywords: ['garantia', 'garantía', 'respaldo', 'fallas', 'errores', 'bug', 'correcciones'], answers: packAnswers('Si, ofrecemos garantia tecnica post-entrega para ajustes y estabilidad, de acuerdo con el alcance definido del proyecto.') },
+            { keywords: ['mantenimiento mensual', 'soporte mensual', 'plan mensual', 'bolsa de horas', 'actualizaciones', 'monitoreo mensual'], answers: packAnswers('Si, contamos con planes de mantenimiento y soporte mensual para mejoras, monitoreo, ajustes y continuidad operativa.') },
+            { keywords: ['mejorar web', 'mejorar sistema', 'optimizar pagina', 'optimizar web', 'rediseño', 'rediseno', 'modernizar sistema', 'web existente'], answers: packAnswers('Claro. Podemos auditar tu web o sistema actual y proponer mejoras por etapas para reducir riesgo y acelerar resultados.') },
+            { keywords: ['portafolio', 'portfolio', 'casos de exito', 'casos de éxito', 'trabajos realizados', 'proyectos hechos', 'ejemplos'], answers: packAnswers('Si, te compartimos portafolio y casos de referencia relacionados con tu tipo de negocio.') },
+            { keywords: ['factura', 'facturacion', 'facturación', 'facturan', 'comprobante', 'documento de cobro'], answers: packAnswers('Si, manejamos facturacion formal para nuestros servicios de desarrollo y soporte.') },
+            { keywords: ['como iniciamos', 'cómo iniciamos', 'como empezamos', 'cómo empezamos', 'siguiente paso', 'primer paso', 'como contratar', 'arrancamos'], answers: packAnswers('El primer paso es agendar una llamada corta de discovery. Con eso definimos alcance, tiempos y propuesta.') }
+        ];
+        faqs.unshift(...customFaqs);
+
         const defaultMsg = {
             es: "Solo puedo responder sobre los contenidos y servicios de esta página: desarrollo web a medida, inventarios, UX/UI, APIs, soporte y sesiones Discovery.",
             en: "I can answer only about this site’s content and services: custom web dev, inventory, UX/UI, APIs, support, and Discovery sessions.",
@@ -562,6 +832,41 @@
             ]
         };
 
+        const normalizeText = (value) => String(value || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim();
+
+        function linkify(text) {
+            const safe = String(text || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+
+            return safe.replace(
+                /(https?:\/\/[^\s<]+)/g,
+                '<a href="$1" target="_blank" rel="noopener" class="text-brand-accent hover:underline">$1</a>'
+            );
+        }
+
+        function findAnswer(question, lang) {
+            const query = normalizeText(question);
+
+            for (const item of faqs) {
+                if (!item || !Array.isArray(item.keywords)) continue;
+                const matched = item.keywords.some((keyword) => query.includes(normalizeText(keyword)));
+                if (matched) {
+                    const answers = item.answers || {};
+                    return answers[lang] || answers.es || (defaultMsg[lang] || defaultMsg.es);
+                }
+            }
+
+            return defaultMsg[lang] || defaultMsg.es;
+        }
+
         function renderGreeting(lang) {
             const greetText = greetings[lang] || greetings.es;
             const options = botOptions[lang] || botOptions.es;
@@ -599,10 +904,11 @@
         const unlockScroll = () => { delete document.body.dataset.scrollLock; document.body.style.overflow = ''; };
 
         function handleAsk() {
-            const q = (questionInput.value || '').trim().toLowerCase();
+            const q = (questionInput.value || '').trim();
             if (!q) return;
             const lang = window.mceCurrentLang || 'es';
-            const isRel = faqs.some(f => f.keywords.some(k => q.includes(k)));
+            const query = normalizeText(q);
+            const isRel = faqs.some(f => Array.isArray(f.keywords) && f.keywords.some(k => query.includes(normalizeText(k))));
             const raw = isRel ? findAnswer(q, lang) : (defaultMsg[lang] || defaultMsg.es);
             
             const msgHtml = `<div class="bot-msg-answer animate-in slide-in-from-bottom-2 duration-300 space-y-3">
@@ -704,11 +1010,11 @@
                 'nav-legal': 'Aviso legal',
                 'nav-privacy': 'Política de privacidad',
                 'nav-subtitle': 'Desarrollo   Web',
-                'meta-title-index': 'Proyectos MCE | Soluciones Digitales',
-                'meta-title-servicios': 'Servicios · Proyectos MCE',
-                'meta-title-portafolio': 'Portafolio · Proyectos MCE',
+                'meta-title-index': 'Proyectos MCE | Desarrollo de Software a Medida en Colombia',
+                'meta-title-servicios': 'Servicios de Desarrollo y Automatización | Proyectos MCE',
+                'meta-title-portafolio': 'Portafolio de Proyectos Digitales | Proyectos MCE',
                 'meta-title-testimonios': 'Testimonios · Proyectos MCE',
-                'meta-title-contacto': 'Contacto · Proyectos MCE',
+                'meta-title-contacto': 'Contacto y Agenda Discovery | Proyectos MCE',
                 'brand-name': 'Proyectos MCE',
                 'bot-online': 'En línea ahora',
                 'bot-input-ph': 'Escribe tu pregunta...',
@@ -793,11 +1099,11 @@
                 'srv-price-tax': '+IVA',
                 'srv-ask-quote': 'Solicitar presupuesto',
                 'srv-summary-hint': 'Toca para ver detalles',
-                'srv-card1-title': 'Desarrollo Web a Medida',
+                'srv-card1-title': 'Desarrollo a medida',
                 'srv-card1-desc': 'Plataformas a medida de tus procesos, con arquitectura escalable, seguridad y analítica desde el día uno',
-                'srv-card2-title': 'Sistemas de Inventario',
+                'srv-card2-title': 'Sistemas de Inventarios',
                 'srv-card2-desc': 'Suite de inventario y operaciones con trazabilidad, alertas de stock, ventas y reportes en tiempo real',
-                'srv-card3-title': 'Landing Pages',
+                'srv-card3-title': 'Landing Page',
                 'srv-card3-desc': 'Landing pages de conversión: copy persuasivo, captura de leads y medición completa (analytics y píxeles)',
                 'srv-next-label': 'Siguiente paso',
                 'srv-next-title': 'Cuéntanos qué quieres automatizar o lanzar',
@@ -975,7 +1281,7 @@
                 'ct-mail': 'Correo',
                 'ct-wa': 'WhatsApp',
                 'ct-hours': 'Horario',
-                'ct-hours-detail': 'Lunes a Viernes · 8:00 - 17:00 <br>Sábados · 9:00 - 13:00',
+                'ct-hours-detail': 'Lunes a Viernes · 08:00 - 17:00 <br>Sábados · 09:00 - 14:00',
                 'ct-call-label': 'Coordina tu llamada',
                 'ct-call-title': 'Elige fecha y hora para hablar',
                 'ct-call-desc': 'Agendamos una llamada corta para revisar tu necesidad y darte siguientes pasos. Confirmamos por correo con el enlace de la reunión.',
@@ -1026,10 +1332,10 @@
                 'ft-about-link': 'Ver casos en vivo',
                 'ft-links-title': 'Enlaces',
                 'ft-services-title': 'Servicios',
-                'ft-srv1': 'Desarrollo a Medida',
-                'ft-srv2': 'Sistemas de Inventario',
-                'ft-srv3': 'Mantenimiento Web',
-                'ft-hours': 'Lunes a sábado · 8:00 - 18:00 ',
+                'ft-srv1': 'Desarrollo a medida',
+                'ft-srv2': 'Sistemas de Inventarios',
+                'ft-srv3': 'Landing Page',
+                'ft-hours': 'Lunes a viernes · 08:00 - 17:00 · Sábados · 09:00 - 14:00 ',
                 'ft-copy': 'Proyectos MCE. Todos los derechos reservados.',
                 'ct-field-required': 'Este campo es obligatorio.',
                 'ct-field-email': 'Ingresa un correo válido.',
@@ -1325,7 +1631,7 @@
                 'ct-mail': 'Email',
                 'ct-wa': 'WhatsApp',
                 'ct-hours': 'Hours',
-                'ct-hours-detail': 'Mon to Fri · 8:00 - 17:00 <br>Sat · 9:00 - 13:00',
+                'ct-hours-detail': 'Mon to Fri · 08:00 - 17:00 <br>Sat · 09:00 - 14:00',
                 'ct-call-label': 'Schedule your call',
                 'ct-call-title': 'Pick a date and time to talk',
                 'ct-call-desc': 'We set a short call to review your need and give next steps. We confirm by email with the meeting link.',
@@ -1378,8 +1684,8 @@
                 'ft-services-title': 'Services',
                 'ft-srv1': 'Custom Development',
                 'ft-srv2': 'Inventory Systems',
-                'ft-srv3': 'Web Maintenance',
-                'ft-hours': 'Mon to Sat · 8:00 - 18:00 ',
+                'ft-srv3': 'Landing Pages',
+                'ft-hours': 'Mon to Fri · 08:00 - 17:00 · Sat · 09:00 - 14:00 ',
                 'ft-copy': 'MCE Projects. All rights reserved.',
                 'ct-field-required': 'This field is required.',
                 'ct-field-email': 'Enter a valid email.',
@@ -1675,7 +1981,7 @@
                 'ct-mail': 'Email',
                 'ct-wa': 'WhatsApp',
                 'ct-hours': 'Horaires',
-                'ct-hours-detail': 'Lun à Ven · 8:00 - 17:00 <br>Sam · 9:00 - 13:00',
+                'ct-hours-detail': 'Lun à Ven · 08:00 - 17:00 <br>Sam · 09:00 - 14:00',
                 'ct-call-label': 'Planifie ton appel',
                 'ct-call-title': "Choisis la date et l'heure pour échanger",
                 'ct-call-desc': "Nous prévoyons un court appel pour comprendre ton besoin et donner les prochaines étapes. Confirmation par email avec le lien de réunion.",
@@ -1728,8 +2034,8 @@
                 'ft-services-title': 'Services',
                 'ft-srv1': 'Développement sur mesure',
                 'ft-srv2': "Systèmes d'inventaire",
-                'ft-srv3': 'Maintenance web',
-                'ft-hours': 'Lun au Sam · 8:00 - 18:00',
+                'ft-srv3': 'Landing pages',
+                'ft-hours': 'Lun à Ven · 08:00 - 17:00 · Sam · 09:00 - 14:00',
                 'ft-copy': 'Projets MCE. Tous droits réservés.',
                 'ct-field-required': 'Ce champ est obligatoire.',
                 'ct-field-email': 'Saisis un email valide.',
@@ -2025,7 +2331,7 @@
                 'ct-mail': 'E-Mail',
                 'ct-wa': 'WhatsApp',
                 'ct-hours': 'Zeiten',
-                'ct-hours-detail': 'Mo–Fr · 8:00 - 17:00 <br>Sa · 9:00 - 13:00',
+                'ct-hours-detail': 'Mo–Fr · 08:00 - 17:00 <br>Sa · 09:00 - 14:00',
                 'ct-call-label': 'Termin buchen',
                 'ct-call-title': 'Wähle Datum und Uhrzeit fürs Gespräch',
                 'ct-call-desc': 'Kurzes Gespräch, um dein Anliegen zu verstehen und nächste Schritte zu geben. Bestätigung per E-Mail mit Meeting-Link.',
@@ -2078,8 +2384,8 @@
                 'ft-services-title': 'Services',
                 'ft-srv1': 'Individuelle Entwicklung',
                 'ft-srv2': 'Warenwirtschaftssysteme',
-                'ft-srv3': 'Web-Wartung',
-                'ft-hours': 'Mo bis Sa · 8:00 - 18:00',
+                'ft-srv3': 'Landingpages',
+                'ft-hours': 'Mo bis Fr · 08:00 - 17:00 · Sa · 09:00 - 14:00',
                 'ft-copy': 'MCE Projekte. Alle Rechte vorbehalten.',
                 'ct-field-required': 'Dieses Feld ist erforderlich.',
                 'ct-field-email': 'Bitte eine gültige E-Mail eingeben.',
@@ -2375,7 +2681,7 @@
                 'ct-mail': 'E-mail',
                 'ct-wa': 'WhatsApp',
                 'ct-hours': 'Horário',
-                'ct-hours-detail': 'Seg a Sex · 8:00 - 17:00 <br>Sáb · 9:00 - 13:00',
+                'ct-hours-detail': 'Seg a Sex · 08:00 - 17:00 <br>Sáb · 09:00 - 14:00',
                 'ct-call-label': 'Agende sua chamada',
                 'ct-call-title': 'Escolha data e hora para falar',
                 'ct-call-desc': 'Marcamos uma call rápida para entender sua necessidade e dar próximos passos. Confirmamos por email com o link da reunião.',
@@ -2428,8 +2734,8 @@
                 'ft-services-title': 'Serviços',
                 'ft-srv1': 'Desenvolvimento sob medida',
                 'ft-srv2': 'Sistemas de Inventário',
-                'ft-srv3': 'Manutenção Web',
-                'ft-hours': 'Seg a Sáb · 8:00 - 18:00',
+                'ft-srv3': 'Landing pages',
+                'ft-hours': 'Seg a Sex · 08:00 - 17:00 · Sáb · 09:00 - 14:00',
                 'ft-copy': 'Projetos MCE. Todos os direitos reservados.',
                 'ct-field-required': 'Este campo é obrigatório.',
                 'ct-field-email': 'Insira um email válido.',
@@ -2725,7 +3031,7 @@
                 'ct-mail': 'Email',
                 'ct-wa': 'WhatsApp',
                 'ct-hours': 'Orari',
-                'ct-hours-detail': 'Lun–Ven · 8:00 - 17:00 <br>Sab · 9:00 - 13:00',
+                'ct-hours-detail': 'Lun–Ven · 08:00 - 17:00 <br>Sab · 09:00 - 14:00',
                 'ct-call-label': 'Programma la tua chiamata',
                 'ct-call-title': 'Scegli data e ora per parlare',
                 'ct-call-desc': 'Organizziamo una breve call per capire la tua esigenza e darti i prossimi passi. Confermiamo via email con il link della riunione.',
@@ -2778,8 +3084,8 @@
                 'ft-services-title': 'Servizi',
                 'ft-srv1': 'Sviluppo su misura',
                 'ft-srv2': 'Sistemi di inventario',
-                'ft-srv3': 'Manutenzione Web',
-                'ft-hours': 'Lun a Sab · 8:00 - 18:00',
+                'ft-srv3': 'Landing page',
+                'ft-hours': 'Lun–Ven · 08:00 - 17:00 · Sab · 09:00 - 14:00',
                 'ft-copy': 'Progetti MCE. Tutti i diritti riservati.',
                 'ct-field-required': 'Questo campo è obbligatorio.',
                 'ct-field-email': "Inserisci un'email valida.",

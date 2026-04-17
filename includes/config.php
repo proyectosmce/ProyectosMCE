@@ -5,31 +5,52 @@ define('MAINTENANCE_PATH', __DIR__ . '/.maintenance');
 define('MAINTENANCE_MODE', file_exists(MAINTENANCE_PATH));
 $maintenance_back_at = MAINTENANCE_MODE ? (int)file_get_contents(MAINTENANCE_PATH) : 0;
 
-// Carga secretos locales o generados en el deploy si existen.
-$secretPath = __DIR__ . '/secrets.php';
-if (is_file($secretPath)) {
-    require $secretPath;
+// Carga secretos locales/privados (no versionados).
+// Orden de carga:
+// 1) MCE_SECRETS_FILE (ruta absoluta o relativa)
+// 2) includes/secrets.local.php
+// 3) includes/secrets.php
+$secretFiles = [];
+$customSecretPath = trim((string) getenv('MCE_SECRETS_FILE'));
+if ($customSecretPath !== '') {
+    $isAbsolutePath = preg_match('~^([A-Za-z]:[\\\\/]|/|\\\\\\\\)~', $customSecretPath) === 1;
+    $secretFiles[] = $isAbsolutePath
+        ? $customSecretPath
+        : dirname(__DIR__) . DIRECTORY_SEPARATOR . ltrim($customSecretPath, DIRECTORY_SEPARATOR);
+}
+$secretFiles[] = __DIR__ . '/secrets.local.php';
+$secretFiles[] = __DIR__ . '/secrets.php';
+
+foreach ($secretFiles as $secretPath) {
+    if (is_file($secretPath)) {
+        require $secretPath;
+    }
 }
 
 // Configuracion basica de la base de datos.
-// Ajusta las variables de entorno DB_HOST, DB_USER, DB_PASS y DB_NAME si necesitas credenciales distintas.
-$DB_HOST   = $DB_HOST ?? getenv('DB_HOST') ?: 'localhost';          // Servidor local
-$DB_USER   = $DB_USER ?? getenv('DB_USER') ?: 'root';               // Usuario por defecto en XAMPP
-$DB_PASS   = $DB_PASS ?? getenv('DB_PASS') ?: '';                   // Clave vacia por defecto
-$DB_NAME   = $DB_NAME ?? getenv('DB_NAME') ?: 'proyectosmce';       // Nombre de la BD local
-$DB_PORT   = $DB_PORT ?? getenv('DB_PORT') ?: 3306;                 // Puerto MySQL por defecto
-$DB_SOCKET = $DB_SOCKET ?? getenv('DB_SOCKET') ?: null;             // Usalo si tu hosting exige conectar por socket
-
-// Si usas localhost, fuerza 127.0.0.1 para evitar sockets inexistentes.
-if ($DB_HOST === 'localhost') {
-    $DB_HOST = '127.0.0.1';
-}
+// Si no usas archivos de secretos ni variables de entorno, puedes colocar tus
+// credenciales directamente aqui.
+$DB_HOST   = $DB_HOST ?? getenv('DB_HOST') ?: 'localhost';
+$DB_USER   = $DB_USER ?? getenv('DB_USER') ?: 'root';
+$DB_PASS   = $DB_PASS ?? getenv('DB_PASS') ?: '';
+$DB_NAME   = $DB_NAME ?? getenv('DB_NAME') ?: 'proyectosmce';
+$DB_PORT   = $DB_PORT ?? getenv('DB_PORT') ?: 3306;
+$DB_SOCKET = $DB_SOCKET ?? getenv('DB_SOCKET') ?: null;
 
 // Evita excepciones de mysqli y controla el error manualmente.
 mysqli_report(MYSQLI_REPORT_OFF);
 
 // Crear conexion mysqli.
 $conn = new mysqli($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME, (int) $DB_PORT, $DB_SOCKET);
+
+// Fallback solo para entornos donde localhost falle por socket y se requiera TCP.
+if ($conn->connect_error && $DB_HOST === 'localhost' && ($DB_SOCKET === null || $DB_SOCKET === '')) {
+    $retry = new mysqli('127.0.0.1', $DB_USER, $DB_PASS, $DB_NAME, (int) $DB_PORT);
+    if (!$retry->connect_error) {
+        $conn = $retry;
+        $DB_HOST = '127.0.0.1';
+    }
+}
 
 // Verificar conexion.
 if ($conn->connect_error) {
@@ -136,6 +157,44 @@ function current_absolute_url()
     $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
 
     return $scheme . '://' . $host . $requestUri;
+}
+
+function canonical_absolute_url()
+{
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+
+    $path = (string) (parse_url($requestUri, PHP_URL_PATH) ?? '/');
+    $query = (string) (parse_url($requestUri, PHP_URL_QUERY) ?? '');
+
+    // Normaliza rutas del front para evitar duplicados con .php
+    $path = preg_replace('~\.php$~i', '', $path);
+    if ($path === '' || $path === '/index') {
+        $path = '/';
+    }
+    $path = preg_replace('~/+~', '/', $path);
+
+    // Conservamos solo parámetros canónicos necesarios (ej. detalle por id en portafolio)
+    $allowedParams = ['id'];
+    parse_str($query, $params);
+    $keptParams = [];
+    foreach ($allowedParams as $key) {
+        if (!isset($params[$key]) || $params[$key] === '') {
+            continue;
+        }
+        if ($key === 'id' && !ctype_digit((string) $params[$key])) {
+            continue;
+        }
+        $keptParams[$key] = (string) $params[$key];
+    }
+
+    $canonical = $scheme . '://' . $host . $path;
+    if (!empty($keptParams)) {
+        $canonical .= '?' . http_build_query($keptParams);
+    }
+
+    return $canonical;
 }
 
 // Ejecución de MODO MANTENIMIENTO al final (cuando ya existen funciones como app_url)

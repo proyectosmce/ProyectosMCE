@@ -5,6 +5,24 @@ $contactFormGuard = form_guard_issue('contacto');
 $contactRecaptchaEnabled = form_guard_recaptcha_enabled();
 $selectedService = trim((string) ($_GET['servicio'] ?? ''));
 
+if (!function_exists('mce_canonical_service_name')) {
+    function mce_canonical_service_name($title) {
+        $normalized = strtolower(trim((string) $title));
+        $map = [
+            'desarrollo web a medida' => 'Desarrollo a medida',
+            'desarrollo a medida' => 'Desarrollo a medida',
+            'sistemas de inventario' => 'Sistemas de Inventarios',
+            'sistemas de inventarios' => 'Sistemas de Inventarios',
+            'landing pages' => 'Landing Page',
+            'landing page' => 'Landing Page',
+        ];
+
+        return $map[$normalized] ?? (string) $title;
+    }
+}
+
+$selectedServiceCanonical = mce_canonical_service_name($selectedService);
+
 // Crear tabla de citas si no existe (agenda de llamadas)
 $conn->query("
     CREATE TABLE IF NOT EXISTS citas (
@@ -52,7 +70,8 @@ if ($bookedQuery) {
         $bookedSlotsByDate[$d][] = $h;
     }
 }
-$availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:00','17:00'];
+$weekdayHours = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
+$saturdayHours = ['09:00','10:00','11:00','12:00','13:00','14:00'];
 ?>
 <?php include 'includes/header.php'; ?>
 
@@ -122,7 +141,7 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                     <div class="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
                         <div>
                             <p class="text-sm text-white/70 i18n-ct-hours" data-i18n="ct-hours">Horario</p>
-                            <p class="font-semibold i18n-ct-hours-detail" data-i18n="ct-hours-detail">Lunes a Viernes | 8:00 - 17:00 <br>Sábados | 9:00 - 13:00</p>
+                            <p class="font-semibold i18n-ct-hours-detail" data-i18n="ct-hours-detail">Lunes a Viernes | 08:00 - 17:00 <br>Sábados | 09:00 - 14:00</p>
                         </div>
                         <i class="fas fa-arrow-right text-brand-accent"></i>
                     </div>
@@ -250,9 +269,10 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                             <?php
                             $servicios = $conn->query("SELECT titulo FROM servicios WHERE LOWER(titulo) <> 'tiendas online' ORDER BY orden");
                             while ($s = $servicios->fetch_assoc()) {
-                                $serviceTitle = (string) ($s['titulo'] ?? '');
+                                $serviceTitleRaw = (string) ($s['titulo'] ?? '');
+                                $serviceTitle = mce_canonical_service_name($serviceTitleRaw);
                                 ?>
-                                <option value="<?php echo htmlspecialchars($serviceTitle, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $selectedService !== '' && strcasecmp($selectedService, $serviceTitle) === 0 ? 'selected' : ''; ?>>
+                                <option value="<?php echo htmlspecialchars($serviceTitle, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $selectedServiceCanonical !== '' && strcasecmp($selectedServiceCanonical, $serviceTitle) === 0 ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($serviceTitle, ENT_QUOTES, 'UTF-8'); ?>
                                 </option>
                                 <?php
@@ -340,9 +360,10 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
                             <?php
                             $servicios = $conn->query("SELECT titulo FROM servicios WHERE LOWER(titulo) <> 'tiendas online' ORDER BY orden");
                             while ($s = $servicios->fetch_assoc()) {
-                                $serviceTitle = (string) ($s['titulo'] ?? '');
+                                $serviceTitleRaw = (string) ($s['titulo'] ?? '');
+                                $serviceTitle = mce_canonical_service_name($serviceTitleRaw);
                                 ?>
-                                <option value="<?php echo htmlspecialchars($serviceTitle, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $selectedService !== '' && strcasecmp($selectedService, $serviceTitle) === 0 ? 'selected' : ''; ?>>
+                                <option value="<?php echo htmlspecialchars($serviceTitle, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $selectedServiceCanonical !== '' && strcasecmp($selectedServiceCanonical, $serviceTitle) === 0 ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($serviceTitle, ENT_QUOTES, 'UTF-8'); ?>
                                 </option>
                                 <?php
@@ -423,7 +444,8 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
     const forms = ['contact-form', 'agenda-form'].map(id => document.getElementById(id)).filter(Boolean);
 
     // Horarios de agenda
-    const availableHours = <?php echo json_encode($availableHours, JSON_UNESCAPED_UNICODE); ?>;
+    const weekdayHours = <?php echo json_encode($weekdayHours, JSON_UNESCAPED_UNICODE); ?>;
+    const saturdayHours = <?php echo json_encode($saturdayHours, JSON_UNESCAPED_UNICODE); ?>;
     const bookedSlots = <?php echo json_encode($bookedSlotsByDate, JSON_UNESCAPED_UNICODE); ?>;
     const horaSelect = document.getElementById('agenda-hora');
     const fechaInput = document.getElementById('agenda-fecha');
@@ -433,7 +455,17 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
     const renderHours = (dateStr) => {
         if (!horaSelect || !fechaInput || !horaContainer) return;
         const booked = bookedSlots[dateStr] || [];
-        let options = availableHours.filter(h => !booked.includes(h));
+        const selectedDate = new Date(dateStr + 'T00:00:00');
+        const day = Number.isNaN(selectedDate.getTime()) ? -1 : selectedDate.getDay();
+        let baseHours = [];
+
+        if (day >= 1 && day <= 5) {
+            baseHours = weekdayHours;
+        } else if (day === 6) {
+            baseHours = saturdayHours;
+        }
+
+        let options = baseHours.filter(h => !booked.includes(h));
         const todayStr = new Date().toISOString().slice(0, 10);
         if (dateStr === todayStr) {
             const now = new Date();
@@ -527,14 +559,20 @@ $availableHours = ['08:00','09:00','10:00','11:00','12:00','14:00','15:00','16:0
     const tplService = {
         es: {
             'desarrollo web a medida': 'Hola, quiero un desarrollo web a medida.\n\nObjetivo principal:\nPúblico objetivo:\nFunciones clave:\nIntegraciones (APIs/pagos):\nPlazo ideal y presupuesto aproximado:',
+            'desarrollo a medida': 'Hola, quiero un desarrollo a medida.\n\nObjetivo principal:\nPúblico objetivo:\nFunciones clave:\nIntegraciones (APIs/pagos):\nPlazo ideal y presupuesto aproximado:',
             'sistemas de inventario': 'Hola, necesito un sistema de inventario.\n\nNúmero de productos/SKUs:\nPuntos de venta o canales:\nAlertas y reportes deseados:\nIntegraciones con contabilidad/tiendas:\nPlazo ideal y presupuesto aproximado:',
+            'sistemas de inventarios': 'Hola, necesito un sistema de inventarios.\n\nNúmero de productos/SKUs:\nPuntos de venta o canales:\nAlertas y reportes deseados:\nIntegraciones con contabilidad/tiendas:\nPlazo ideal y presupuesto aproximado:',
             'landing pages': 'Hola, necesito una landing page.\n\nObjetivo de la campaña (leads/ventas):\nPúblico y propuesta de valor:\nSecciones requeridas:\nIntegraciones (formularios/CRM/pagos):\nFecha de lanzamiento y presupuesto:',
+            'landing page': 'Hola, necesito una landing page.\n\nObjetivo de la campaña (leads/ventas):\nPúblico y propuesta de valor:\nSecciones requeridas:\nIntegraciones (formularios/CRM/pagos):\nFecha de lanzamiento y presupuesto:',
             'mantenimiento web': 'Hola, busco mantenimiento web.\n\nTipo de sitio y tecnología:\nAlcance (monitoreo, soporte, mejoras):\nFrecuencia de actualizaciones:\nAccesos disponibles (hosting/Git):\nPresupuesto mensual o por horas:'
         },
         en: {
             'desarrollo web a medida': 'Hi, I need a custom web development project.\n\nMain goal:\nTarget audience:\nKey features:\nIntegrations (APIs/payments):\nIdeal timeline and budget:',
+            'desarrollo a medida': 'Hi, I need a custom development project.\n\nMain goal:\nTarget audience:\nKey features:\nIntegrations (APIs/payments):\nIdeal timeline and budget:',
             'sistemas de inventario': 'Hi, I need an inventory system.\n\nNumber of products/SKUs:\nSales channels or POS:\nAlerts and reports needed:\nIntegrations with accounting/stores:\nIdeal timeline and budget:',
+            'sistemas de inventarios': 'Hi, I need an inventory system.\n\nNumber of products/SKUs:\nSales channels or POS:\nAlerts and reports needed:\nIntegrations with accounting/stores:\nIdeal timeline and budget:',
             'landing pages': 'Hi, I need a landing page.\n\nCampaign goal (leads/sales):\nAudience and value proposition:\nRequired sections:\nIntegrations (forms/CRM/payments):\nLaunch date and budget:',
+            'landing page': 'Hi, I need a landing page.\n\nCampaign goal (leads/sales):\nAudience and value proposition:\nRequired sections:\nIntegrations (forms/CRM/payments):\nLaunch date and budget:',
             'mantenimiento web': 'Hi, I need website maintenance.\n\nSite type and tech stack:\nScope (monitoring, support, improvements):\nUpdate frequency:\nAccess available (hosting/Git):\nMonthly or hourly budget:'
         }
     };

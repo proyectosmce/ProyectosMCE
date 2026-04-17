@@ -3,13 +3,23 @@
 if (!headers_sent()) { header('Content-Type: text/html; charset=UTF-8'); }
 $pageSlug = basename($_SERVER["PHP_SELF"], ".php");
 $titleKey = "meta-title-" . $pageSlug;
+$titleDefaults = [
+    'index' => 'Proyectos MCE | Desarrollo de Software a Medida en Colombia',
+    'servicios' => 'Servicios de Desarrollo y Automatización | Proyectos MCE',
+    'portafolio' => 'Portafolio de Proyectos Digitales | Proyectos MCE',
+    'contacto' => 'Contacto y Agenda Discovery | Proyectos MCE',
+    'testimonios' => 'Testimonios de Clientes | Proyectos MCE',
+    'aviso-legal' => 'Aviso Legal | Proyectos MCE',
+    'politica-privacidad' => 'Política de Privacidad | Proyectos MCE',
+];
+$serverTitle = $titleDefaults[$pageSlug] ?? 'Proyectos MCE | Soluciones Digitales';
 ?>
 <!DOCTYPE html>
 <html lang="es" data-page-key="<?php echo htmlspecialchars($titleKey, ENT_QUOTES, 'UTF-8'); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="<?php echo htmlspecialchars($titleKey, ENT_QUOTES, 'UTF-8'); ?>">Proyectos MCE | Soluciones Digitales</title>
+    <title data-i18n="<?php echo htmlspecialchars($titleKey, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($serverTitle, ENT_QUOTES, 'UTF-8'); ?></title>
     <?php
     $faviconFile = dirname(__DIR__) . '/favicon.ico';
     $faviconPngFile = dirname(__DIR__) . '/favicon.png';

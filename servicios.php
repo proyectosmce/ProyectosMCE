@@ -134,17 +134,34 @@
         $result = $conn->query("SELECT * FROM servicios WHERE LOWER(titulo) <> 'tiendas online' ORDER BY orden");
         $i18nMap = [
             'desarrollo web a medida' => 'srv-card1',
+            'desarrollo a medida'     => 'srv-card1',
             'sistemas de inventario'  => 'srv-card2',
+            'sistemas de inventarios' => 'srv-card2',
             'landing pages'           => 'srv-card3',
+            'landing page'            => 'srv-card3',
+        ];
+        $canonicalTitles = [
+            'desarrollo web a medida' => 'Desarrollo a medida',
+            'desarrollo a medida'     => 'Desarrollo a medida',
+            'sistemas de inventario'  => 'Sistemas de Inventarios',
+            'sistemas de inventarios' => 'Sistemas de Inventarios',
+            'landing pages'           => 'Landing Page',
+            'landing page'            => 'Landing Page',
         ];
         while ($row = $result->fetch_assoc()):
             $slug = strtolower(trim($row['titulo'] ?? ''));
+            if (isset($canonicalTitles[$slug])) {
+                $row['titulo'] = $canonicalTitles[$slug];
+            }
             $i18nKey = $i18nMap[$slug] ?? null;
-            // Descripciones más profesionales por servicio (sin tocar la base de datos)
+            // Descripciones mas profesionales por servicio (sin tocar la base de datos)
             $descOverrides = [
-                'desarrollo web a medida' => 'Plataformas y portales hechos a la medida de tus procesos, con arquitectura escalable, seguridad y analítica desde el día uno.',
+                'desarrollo web a medida' => 'Plataformas y portales hechos a la medida de tus procesos, con arquitectura escalable, seguridad y analitica desde el dia uno.',
+                'desarrollo a medida'     => 'Plataformas y portales hechos a la medida de tus procesos, con arquitectura escalable, seguridad y analitica desde el dia uno.',
                 'sistemas de inventario'  => 'Suite de inventario y operaciones con trazabilidad, alertas de stock, ventas y reportes en tiempo real.',
-                'landing pages'           => 'Landing pages orientadas a conversión: copy persuasivo, captura de leads y medición completa (analytics y píxeles).',
+                'sistemas de inventarios' => 'Suite de inventario y operaciones con trazabilidad, alertas de stock, ventas y reportes en tiempo real.',
+                'landing pages'           => 'Landing pages orientadas a conversion: copy persuasivo, captura de leads y medicion completa (analytics y pixeles).',
+                'landing page'            => 'Landing pages orientadas a conversion: copy persuasivo, captura de leads y medicion completa (analytics y pixeles).',
             ];
             if (isset($descOverrides[$slug])) {
                 $row['descripcion'] = $descOverrides[$slug];

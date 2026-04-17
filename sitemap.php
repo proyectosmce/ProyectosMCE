@@ -1,13 +1,14 @@
 ﻿<?php
 // sitemap.php
-header('Content-Type: application/xml');
+header('Content-Type: application/xml; charset=UTF-8');
 require_once 'includes/config.php';
 
 $pages = [
     '',
-    'servicios.php',
-    'portafolio.php',
-    'contacto.php'
+    'servicios',
+    'portafolio',
+    'contacto',
+    'testimonios'
 ];
 
 echo '<?xml version="1.0" encoding="UTF-8"?>';
@@ -28,7 +29,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
     while($p = $proyectos->fetch_assoc()):
     ?>
     <url>
-        <loc><?php echo app_absolute_url('portafolio.php'); ?>?id=<?php echo $p['id']; ?></loc>
+        <loc><?php echo app_absolute_url('portafolio'); ?>?id=<?php echo (int) $p['id']; ?></loc>
         <lastmod><?php echo date('Y-m-d', strtotime($p['created_at'])); ?></lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
